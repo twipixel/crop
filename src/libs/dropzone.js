@@ -25,7 +25,7 @@
  *
  */
 
-
+(function() {
   var Dropzone, Emitter, camelize, contentLoaded, detectVerticalSquash, drawImageIOSFix, noop, without,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
@@ -1762,5 +1762,7 @@
     }
   };
 
+  window.Dropzone = Dropzone;
   contentLoaded(window, Dropzone._autoDiscoverFunction);
 
+}).call(this);

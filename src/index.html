@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>IMAGE EDITOR</title>
-    <link rel="stylesheet" type="text/css" href="css/basic.css">
-    <link rel="stylesheet" type="text/css" href="css/dropzone.css">
+    <link href="./css/basic.css" type="text/css" rel="stylesheet">
+    <link href="./css/dropzone.css" type="text/css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -15,21 +15,18 @@
 </head>
 <body>
 
-<!--<form action="/file-upload" class="dropzone" id="dropzone">
-    <div class="fallback">
-        <input name="file" type="file" multiple>
-    </div>
-</form>-->
-
-<div id="dropzone"></div>
-
-
 <script src="./libs/dropzone.js"></script>
 <script>
     // Install babel hooks to the browser process
     require('babel-core/register')();
     require('./js/index');
 </script>
+
+<form action="http://twipixel.com/test/dropdown/upload.php" class="dropzone">
+    <div id="box" class="fallback">
+        <input name="file" type="file" multiple />
+    </div>
+</form>
 
 
 </body>
