@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>IMAGE EDITOR</title>
+    <link rel="stylesheet" type="text/css" href="css/basic.css">
+    <link rel="stylesheet" type="text/css" href="css/dropzone.css">
     <style>
         body {
             margin: 0;
@@ -12,11 +14,23 @@
     </style>
 </head>
 <body>
-<div id="image">IMAGE</div>
+
+<!--<form action="/file-upload" class="dropzone" id="dropzone">
+    <div class="fallback">
+        <input name="file" type="file" multiple>
+    </div>
+</form>-->
+
+<div id="dropzone"></div>
+
+
+<script src="./libs/dropzone.js"></script>
 <script>
     // Install babel hooks to the browser process
     require('babel-core/register')();
     require('./js/index');
 </script>
+
+
 </body>
 </html>
