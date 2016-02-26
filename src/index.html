@@ -11,11 +11,19 @@
                 padding: 0;
                 background-color: #FFFFFF;
             }
+            #canvas {
+                margin: 10px;
+                background: #e6e9ec;
+            }
         </style>
     </head>
 <body>
 
 <form id="upload" method="post" action="http://twipixel.com/test/dropzone/upload.php" class="dropzone"></form>
+<!--<form id="upload" method="post" action="http://twipixel.com/test/dropzone/upload_default.php" class="dropzone"></form>-->
+
+
+<canvas id="canvas" width="800" height="600"></canvas>
 
 <script src="libs/dropzone.js"></script>
 
