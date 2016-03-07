@@ -15,17 +15,11 @@ export class Config {
 
 
 
-    static set imageURL(value) {
-        this._imageURL = value;
-    }
-
-    static get imageURL() {
-        return this._imageURL;
-    }
-
 
     static set canvas(value) {
         this._canvas = value;
+        Config.stageWidth = this._canvas.width;
+        Config.stageHeight = this._canvas.height;
     }
 
     static get canvas() {
@@ -40,13 +34,6 @@ export class Config {
         return this._context;
     }
 
-    static set originalImage(value) {
-        this._originalImage = value;
-    }
-
-    static get originalImage() {
-        return this._originalImage;
-    }
 
 
     static set stageWidth(value) {

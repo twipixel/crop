@@ -1,11 +1,10 @@
-import {Config} from './config/Config';
-import {Resizer} from './transform/Resizer';
+import {Config} from './nts/editor/config/Config';
+import {ImageEditor} from './nts/editor/ImageEditor';
 
 
-var resizer;
+var editor;
 window.onload = initailize.bind(this);
 window.onresize = resizeWindow.bind(this);
-
 
 
 function initailize() {
@@ -20,26 +19,18 @@ function initailize() {
 
     dropzone.on('success', function (file, done) {
         console.log('success', file.name, done);
-
         console.log('------------');
         console.log(done);
         console.log('------------');
 
-
-        if (window.DOMParser)
-        {
+        if (window.DOMParser) {
             var parser = new DOMParser();
             var xmlDoc = parser.parseFromString(done, "text/xml");
             console.dir(xmlDoc);
-
-            Config.imageURL = xmlDoc.documentElement.textContent.substr('success'.length);
-            console.log(Config.imageURL);
         }
-
 
         console.dir(xmlDoc);
         //<url><![CDATA[http://twipixel.com/test/dropzone/uploads/Koala.jpg]]></url>
-
 
         createImageByFile(file);
     });
@@ -57,21 +48,25 @@ function createImageByFile(file) {
     }
 }
 
-function beginWithImg(img) {
-    Config.canvas = document.getElementById('canvas');
-    Config.context = Config.canvas.getContext('2d');
+function beginWithImg(image) {
+    var dropzone = document.getElementById('upload');
+    document.body.removeChild(dropzone);
+    Config.context.drawImage(image, 0, 0);
+
+    editor = new ImageEditor(image);
+
+    //Config.image = image;
+    //Config.canvas = document.getElementById('canvas');
+    //Config.context = Config.canvas.getContext('2d');
+
     resizeWindow();
-
-    var uploader = document.getElementById('upload');
-    document.body.removeChild(uploader);
-    Config.context.drawImage(img, 0, 0);
-
-    resizer = new Resizer(img);
 }
 
 function resizeWindow() {
-    if(Config.canvas) {
+    /*if (Config.canvas) {
         Config.canvas.width = Config.stageWidth = window.innerWidth;
         Config.canvas.height = Config.stageHeight = window.innerHeight;
-    }
+    }*/
+
+    editor.resize();
 }
