@@ -2,8 +2,13 @@ import {Config} from './nts/editor/config/Config';
 import {ImageEditor} from './nts/editor/ImageEditor';
 
 
+
 var editor;
-window.onload = initailize.bind(this);
+
+var image = document.getElementById("image");
+
+//window.onload = initailize.bind(this);
+window.onload = fastInitailize.bind(this);
 window.onresize = resizeWindow.bind(this);
 
 
@@ -23,18 +28,23 @@ function initailize() {
         console.log(done);
         console.log('------------');
 
+        var xmlDoc;
+
         if (window.DOMParser) {
             var parser = new DOMParser();
-            var xmlDoc = parser.parseFromString(done, "text/xml");
-            console.dir(xmlDoc);
+            xmlDoc = parser.parseFromString(done, "text/xml");
         }
 
         console.dir(xmlDoc);
-        //<url><![CDATA[http://twipixel.com/test/dropzone/uploads/Koala.jpg]]></url>
+        var imageURL = xmlDoc.children[0].lastElementChild.innerHTML;
+        //<![CDATA[http://twipixel.com/test/dropzone/uploads/Koala.jpg]]>
+        console.log(imageURL);
+
 
         createImageByFile(file);
     });
 }
+
 
 function createImageByFile(file) {
     if (file) {
@@ -42,31 +52,34 @@ function createImageByFile(file) {
         fileReader.onload = function (e) {
             var img = document.createElement('img');
             img.src = e.target.result;
-            beginWithImg(img);
+            beginWithImageElement(img);
         };
         fileReader.readAsDataURL(file);
     }
 }
 
-function beginWithImg(image) {
+
+function fastInitailize() {
+    if(image) {
+        document.body.removeChild(image);
+        beginWithImageElement(image);
+    }
+}
+
+
+function beginWithImageElement(image) {
     var dropzone = document.getElementById('upload');
-    document.body.removeChild(dropzone);
-    Config.context.drawImage(image, 0, 0);
+
+    if(dropzone)
+        document.body.removeChild(dropzone);
+
+    console.log('beginWithImageElement(' + image + ')');
 
     editor = new ImageEditor(image);
-
-    //Config.image = image;
-    //Config.canvas = document.getElementById('canvas');
-    //Config.context = Config.canvas.getContext('2d');
-
     resizeWindow();
 }
 
-function resizeWindow() {
-    /*if (Config.canvas) {
-        Config.canvas.width = Config.stageWidth = window.innerWidth;
-        Config.canvas.height = Config.stageHeight = window.innerHeight;
-    }*/
 
+function resizeWindow() {
     editor.resize();
 }
