@@ -1,12 +1,13 @@
-import {SizeUI} from './../ui/SizeUI';
+import {SizeControlUI} from './../ui/SizeControlUI';
+import {ImageContainer} from './../ui/ImageContainer';
 
 
 export class Cropper extends PIXI.Container {
-    constructor(canvas, image) {
+    constructor(canvas, imageElement) {
         super();
 
-        this.image = image;
         this.canvas = canvas;
+        this.imageElement = imageElement;
 
         console.log('Cropper');
         this.initialize();
@@ -20,7 +21,10 @@ export class Cropper extends PIXI.Container {
             height:this.getPercent(80, this.canvas.height)};
         var size = {width:max.width, height:max.height};
 
-        this.ui = new SizeUI(this.canvas, size, min, max, true);
+        this.image = new ImageContainer(this.imageElement);
+        this.addChild(this.image);
+
+        this.ui = new SizeControlUI(this.canvas, size, min, max, true);
         this.addChild(this.ui);
     }
 
@@ -31,19 +35,26 @@ export class Cropper extends PIXI.Container {
 
 
     render() {
-        this.ui.x = this.canvas.width / 2;
-        this.ui.y = this.canvas.height / 2;
 
-
-        console.log(this.ui.x, this.ui.y);
     }
+
 
     update() {
         this.render();
-
         this.ui.update();
-        //console.log('Copper.update()');
+
+        //this.logPoints();
     }
+
+
+    logPoints() {
+        var lt = this.ui.toGlobal(this.ui.leftTop);
+        var rt = this.ui.toGlobal(this.ui.rightTop);
+        var rb = this.ui.toGlobal(this.ui.rightBottom);
+        var lb = this.ui.toGlobal(this.ui.leftBottom);
+        console.log(lt, rt, rb, lb);
+    }
+
 
     resize() {
 

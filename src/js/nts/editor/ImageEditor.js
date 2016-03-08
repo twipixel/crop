@@ -4,11 +4,11 @@ import {requestAnimFrame} from './../../../libs/animation';
 
 export class ImageEditor {
 
-    constructor(image) {
+    constructor(imageElement) {
 
-        console.log('ImageEditor(' + image + ')');
+        console.log('ImageEditor(' + imageElement + ')');
 
-        this.image = image;
+        this.imageElement = imageElement;
         this.canvas = document.getElementById('canvas');
         this.context = this.canvas.getContext('2d');
         this.renderer = new PIXI.CanvasRenderer(this.canvas.width, this.canvas.height, {
@@ -16,7 +16,9 @@ export class ImageEditor {
             backgroundColor: 0xE6E9EC
         });
 
-        this.stage = new PIXI.Container();
+        /*var interactive = true;
+        this.stage = new PIXI.Stage(0xE6E9EC, interactive);*/
+        this.stage = new PIXI.Container(0xE6E9EC);
 
         this.initialize();
         this.addEvnet();
@@ -24,7 +26,7 @@ export class ImageEditor {
     }
 
     initialize() {
-        this.cropper = new Cropper(this.canvas, this.image);
+        this.cropper = new Cropper(this.canvas, this.imageElement);
         this.stage.addChild(this.cropper);
     }
 

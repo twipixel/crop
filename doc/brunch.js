@@ -819,11 +819,11 @@
                     function a(a) {
                         if (!a.canvas)
                             throw "A canvas is required";
-                        if (!a.image)
+                        if (!a.imageElement)
                             throw "Image is required";
                         var b = a.canvas
                             , c = b.getContext("2d")
-                            , d = a.image
+                            , d = a.imageElement
                             , e = a.srcx || 0
                             , f = a.srcy || 0
                             , g = a.srcw || d.naturalWidth
@@ -846,7 +846,7 @@
                                 b.style.height = r + "px",
                                 c.scale(p, p)
                         }
-                        c.drawImage(a.image, e, f, g, h, i, j, k, l)
+                        c.drawImage(a.imageElement, e, f, g, h, i, j, k, l)
                     }
                     return {
                         drawImage: a

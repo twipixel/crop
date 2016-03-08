@@ -24349,7 +24349,7 @@ function ColorMatrixFilter()
         "precision mediump float;\n\nvarying vec2 vTextureCoord;\nuniform sampler2D uSampler;\nuniform float m[25];\n\nvoid main(void)\n{\n\n    vec4 c = texture2D(uSampler, vTextureCoord);\n\n    gl_FragColor.r = (m[0] * c.r);\n        gl_FragColor.r += (m[1] * c.g);\n        gl_FragColor.r += (m[2] * c.b);\n        gl_FragColor.r += (m[3] * c.a);\n        gl_FragColor.r += m[4];\n\n    gl_FragColor.g = (m[5] * c.r);\n        gl_FragColor.g += (m[6] * c.g);\n        gl_FragColor.g += (m[7] * c.b);\n        gl_FragColor.g += (m[8] * c.a);\n        gl_FragColor.g += m[9];\n\n     gl_FragColor.b = (m[10] * c.r);\n        gl_FragColor.b += (m[11] * c.g);\n        gl_FragColor.b += (m[12] * c.b);\n        gl_FragColor.b += (m[13] * c.a);\n        gl_FragColor.b += m[14];\n\n     gl_FragColor.a = (m[15] * c.r);\n        gl_FragColor.a += (m[16] * c.g);\n        gl_FragColor.a += (m[17] * c.b);\n        gl_FragColor.a += (m[18] * c.a);\n        gl_FragColor.a += m[19];\n\n}\n",
         // custom uniforms
         {
-            m: {
+            dimmedTop: {
                 type: '1fv', value: [
                     1, 0, 0, 0, 0,
                     0, 1, 0, 0, 0,
@@ -24379,12 +24379,12 @@ ColorMatrixFilter.prototype._loadMatrix = function (matrix, multiply)
     var newMatrix = matrix;
 
     if (multiply) {
-        this._multiply(newMatrix, this.uniforms.m.value, matrix);
+        this._multiply(newMatrix, this.uniforms.dimmedTop.value, matrix);
         newMatrix = this._colorMatrix(newMatrix);
     }
 
     // set the new matrix
-    this.uniforms.m.value = newMatrix;
+    this.uniforms.dimmedTop.value = newMatrix;
 };
 
 /**
@@ -24433,7 +24433,7 @@ ColorMatrixFilter.prototype._multiply = function (out, a, b)
  * Create a Float32 Array and normalize the offset component to 0-1
  *
  * @param matrix {number[]} (mat 5x4)
- * @return m {number[]} (mat 5x4) with all values between 0-1
+ * @return dimmedTop {number[]} (mat 5x4) with all values between 0-1
  */
 ColorMatrixFilter.prototype._colorMatrix = function (matrix)
 {
@@ -24847,11 +24847,11 @@ Object.defineProperties(ColorMatrixFilter.prototype, {
     matrix: {
         get: function ()
         {
-            return this.uniforms.m.value;
+            return this.uniforms.dimmedTop.value;
         },
         set: function (value)
         {
-            this.uniforms.m.value = value;
+            this.uniforms.dimmedTop.value = value;
         }
     }
 });
@@ -27610,7 +27610,7 @@ module.exports = function ()
         var resolution = core.utils.getResolutionOfUrl( resource.url );
 
         // load the image for this sheet
-        this.add(resource.name + '_image', route + '/' + resource.data.meta.image, loadOptions, function (res)
+        this.add(resource.name + '_image', route + '/' + resource.data.meta.imageElement, loadOptions, function (res)
         {
             resource.textures = {};
 
