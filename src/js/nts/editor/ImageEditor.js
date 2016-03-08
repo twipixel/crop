@@ -48,6 +48,8 @@ export class ImageEditor {
 
     resize() {
         console.log('resize');
+
+        this.cropper.resize();
     }
 
 }

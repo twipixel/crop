@@ -1,5 +1,4 @@
 import {SizeControlUI} from './../ui/SizeControlUI';
-import {ImageContainer} from './../ui/ImageContainer';
 
 
 export class Cropper extends PIXI.Container {
@@ -21,8 +20,15 @@ export class Cropper extends PIXI.Container {
             height:this.getPercent(80, this.canvas.height)};
         var size = {width:max.width, height:max.height};
 
-        this.image = new ImageContainer(this.imageElement);
+
+        this.base = new PIXI.BaseTexture(this.imageElement);
+        this.texture = new PIXI.Texture(this.base);
+        this.image = new PIXI.Sprite(this.texture);
+        this.image.anchor = new PIXI.Point(0.5, 0.5);
+        this.image.x = this.canvas.width / 2;
+        this.image.y = this.canvas.height / 2;
         this.addChild(this.image);
+
 
         this.ui = new SizeControlUI(this.canvas, size, min, max, true);
         this.addChild(this.ui);
@@ -58,5 +64,23 @@ export class Cropper extends PIXI.Container {
 
     resize() {
 
+
+
+    }
+
+
+    getScale() {
+        var imageWidth = this.getPercent(80, this.canvas.width);
+        var imageHeight = this.getPercent(80, this.canvas.height);
+
+
+        var sx = this.canvas.width / imageWidth;
+        var sy = this.canvas.height / imageHeight;
+        var s = sx < sy ? sx : sy;
+        var width = parseInt(imageWidth * s);
+        var height = parseInt(imageHeight * s);
+
+        this.image.width = width;
+        this.image.height = height;
     }
 }
