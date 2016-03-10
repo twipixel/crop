@@ -8,35 +8,31 @@ export class Cropper extends PIXI.Container {
         this.canvas = canvas;
         this.imageElement = imageElement;
 
-        console.log('Cropper');
+        this.paddingX = 216;
+        this.paddingY = 158;
+        this.imageWidth = imageElement.width;
+        this.imageHeight = imageElement.height;
+
         this.initialize();
     }
 
 
     initialize() {
-        var min = {width:100, height:100};
-        var max = {
-            width:this.getPercent(80, this.canvas.width),
-            height:this.getPercent(80, this.canvas.height)};
-        var size = {width:max.width, height:max.height};
-
-
         this.base = new PIXI.BaseTexture(this.imageElement);
         this.texture = new PIXI.Texture(this.base);
         this.image = new PIXI.Sprite(this.texture);
-        this.image.anchor = new PIXI.Point(0.5, 0.5);
-        this.image.x = this.canvas.width / 2;
-        this.image.y = this.canvas.height / 2;
+        //this.image.anchor = new PIXI.Point(0.5, 0.5);
+        //this.image.x = this.canvas.width / 2;
+        //this.image.y = this.canvas.height / 2;
         this.addChild(this.image);
 
+        this.bounds = new PIXI.Graphics();
+        this.addChild(this.bounds);
 
+        /*
         this.ui = new SizeControlUI(this.canvas, size, min, max, true);
         this.addChild(this.ui);
-    }
-
-
-    getPercent(ratio, total) {
-        return ratio / 100 * total;
+        */
     }
 
 
@@ -47,9 +43,7 @@ export class Cropper extends PIXI.Container {
 
     update() {
         this.render();
-        this.ui.update();
-
-        //this.logPoints();
+        //this.ui.update();
     }
 
 
@@ -62,25 +56,44 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    resize() {
+    resize(w, h) {
+        this.drawBounds(w, h);
 
 
 
     }
 
 
-    getScale() {
-        var imageWidth = this.getPercent(80, this.canvas.width);
-        var imageHeight = this.getPercent(80, this.canvas.height);
 
+    drawBounds(canvasWidth, canvasHeight) {
+        var boundsWidth = canvasWidth - this.paddingX;
+        var boundssHeight = canvasHeight - this.paddingY;
 
-        var sx = this.canvas.width / imageWidth;
-        var sy = this.canvas.height / imageHeight;
-        var s = sx < sy ? sx : sy;
-        var width = parseInt(imageWidth * s);
-        var height = parseInt(imageHeight * s);
+        console.log(canvasWidth, boundsWidth, canvasHeight, boundssHeight);
 
-        this.image.width = width;
-        this.image.height = height;
+        var boundsX = this.canvas.width / 2 - boundsWidth / 2;
+        var boundsY = this.canvas.height / 2 - boundssHeight / 2;
+        this.bounds.clear();
+        this.bounds.beginFill(0xFF3300, 0.2);
+        this.bounds.drawRect(boundsX, boundsY, boundsWidth, boundssHeight);
+        this.bounds.endFill();
+
+        var size = this.getResize(boundsWidth, boundssHeight);
+        this.image.width = size.width;
+        this.image.height = size.height;
+        this.image.x = this.canvas.width / 2 - this.image.width / 2;
+        this.image.y = this.canvas.height / 2 - this.image.height / 2;
     }
+
+
+    getResize(boundsWidth, boundsHeight) {
+        var widthRatio = boundsWidth / this.imageWidth;
+        var heightRatio = boundsHeight / this.imageHeight;
+        var scale = Math.min(widthRatio, heightRatio);
+        var imageWidth = scale * this.imageWidth;
+        var imageHeight = scale * this.imageHeight;
+        return {width:imageWidth, height:imageHeight};
+    }
+
+
 }

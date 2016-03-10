@@ -14962,7 +14962,7 @@ function AbstractFilter(vertexSrc, fragmentSrc, uniforms)
      * The extra padding that the filter might need
      * @member {number}
      */
-    this.padding = 0;
+    this.paddingX = 0;
 
     /**
      * The uniforms as an object
@@ -15342,7 +15342,7 @@ FilterManager.prototype.pushFilter = function (target, filters)
 
 
     // padding!
-    var padding = filters[0].padding | 0;
+    var padding = filters[0].paddingX | 0;
     bounds.x -= padding;
     bounds.y -= padding;
     bounds.width += padding * 2;
@@ -18980,7 +18980,7 @@ Object.defineProperties(Text.prototype, {
             style.dropShadowDistance = style.dropShadowDistance !== undefined ? style.dropShadowDistance : 5;
             style.dropShadowBlur = style.dropShadowBlur !== undefined ? style.dropShadowBlur : 0; //shadowBlur is '0' by default according to HTML
 
-            style.padding = style.padding || 0;
+            style.paddingX = style.paddingX || 0;
 
             style.textBaseline = style.textBaseline || 'alphabetic';
 
@@ -19060,7 +19060,7 @@ Text.prototype.updateText = function ()
         height += style.dropShadowDistance;
     }
 
-    this.canvas.height = ( height + this._style.padding * 2 ) * this.resolution;
+    this.canvas.height = ( height + this._style.paddingX * 2 ) * this.resolution;
 
     this.context.scale( this.resolution, this.resolution);
 
@@ -19111,7 +19111,7 @@ Text.prototype.updateText = function ()
 
             if (style.fill)
             {
-                this.context.fillText(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + this._style.padding);
+                this.context.fillText(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + this._style.paddingX);
             }
         }
     }
@@ -19136,12 +19136,12 @@ Text.prototype.updateText = function ()
 
         if (style.stroke && style.strokeThickness)
         {
-            this.context.strokeText(lines[i], linePositionX, linePositionY + this._style.padding);
+            this.context.strokeText(lines[i], linePositionX, linePositionY + this._style.paddingX);
         }
 
         if (style.fill)
         {
-            this.context.fillText(lines[i], linePositionX, linePositionY + this._style.padding);
+            this.context.fillText(lines[i], linePositionX, linePositionY + this._style.paddingX);
         }
     }
 
@@ -19166,10 +19166,10 @@ Text.prototype.updateTexture = function ()
     texture.crop.height = texture._frame.height = this.canvas.height / this.resolution;
 
     texture.trim.x = 0;
-    texture.trim.y = -this._style.padding;
+    texture.trim.y = -this._style.paddingX;
 
     texture.trim.width = texture._frame.width;
-    texture.trim.height = texture._frame.height - this._style.padding*2;
+    texture.trim.height = texture._frame.height - this._style.paddingX*2;
 
     this._width = this.canvas.width / this.resolution;
     this._height = this.canvas.height / this.resolution;
@@ -23468,7 +23468,7 @@ DisplayObject.prototype._initCachedDisplayObject = function (renderer)
     // add some padding!
     if(this._filters)
     {
-        var padding = this._filters[0].padding;
+        var padding = this._filters[0].paddingX;
         bounds.x -= padding;
         bounds.y -= padding;
 
@@ -23961,7 +23961,7 @@ Object.defineProperties(BlurDirFilter.prototype, {
         },
         set: function (value)
         {
-            this.padding = value * 0.5;
+            this.paddingX = value * 0.5;
             this.strength = value;
         }
     },
@@ -24051,7 +24051,7 @@ Object.defineProperties(BlurFilter.prototype, {
         },
         set: function (value)
         {
-            this.padding = Math.abs(value) * 0.5;
+            this.paddingX = Math.abs(value) * 0.5;
             this.blurXFilter.blur = this.blurYFilter.blur = value;
         }
     },
@@ -24198,7 +24198,7 @@ Object.defineProperties(BlurXFilter.prototype, {
         },
         set: function (value)
         {
-            this.padding =  Math.abs(value) * 0.5;
+            this.paddingX =  Math.abs(value) * 0.5;
             this.strength = value;
         }
     }
@@ -24284,7 +24284,7 @@ Object.defineProperties(BlurYFilter.prototype, {
         },
         set: function (value)
         {
-            this.padding = Math.abs(value) * 0.5;
+            this.paddingX = Math.abs(value) * 0.5;
             this.strength = value;
         }
     }
@@ -25263,7 +25263,7 @@ Object.defineProperties(BlurYTintFilter.prototype, {
         },
         set: function (value)
         {
-            this.padding = value * 0.5;
+            this.paddingX = value * 0.5;
             this.strength = value;
         }
     }
@@ -25291,7 +25291,7 @@ function DropShadowFilter()
 
     this.defaultFilter = new core.AbstractFilter();
 
-    this.padding = 30;
+    this.paddingX = 30;
 
     this._dirtyPosition = true;
     this._angle = 45 * Math.PI / 180;
