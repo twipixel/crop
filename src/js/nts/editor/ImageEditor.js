@@ -5,9 +5,12 @@ import {requestAnimFrame} from './../../../libs/animation';
 export class ImageEditor {
 
     constructor(imageElement) {
+        this.initialize(imageElement);
+        this.updateLoop();
+    }
 
-        console.log('ImageEditor(' + imageElement + ')');
 
+    initialize() {
         this.imageElement = imageElement;
         this.canvas = document.getElementById('canvas');
         this.context = this.canvas.getContext('2d');
@@ -18,18 +21,12 @@ export class ImageEditor {
         });
 
         /*
-        var interactive = true;
-        this.stage = new PIXI.Stage(0xE6E9EC, interactive);
-        */
+         var interactive = true;
+         this.stage = new PIXI.Stage(0xE6E9EC, interactive);
+         */
 
         this.stage = new PIXI.Container(0xE6E9EC);
 
-        this.initialize();
-        this.updateLoop();
-    }
-
-
-    initialize() {
         this.cropper = new Cropper(this.canvas, this.imageElement);
         this.stage.addChild(this.cropper);
     }
@@ -52,8 +49,8 @@ export class ImageEditor {
         var height = window.innerHeight;
 
         /**
-         * Set the canvas size and display size
-         * This way we can support retina graphics and make our game really crisp
+         * 캔버스 사이즈와 디스플레이 사이즈 설정
+         * 레티나 그래픽 지원 코드
          */
         this.canvas.width = width * window.devicePixelRatio;
         this.canvas.height = height * window.devicePixelRatio;
@@ -61,8 +58,8 @@ export class ImageEditor {
         this.canvas.style.height = height + 'px';
 
         /**
-         * Resize the PIXI renderer
-         * Let PIXI know that we changed the size of the viewport
+         * PIXI renderer 리사이즈
+         * PIXI 에게 viewport 사이즈 변경 알림
          */
         this.renderer.resize(this.canvas.width, this.canvas.height);
         this.cropper.resize(this.canvas.width, this.canvas.height);

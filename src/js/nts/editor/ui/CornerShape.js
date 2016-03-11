@@ -18,13 +18,17 @@ export class CornerShape extends PIXI.Sprite {
 
     constructor(type) {
         super();
+        this.initialize();
+        this.draw(type);
+    }
 
+
+    initialize() {
         this.type = type;
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
-
-        this.draw(type);
     }
+
 
     draw(type) {
         switch (type) {

@@ -1,4 +1,3 @@
-import {Config} from './nts/editor/config/Config';
 import {ImageEditor} from './nts/editor/ImageEditor';
 
 
@@ -18,7 +17,6 @@ function initailize() {
     var dropzone = Dropzone.instances[0];
 
     dropzone.on('addedfile', function (file) {
-        Config.imageElement = file;
         console.log('addedfile', file.name);
     });
 

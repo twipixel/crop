@@ -11,14 +11,16 @@ export class ControlArea extends PIXI.Sprite {
 
     constructor(type) {
         super();
+        this.initialize();
+        this.draw(type);
+        this.addMouseDownEvent();
+    }
 
+
+    initialize() {
         this.interactive = true;
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
-
-        this.draw(type);
-        this.addMouseDownEvent();
-
     }
 
 
