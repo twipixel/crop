@@ -1,19 +1,19 @@
 export class CornerShape extends PIXI.Sprite {
 
     static get LEFT_TOP() {
-        return "leftTop";
+        return 'leftTop';
     }
 
     static get RIGHT_TOP() {
-        return "rightTop";
+        return 'rightTop';
     }
 
     static get RIGHT_BOTTOM() {
-        return "rightBottom";
+        return 'rightBottom';
     }
 
     static get LEFT_BOTTOM() {
-        return "leftBottom";
+        return 'leftBottom';
     }
 
     constructor(type) {

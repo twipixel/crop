@@ -25,7 +25,6 @@ export class ImageEditor {
         this.stage = new PIXI.Container(0xE6E9EC);
 
         this.initialize();
-        this.addEvnet();
         this.updateLoop();
     }
 
@@ -33,10 +32,6 @@ export class ImageEditor {
     initialize() {
         this.cropper = new Cropper(this.canvas, this.imageElement);
         this.stage.addChild(this.cropper);
-    }
-
-    addEvnet() {
-
     }
 
 

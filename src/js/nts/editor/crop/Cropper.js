@@ -1,5 +1,5 @@
 import {CornerShape} from './../ui/CornerShape';
-import {SizeControlBar} from './../ui/SizeControlBar';
+import {ControlArea} from './../ui/ControlArea';
 
 
 export class Cropper extends PIXI.Container {
@@ -25,6 +25,7 @@ export class Cropper extends PIXI.Container {
         this.base = new PIXI.BaseTexture(this.imageElement);
         this.texture = new PIXI.Texture(this.base);
         this.image = new PIXI.Sprite(this.texture);
+        this.image.interactive = true;
         //this.image.anchor = new PIXI.Point(0.5, 0.5);
         //this.image.x = this.canvas.width / 2;
         //this.image.y = this.canvas.height / 2;
@@ -46,18 +47,23 @@ export class Cropper extends PIXI.Container {
         this.addChild(this.lb);
 
 
-        this.top = new SizeControlBar();
+        this.top = new ControlArea(ControlArea.ROW);
         this.addChild(this.top);
+
+        this.bottom = new ControlArea(ControlArea.ROW);
+        this.addChild(this.bottom);
+
+        this.left = new ControlArea(ControlArea.COL);
+        this.addChild(this.left);
+
+        this.right = new ControlArea(ControlArea.COL);
+        this.addChild(this.right);
     }
 
-
-    render() {
-
-    }
 
 
     update() {
-        this.render();
+        //
     }
 
 
@@ -70,7 +76,27 @@ export class Cropper extends PIXI.Container {
         //this.drawBounds(boundsX, boundsY, boundsWidth, boundsHeight);
         this.resizeImage(boundsWidth, boundsHeight);
         this.resizeCornerShape();
+        this.resizeControlBar();
         this.drawImageRect();
+    }
+
+
+    resizeControlBar() {
+        this.top.x = this.lt.x;
+        this.top.y = this.lt.y;
+        this.top.width = this.rt.x - this.lt.x;
+
+        this.bottom.x = this.lb.x;
+        this.bottom.y = this.lb.y;
+        this.bottom.width = this.top.width;
+
+        this.left.x = this.lt.x;
+        this.left.y = this.lt.y;
+        this.left.height = this.rb.y - this.lt.y;
+
+        this.right.x = this.rt.x;
+        this.right.y = this.rt.y;
+        this.right.height = this.left.height;
     }
 
 
