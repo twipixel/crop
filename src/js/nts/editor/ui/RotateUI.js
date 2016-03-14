@@ -8,7 +8,7 @@ export class RotateUI extends PIXI.Sprite {
 
     initialize(canvas) {
         this.canvas = canvas;
-        //this.interactive = true;
+        this.interactive = true;
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
     }
@@ -51,12 +51,15 @@ export class RotateUI extends PIXI.Sprite {
 
     onMouseDown(e) {
         console.log('RotateUI.onMouseDown()');
+
+        e.stopPropagation();
+
         this.addMouseMoveEvent();
         this.removeMouseDownEvent();
     }
 
     onMouseMove(e) {
-        console.log(e.clientX, e.clientY);
+        console.log('RotateUI', e.clientX, e.clientY);
     }
 
     onMouseUp(e) {

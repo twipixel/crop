@@ -29,7 +29,7 @@ export class Cropper extends PIXI.Container {
         this.base = new PIXI.BaseTexture(this.imageElement);
         this.texture = new PIXI.Texture(this.base);
         this.image = new PIXI.Sprite(this.texture);
-        //this.image.interactive = true;
+        this.image.interactive = true;
         this.addChild(this.image);
 
         this.resizeUI = new ResizeUI(this.canvas, this.originalImageWidth, this.origianlImageHeight);
@@ -106,13 +106,15 @@ export class Cropper extends PIXI.Container {
 
 
     onImageDown(e) {
+
+        e.stopPropagation();
         this.addImageMouseMoveEvent();
         this.removeImageMouseDownEvent();
     }
 
 
     onImageMove(e) {
-        //
+        console.log('ImageMove');
     }
 
 

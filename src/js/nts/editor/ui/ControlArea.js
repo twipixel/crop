@@ -22,7 +22,7 @@ export class ControlArea extends PIXI.Sprite {
 
 
     initialize() {
-        //this.interactive = true;
+        this.interactive = true;
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
     }
@@ -73,13 +73,28 @@ export class ControlArea extends PIXI.Sprite {
     }
 
     onMouseDown(e) {
-        console.log('ControlArea.onMouseDown()');
+        console.dir(e);
+
+        console.log(e.stopPropagation);
+        e.stopPropagation();
+
+        /*
+        // 현재 이벤트의 기본 동작을 중단한다.
+        e.preventDefault();
+
+        // 현재 이벤트가 상위로 전파되지 않도록 중단한다.
+        e.stopPropagation();
+
+        // 현재 이벤트가 상위뿐 아니라 현재 레벨에 걸린 다른 이벤트도 동작하지 않도록 중단한다.
+        e.stopImmediatePropagation();
+        */
+
         this.addMouseMoveEvent();
         this.removeMouseDownEvent();
     }
 
     onMouseMove(e) {
-        console.log(e.clientX, e.clientY);
+        console.log('ControlArea', e.clientX, e.clientY);
     }
 
     onMouseUp(e) {
