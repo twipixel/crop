@@ -1,56 +1,33 @@
-export class ControlArea extends PIXI.Sprite {
-
-    static get ROW() {
-        return 'row';
-    }
-
-    static get COL() {
-        return 'col';
-    }
-
-    static get CORNER() {
-        return 'corner';
-    }
-
-
-    constructor(type) {
+export class RotateUI extends PIXI.Sprite {
+    constructor(canvas) {
         super();
-        this.initialize();
-        this.draw(type);
+        this.initialize(canvas);
+        this.render();
         this.addMouseDownEvent();
     }
 
-
-    initialize() {
+    initialize(canvas) {
+        this.canvas = canvas;
         //this.interactive = true;
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
     }
 
-
-    draw(type) {
+    render() {
         this.graphics.clear();
-        this.graphics.beginFill(0xFF3300, 0.1);
-
-        switch(type){
-            case ControlArea.ROW:
-                this.graphics.drawRect(0, -16, 1, 32);
-                break;
-
-            case ControlArea.COL:
-                this.graphics.drawRect(-16, 0, 32, 1);
-                break;
-
-            case ControlArea.CORNER:
-                this.graphics.drawRect(-16, -16, 32, 32);
-                break;
-        }
-
+        this.graphics.beginFill(0xFFFFFF, 0.2);
+        this.graphics.drawRect(0, 0, 1, 1);
         this.graphics.endFill();
     }
 
+    resize() {
+        this.graphics.width = this.canvas.width;
+        this.graphics.height = this.canvas.height;
+    }
+
+
     addMouseDownEvent() {
-        console.log('ControlArea.addMouseDownEvent()');
+        console.log('RotateUI.addMouseDownEvent()');
         this._mouseDownListener = this.onMouseDown.bind(this);
         this.on('mousedown', this._mouseDownListener);
     }
@@ -73,7 +50,7 @@ export class ControlArea extends PIXI.Sprite {
     }
 
     onMouseDown(e) {
-        console.log('ControlArea.onMouseDown()');
+        console.log('RotateUI.onMouseDown()');
         this.addMouseMoveEvent();
         this.removeMouseDownEvent();
     }
@@ -86,5 +63,4 @@ export class ControlArea extends PIXI.Sprite {
         this.addMouseDownEvent();
         this.removeMouseMoveEvent();
     }
-
 }

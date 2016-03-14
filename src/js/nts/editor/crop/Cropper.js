@@ -1,5 +1,6 @@
 import {Calculator} from './../utils/Calculator';
-import {ControlUI} from './../ui/ControlUI';
+import {ResizeUI} from './../ui/ResizeUI';
+import {RotateUI} from './../ui/RotateUI';
 
 
 export class Cropper extends PIXI.Container {
@@ -10,7 +11,7 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    initialize() {
+    initialize(canvas, imageElement) {
         this.canvas = canvas;
         this.imageElement = imageElement;
 
@@ -22,14 +23,17 @@ export class Cropper extends PIXI.Container {
         this.bounds = new PIXI.Graphics();
         this.addChild(this.bounds);
 
+        this.rotateUI = new RotateUI(this.canvas);
+        this.addChild(this.rotateUI);
+
         this.base = new PIXI.BaseTexture(this.imageElement);
         this.texture = new PIXI.Texture(this.base);
         this.image = new PIXI.Sprite(this.texture);
-        this.image.interactive = true;
+        //this.image.interactive = true;
         this.addChild(this.image);
 
-        this.ui = new ControlUI(this.originalImageWidth, this.origianlImageHeight);
-        this.addChild(this.ui);
+        this.resizeUI = new ResizeUI(this.canvas, this.originalImageWidth, this.origianlImageHeight);
+        this.addChild(this.resizeUI);
     }
 
 
@@ -44,15 +48,16 @@ export class Cropper extends PIXI.Container {
         var boundsX = this.canvas.width / 2 - boundsWidth / 2;
         var boundsY = this.canvas.height / 2 - boundsHeight / 2;
 
+        this.rotateUI.resize();
         this.drawBounds(boundsX, boundsY, boundsWidth, boundsHeight);
         this.resizeImage(boundsWidth, boundsHeight);
-        this.ui.resize(this.image.getBo)
+        this.resizeUI.resize({x:this.image.x, y:this.image.y, width:this.image.width, height:this.image.height});
     }
 
 
     drawBounds(boundsX, boundsY, boundsWidth, boundsHeight) {
         this.bounds.clear();
-        this.bounds.lineStyle(2, 0x9e9e9e);
+        this.bounds.lineStyle(1, 0xff3300, 0.4);
         //this.bounds.beginFill(0xFF3300, 0.2);
         this.bounds.drawRect(boundsX, boundsY, boundsWidth, boundsHeight);
         this.bounds.endFill();
@@ -61,9 +66,6 @@ export class Cropper extends PIXI.Container {
 
     resizeImage(boundsWidth, boundsHeight) {
         var size = Calculator.getImageSizeKeepAspectRatio(boundsWidth, this.originalImageWidth, boundsHeight, this.origianlImageHeight);
-
-        console.log(size.width, size.height);
-
         this.image.width = size.width;
         this.image.height = size.height;
         this.image.x = this.canvas.width / 2 - this.image.width / 2;
@@ -77,6 +79,7 @@ export class Cropper extends PIXI.Container {
 
 
     addImageMouseDownEvent() {
+        console.log('Cropper.addImageMouseDownEvent()');
         this._imageMouseDownListener = this.onImageDown.bind(this);
         this.image.on('mousedown', this._imageMouseDownListener);
     }

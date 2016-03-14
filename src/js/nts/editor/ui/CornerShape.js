@@ -23,7 +23,7 @@ export class CornerShape extends PIXI.Sprite {
     }
 
 
-    initialize() {
+    initialize(type) {
         this.type = type;
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);

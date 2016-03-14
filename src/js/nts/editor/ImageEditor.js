@@ -10,7 +10,7 @@ export class ImageEditor {
     }
 
 
-    initialize() {
+    initialize(imageElement) {
         this.imageElement = imageElement;
         this.canvas = document.getElementById('canvas');
         this.context = this.canvas.getContext('2d');
@@ -20,10 +20,8 @@ export class ImageEditor {
             backgroundColor: 0x000000
         });
 
-        /*
-         var interactive = true;
-         this.stage = new PIXI.Stage(0xE6E9EC, interactive);
-         */
+         /*var interactive = true;
+         this.stage = new PIXI.Stage(0xE6E9EC, interactive);*/
 
         this.stage = new PIXI.Container(0xE6E9EC);
 
