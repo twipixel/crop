@@ -3,8 +3,28 @@ export class Calculator {
 
     }
 
-    static get PI() {
-        return 3.14159265358979323846;
+    static get DEG_TO_RAD() {
+        if(Calculator._DEG_TO_RAD)
+            return Calculator._DEG_TO_RAD;
+
+        Calculator._DEG_TO_RAD = Math.PI / 180;
+        return Calculator._DEG_TO_RAD;
+    }
+
+    static get RAD_TO_DEG() {
+        if(Calculator._RAD_TO_DEG)
+            return Calculator._RAD_TO_DEG;
+
+        Calculator._RAD_TO_DEG = 180 / Math.PI;
+        return Calculator._RAD_TO_DEG;
+    }
+
+    static get DEG180_TO_RAD() {
+        if(Calculator._DEG180_TO_RAD)
+            return Calculator._DEG180_TO_RAD;
+
+        Calculator._DEG180_TO_RAD = 180 * Math.PI / 180;
+        return Calculator._DEG180_TO_RAD;
     }
 
     /**
@@ -39,19 +59,42 @@ export class Calculator {
     }
 
     static getRotation(centerPoint, mousePoint) {
-        var dx = mousePonit.x - centerPoint.x;
+        var dx = mousePoint.x - centerPoint.x;
         var dy = mousePoint.y - centerPoint.y;
-        var radians = Math.atan2(dy, dx);
+        var radians = Math.atan2(dy, dx) ;
         var rotation = Calculator.getDegrees(radians);
+        //var rotation = Calculator.getDegrees(radians) + Calculator.getDegrees(Math.PI);
+        //rotation = (rotation <= 0) ? 180 : -180;
         return rotation;
     }
 
+    /**
+     * 대각선 길이를 구합니다.
+     * @param width 사각형의 넓이
+     * @param height 사각형의 높이
+     * @returns {number} 대각선 길이
+     */
+    static getDiagonal(width, height) {
+        return Math.sqrt(width * width + height * height);
+    }
+
+    /**
+     * 새로운 사각형의 넓이 구하기
+     * @param originalWidth 기존 사각형 넓이
+     * @param originalHeight 기존 사각형 높이
+     * @param newHeight 새로운 사각형 높이
+     * @returns {number}
+     */
+    static getRectangleWidth(originalWidth, originalHeight, newHeight) {
+        return originalWidth * newHeight / originalHeight;
+    }
+
     static getRadians(degree) {
-        return degree * (Calculator.PI / 180);
+        return degree * Calculator.DEG_TO_RAD;
     }
 
     static getDegrees(radians) {
-        return radians * (180 / Calculator.PI);
+        return radians * Calculator.RAD_TO_DEG;
     }
 
     /**

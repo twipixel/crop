@@ -1,3 +1,5 @@
+import {Calculator} from './../utils/Calculator';
+
 export class RotateUI extends PIXI.Sprite {
     constructor(canvas) {
         super();
@@ -23,6 +25,9 @@ export class RotateUI extends PIXI.Sprite {
     resize() {
         this.graphics.width = this.canvas.width;
         this.graphics.height = this.canvas.height;
+
+        this.centerX = this.canvas.width / 2;
+        this.centerY = this.canvas.height / 2;
     }
 
 
@@ -50,16 +55,31 @@ export class RotateUI extends PIXI.Sprite {
     }
 
     onMouseDown(e) {
-        console.log('RotateUI.onMouseDown()');
+        this.prevRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.data.global.x, y:e.data.global.y});
 
         e.stopPropagation();
-
         this.addMouseMoveEvent();
         this.removeMouseDownEvent();
     }
 
     onMouseMove(e) {
-        console.log('RotateUI', e.clientX, e.clientY);
+        this.currentRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.clientX, y:e.clientY});
+
+        this.change = this.currentRotation - this.prevRotation;
+        this.absChange = (this.change < 0) ? this.change * -1 : this.change;
+
+        if(this.absChange < 100) {
+            console.log('rotation', this.currentRotation, this.change);
+
+            this.emit('changeRotation', {
+                prevRotation: this.prevRotation,
+                currentRotation: this.currentRotation,
+                currentRadian: Calculator.getRadians(this.currentRotation),
+                change: Calculator.getRadians(this.change),
+            });
+        }
+
+        this.prevRotation = this.currentRotation;
     }
 
     onMouseUp(e) {
