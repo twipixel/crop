@@ -58,6 +58,7 @@ export class ResizeUI extends PIXI.Container {
         this.rb.y = imageBounds.y + imageBounds.height;
         this.lb.x = this.lt.x;
         this.lb.y = this.rb.y;
+
     }
 
     resizeControl() {
@@ -73,6 +74,7 @@ export class ResizeUI extends PIXI.Container {
         this.rightControl.x = this.rt.x;
         this.rightControl.y = this.rt.y;
         this.rightControl.height = this.leftControl.height;
+
         this.ltControl.x = this.lt.x;
         this.ltControl.y = this.lt.y;
         this.rtControl.x = this.rt.x;

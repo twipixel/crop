@@ -6,6 +6,7 @@ export class ImageEditor {
 
     constructor(imageElement) {
         this.initialize(imageElement);
+        this.resize();
         this.updateLoop();
     }
 

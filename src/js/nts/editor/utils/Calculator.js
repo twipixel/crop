@@ -4,7 +4,7 @@ export class Calculator {
     }
 
     static get DEG_TO_RAD() {
-        if(Calculator._DEG_TO_RAD)
+        if (Calculator._DEG_TO_RAD)
             return Calculator._DEG_TO_RAD;
 
         Calculator._DEG_TO_RAD = Math.PI / 180;
@@ -12,7 +12,7 @@ export class Calculator {
     }
 
     static get RAD_TO_DEG() {
-        if(Calculator._RAD_TO_DEG)
+        if (Calculator._RAD_TO_DEG)
             return Calculator._RAD_TO_DEG;
 
         Calculator._RAD_TO_DEG = 180 / Math.PI;
@@ -20,7 +20,7 @@ export class Calculator {
     }
 
     static get DEG180_TO_RAD() {
-        if(Calculator._DEG180_TO_RAD)
+        if (Calculator._DEG180_TO_RAD)
             return Calculator._DEG180_TO_RAD;
 
         Calculator._DEG180_TO_RAD = 180 * Math.PI / 180;
@@ -61,7 +61,7 @@ export class Calculator {
     static getRotation(centerPoint, mousePoint) {
         var dx = mousePoint.x - centerPoint.x;
         var dy = mousePoint.y - centerPoint.y;
-        var radians = Math.atan2(dy, dx) ;
+        var radians = Math.atan2(dy, dx);
         var rotation = Calculator.getDegrees(radians);
         //var rotation = Calculator.getDegrees(radians) + Calculator.getDegrees(Math.PI);
         //rotation = (rotation <= 0) ? 180 : -180;
@@ -107,13 +107,13 @@ export class Calculator {
      * 위 공식을 아래와 같이 바꾸면 된다.
      * Area2(A, B, C) = ((Bx - Ax) * (Cy - Ay) - (By - Ay) * (Cx - Ax))
      *
-     * @param A 삼각형 좌표(Point)
-     * @param B 삼각형 좌표(Point)
-     * @param C 삼각형 좌표(Point)
+     * @param p0 삼각형 좌표(Point)
+     * @param p1 삼각형 좌표(Point)
+     * @param p2 삼각형 좌표(Point)
      * @returns {number} 삼각형의 면적
      */
-    static triangleArea(A, B, C) {
-        return (C.x * B.y - B.x * C.y) - (C.x * A.y - A.x * C.y) + (B.x * A.y - A.x * B.y);
+    static triangleArea(p0, p1, p2) {
+        return (p2.x * p1.y - p1.x * p2.y) - (p2.x * p0.y - p0.x * p2.y) + (p1.x * p0.y - p0.x * p1.y);
     }
 
     /**
@@ -121,7 +121,7 @@ export class Calculator {
      * 세 점이 한 직선상에 있거나 어느 두 점이 동일한 위치의 점이면,
      * 세 점이 이루는 삼각형의 면적은 0이므로 한 직선상에 있다고 볼 수 있다.
      *
-     * OnLineAB(A,B,C) = (Area2(A,B,C) = 0)
+     * OnLineAB(A,B,rb) = (Area2(A,B,rb) = 0)
      *
      * 점 C가 직선 AB로 나뉘는 두 평면 중 어느 쪽 평면에 속하는가?
      * 세 점의 두르기 방향에 따라 면적이 양수 또는 음수가 산출되는 사실을 이용한 것이다.
@@ -129,8 +129,8 @@ export class Calculator {
      * 이 때 점 C가 왼쪽평면에 속하는지 우측평면에 속하는지 알려면
      * 삼각 ABC의 면적이 양수인지 음수인지 검사하면 된다.
      *
-     * isLeftOfAB(A,B,C) = (Area2(A,B,C) > 0)
-     * isRightOfAB(A,B,C) = (Area2(A,B,C) < 0)
+     * isLeftOfAB(A,B,rb) = (Area2(A,B,rb) > 0)
+     * isRightOfAB(A,B,rb) = (Area2(A,B,rb) < 0)
      *
      * 삼각형의 면적이 양수이면 점 C는 왼쪽에
      * 삼각형의 면적이 음수이면 점 C는 오른쪽에 있다.
@@ -140,16 +140,34 @@ export class Calculator {
      * 모두 0이거나 0보다 작으면 우측, 즉 사각형 안에 점이 있는 것이고
      * 하나라도 양수가 나오면 사각형 안에 점이 없는 것이 된다.
      *
-     * @param A 사각형 좌상단 포인트
-     * @param B 사각형 우상단 포인트
-     * @param C 사각형 우한단 포인트
-     * @param D 사각형 좌하단 포인트
-     * @param P 체크하고 싶은 포인트
+     * @param lt 사각형 좌상단 포인트
+     * @param rt 사각형 우상단 포인트
+     * @param rb 사각형 우한단 포인트
+     * @param lb 사각형 좌하단 포인트
+     * @param point 체크하고 싶은 포인트
      * @returns {boolean} 사각형안에 포인트가 있는지 여부
      */
-    static isInsideSquare(A, B, C, D, P) {
-        if (triangleArea(A, B, P) > 0 || triangleArea(B, C, P) > 0 || triangleArea(C, D, P) > 0 || triangleArea(D, A, P) > 0)
+    static isInsideSquare(lt, rt, rb, lb, point) {
+        console.log(
+            parseInt(lt.x), parseInt(lt.y),
+            parseInt(rt.x), parseInt(rt.y),
+            parseInt(rb.x), parseInt(rb.y),
+            parseInt(lb.x), parseInt(lb.y),
+            parseInt(point.x), parseInt(point.y)
+        );
+
+        if (Calculator.triangleArea(lt, rt, point) > 0 || Calculator.triangleArea(rt, rb, point) > 0 || Calculator.triangleArea(rb, lb, point) > 0 || Calculator.triangleArea(lb, lt, point) > 0)
             return false;
         return true;
+    }
+
+
+    static getPointsByBounds(bounds) {
+        return {
+            lt: {x: bounds.x, y: bounds.y},
+            rt: {x: bounds.x + bounds.width, y: bounds.y},
+            rb: {x: bounds.x + bounds.height, y: bounds.y + bounds.height},
+            lb: {x: bounds.x, y: bounds.y + bounds.height}
+        }
     }
 }

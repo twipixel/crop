@@ -1,6 +1,6 @@
 import {Calculator} from './../utils/Calculator';
 
-export class RotateUI extends PIXI.Sprite {
+export class MoveUI extends PIXI.Sprite {
     constructor(canvas) {
         super();
         this.initialize(canvas);
@@ -17,22 +17,20 @@ export class RotateUI extends PIXI.Sprite {
 
     render() {
         this.graphics.clear();
-        this.graphics.beginFill(0xFFFFFF, 0.1);
+        this.graphics.beginFill(0x00A745, 0);
         this.graphics.drawRect(0, 0, 1, 1);
         this.graphics.endFill();
     }
 
     resize(imageBounds) {
-        this.graphics.width = this.canvas.width;
-        this.graphics.height = this.canvas.height;
-
-        this.centerX = this.canvas.width / 2;
-        this.centerY = this.canvas.height / 2;
+        this.graphics.width = imageBounds.width - 32;
+        this.graphics.height = imageBounds.height - 32;
+        this.graphics.x = this.canvas.width / 2 - this.graphics.width / 2;
+        this.graphics.y = this.canvas.height / 2 - this.graphics.height / 2;
     }
 
-
     addMouseDownEvent() {
-        console.log('RotateUI.addMouseDownEvent()');
+        console.log('MoveUI.addMouseDownEvent()');
         this._mouseDownListener = this.onMouseDown.bind(this);
         this.on('mousedown', this._mouseDownListener);
     }
@@ -55,7 +53,7 @@ export class RotateUI extends PIXI.Sprite {
     }
 
     onMouseDown(e) {
-        this.prevRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.data.global.x, y:e.data.global.y});
+        this.prevMousePoint = {x:e.data.global.x, y:e.data.global.y};
 
         e.stopPropagation();
         this.addMouseMoveEvent();
@@ -63,21 +61,20 @@ export class RotateUI extends PIXI.Sprite {
     }
 
     onMouseMove(e) {
-        this.currentRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.clientX, y:e.clientY});
+        this.currentMousePoint = {x:e.clientX, y:e.clientY};
 
-        this.change = this.currentRotation - this.prevRotation;
-        this.absChange = (this.change < 0) ? this.change * -1 : this.change;
+        this.change = {
+            x:this.currentMousePoint.x - this.prevMousePoint.x,
+            y:this.currentMousePoint.y - this.prevMousePoint.y
+        };
 
-        if(this.absChange < 100) {
-            this.emit('changeRotation', {
-                prevRotation: this.prevRotation,
-                currentRotation: this.currentRotation,
-                currentRadian: Calculator.getRadians(this.currentRotation),
-                change: Calculator.getRadians(this.change),
-            });
-        }
+        this.emit('changeMove', {
+            prevMousePoint: this.prevMousePoint,
+            currentMousePoint: this.currentMousePoint,
+            change: this.change,
+        });
 
-        this.prevRotation = this.currentRotation;
+        this.prevMousePoint = this.currentMousePoint;
     }
 
     onMouseUp(e) {
