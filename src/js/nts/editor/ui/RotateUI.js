@@ -32,7 +32,6 @@ export class RotateUI extends PIXI.Sprite {
 
 
     addMouseDownEvent() {
-        console.log('RotateUI.addMouseDownEvent()');
         this._mouseDownListener = this.onMouseDown.bind(this);
         this.on('mousedown', this._mouseDownListener);
     }

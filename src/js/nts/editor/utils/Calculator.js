@@ -180,4 +180,9 @@ export class Calculator {
         var pow = Math.pow(10, digitNumber);
         return parseInt(convertNumber * pow) / pow;
     }
+
+
+    static getY(x, a, b, c, d) {
+        return (d - c) / (b - a) * (x - a) + c;
+    }
 }

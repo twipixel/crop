@@ -19,6 +19,10 @@ export class Cropper extends PIXI.Container {
 
         this.paddingX = 216;
         this.paddingY = 158;
+
+        this.imageRotation = 0;
+        this.limitRotation = 45;
+        this.imageRotationScale = 0;
         this.originalImageWidth = imageElement.width;
         this.origianlImageHeight = imageElement.height;
 
@@ -34,7 +38,7 @@ export class Cropper extends PIXI.Container {
         this.image = new ImageUI(this.imageElement);
         this.addChild(this.image);
 
-        this.maxRotation = Calculator.getRadians(45);
+        this.maxRotation = Calculator.getRadians(this.limitRotation);
         this.minRotation = -this.maxRotation;
 
         this.rotateUI = new RotateUI(this.canvas);
@@ -66,13 +70,7 @@ export class Cropper extends PIXI.Container {
         if (this.image.rotation > this.maxRotation)
             this.image.rotation = this.maxRotation;
 
-
-        // image.rotation 0 ~ 45;
-        // image.scale = imageMinScale ~ imageMaxScale;
-        // y = (d - c) / (b - a) * (x - a) + c;
-        //var scale:Number = (imageMaxScale - imageMinScale) / 45 * Math.abs(image.rotation) + imageMinScale;
-
-        var scale = (this.imageMaxScale - this.imageMinScale) / 45 * Math.abs(this.image.rotation) + this.imageMinScale;
+        var scale = Calculator.getY(Math.abs(this.image.rotation), 0, this.limitRotation, this.imageMinScale, this.imageMaxScale);
         this.image.scale.x = scale;
         this.image.scale.y = scale;
 
@@ -83,6 +81,13 @@ export class Cropper extends PIXI.Container {
         } else {
             this.setPrevImageRotation();
         }
+
+        this.imageRotation = Calculator.getDegrees(this.image.rotation);
+        this.imageRotationScale =  Calculator.getY(Math.abs(this.imageRotation), 0, this.limitRotation, 0, 1);
+        this.imageScaledWidth = this.image.width;
+        this.imageScaledHeight = this.image.height;
+
+        console.log('changeRotation', Calculator.digitNumber(this.imageRotation, 2), Calculator.digitNumber(this.imageRotationScale, 2));
     }
 
     changeMove(e) {
@@ -110,7 +115,6 @@ export class Cropper extends PIXI.Container {
         this.imageScaleX = this.imageScaleWidth / newImageWidth;
         this.imageScaleY = this.imageScaleHeight / newImageHeight;
         this.imageMaxScale = this.imageScaleY;
-
 
         var imageBounds = {
             x: this.canvas.width / 2 - this.image.width / 2,
@@ -141,13 +145,28 @@ export class Cropper extends PIXI.Container {
          this.image.width = size.width;
          this.image.height = size.height;*/
 
-        var scale = Calculator.getResizeMinScaleKeepAspectRatio(boundsWidth, this.originalImageWidth, boundsHeight, this.origianlImageHeight);
+        var scale;
+
+        if(this.imageRotationScale == 0) {
+            scale = Calculator.getResizeMinScaleKeepAspectRatio(boundsWidth, this.originalImageWidth, boundsHeight, this.origianlImageHeight);
+        } else {
+            scale = Calculator.getResizeMinScaleKeepAspectRatio(boundsWidth, this.image.width, boundsHeight, this.image.height);
+        }
+
+        console.log(
+            'imageRotationScale', Calculator.digitNumber(this.imageRotationScale, 2),
+            'scale', Calculator.digitNumber(scale, 2),
+            'imageMinScale', Calculator.digitNumber(this.imageMinScale, 2),
+            'imageMaxScale', Calculator.digitNumber(this.imageMaxScale, 2)
+        );
+
         this.image.scale.x = scale;
         this.image.scale.y = scale;
         this.image.x = this.canvas.width / 2;
         this.image.y = this.canvas.height / 2;
         //this.image.x = this.canvas.width / 2 - this.image.width / 2;
         //this.image.y = this.canvas.height / 2 - this.image.height / 2;
+
 
         this.setPrevImagePosion();
         this.setPrevImageRotation();
@@ -249,6 +268,7 @@ export class Cropper extends PIXI.Container {
         var scaleX = Calculator.digitNumber(this.image.scale.x, 2);
         var scaleY = Calculator.digitNumber(this.image.scale.y, 2);
 
+        console.log(minScale, scaleX, scaleY);
         return (minScale >= scaleX && minScale >= scaleY);
     }
 
@@ -266,4 +286,6 @@ export class Cropper extends PIXI.Container {
             y: boundsY
         }
     }
+
+
 }
