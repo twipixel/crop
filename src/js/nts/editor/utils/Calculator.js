@@ -148,13 +148,13 @@ export class Calculator {
      * @returns {boolean} 사각형안에 포인트가 있는지 여부
      */
     static isInsideSquare(lt, rt, rb, lb, point) {
-        console.log(
+        /*console.log(
             parseInt(lt.x), parseInt(lt.y),
             parseInt(rt.x), parseInt(rt.y),
             parseInt(rb.x), parseInt(rb.y),
             parseInt(lb.x), parseInt(lb.y),
             parseInt(point.x), parseInt(point.y)
-        );
+        );*/
 
         if (Calculator.triangleArea(lt, rt, point) > 0 || Calculator.triangleArea(rt, rb, point) > 0 || Calculator.triangleArea(rb, lb, point) > 0 || Calculator.triangleArea(lb, lt, point) > 0)
             return false;
@@ -169,5 +169,15 @@ export class Calculator {
             rb: {x: bounds.x + bounds.height, y: bounds.y + bounds.height},
             lb: {x: bounds.x, y: bounds.y + bounds.height}
         }
+    }
+
+
+    static digitNumber(convertNumber, digitNumber = 0) {
+        if(digitNumber === 0) {
+            console.log('Missing digitNumber');
+            return convertNumber;
+        }
+        var pow = Math.pow(10, digitNumber);
+        return parseInt(convertNumber * pow) / pow;
     }
 }
