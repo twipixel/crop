@@ -12,7 +12,7 @@ export class ResizeUI extends PIXI.Container {
         this.originalImageWidth = originalImageWidth;
         this.origianlImageHeight = originalImageHeight;
 
-        this.offset = -2;
+        this.offset = -1;
         this.imageRect = new PIXI.Graphics();
         this.lt = new CornerShape(CornerShape.LEFT_TOP);
         this.rt = new CornerShape(CornerShape.RIGHT_TOP);
@@ -42,20 +42,20 @@ export class ResizeUI extends PIXI.Container {
     }
 
 
-    resize(imageBounds) {
-        this.resizeCornerShape(imageBounds);
+    resize(imageRect) {
+        this.resizeCornerShape(imageRect);
         this.resizeControl();
         this.drawImageRect();
     }
 
 
-    resizeCornerShape(imageBounds) {
-        this.lt.x = imageBounds.x - this.offset;
-        this.lt.y = imageBounds.y - this.offset;
-        this.rt.x = imageBounds.x + imageBounds.width + this.offset;
-        this.rt.y = imageBounds.y - this.offset;
+    resizeCornerShape(imageRect) {
+        this.lt.x = imageRect.x - this.offset;
+        this.lt.y = imageRect.y - this.offset;
+        this.rt.x = imageRect.x + imageRect.width + this.offset;
+        this.rt.y = imageRect.y - this.offset;
         this.rb.x = this.rt.x + this.offset;
-        this.rb.y = imageBounds.y + imageBounds.height + this.offset;
+        this.rb.y = imageRect.y + imageRect.height + this.offset;
         this.lb.x = this.lt.x - this.offset;
         this.lb.y = this.rb.y + this.offset;
 

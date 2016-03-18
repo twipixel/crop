@@ -22,9 +22,9 @@ export class MoveUI extends PIXI.Sprite {
         this.graphics.endFill();
     }
 
-    resize(imageBounds) {
-        this.graphics.width = imageBounds.width - 32;
-        this.graphics.height = imageBounds.height - 32;
+    resize(imageRect) {
+        this.graphics.width = imageRect.width - 32;
+        this.graphics.height = imageRect.height - 32;
         this.graphics.x = this.canvas.width / 2 - this.graphics.width / 2;
         this.graphics.y = this.canvas.height / 2 - this.graphics.height / 2;
     }

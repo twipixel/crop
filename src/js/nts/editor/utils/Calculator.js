@@ -40,7 +40,7 @@ export class Calculator {
         var scale = Calculator.getResizeMinScaleKeepAspectRatio(resizeWidth, originalImageWidth, resizeHeight, originalImageHeight);
         var resizeWidth = scale * originalImageWidth;
         var resizeHeight = scale * originalImageHeight;
-        return {width: resizeWidth, height: resizeHeight};
+        return {x: 0, y: 0, width: resizeWidth, height: resizeHeight};
     }
 
     /**
@@ -56,6 +56,12 @@ export class Calculator {
         var widthRatio = resizeWidth / originalImageWidth;
         var heightRatio = resizeHeight / originalImageHeight;
         return Math.min(widthRatio, heightRatio);
+    }
+
+    static getResizeMaxScaleKeepAspectRatio(resizeWidth, originalImageWidth, resizeHeight, originalImageHeight) {
+        var widthRatio = resizeWidth / originalImageWidth;
+        var heightRatio = resizeHeight / originalImageHeight;
+        return Math.max(widthRatio, heightRatio);
     }
 
     static getRotation(centerPoint, mousePoint) {
@@ -149,12 +155,12 @@ export class Calculator {
      */
     static isInsideSquare(lt, rt, rb, lb, point) {
         /*console.log(
-            parseInt(lt.x), parseInt(lt.y),
-            parseInt(rt.x), parseInt(rt.y),
-            parseInt(rb.x), parseInt(rb.y),
-            parseInt(lb.x), parseInt(lb.y),
-            parseInt(point.x), parseInt(point.y)
-        );*/
+         parseInt(lt.x), parseInt(lt.y),
+         parseInt(rt.x), parseInt(rt.y),
+         parseInt(rb.x), parseInt(rb.y),
+         parseInt(lb.x), parseInt(lb.y),
+         parseInt(point.x), parseInt(point.y)
+         );*/
 
         if (Calculator.triangleArea(lt, rt, point) > 0 || Calculator.triangleArea(rt, rb, point) > 0 || Calculator.triangleArea(rb, lb, point) > 0 || Calculator.triangleArea(lb, lt, point) > 0)
             return false;
@@ -173,7 +179,7 @@ export class Calculator {
 
 
     static digitNumber(convertNumber, digitNumber = 0) {
-        if(digitNumber === 0) {
+        if (digitNumber === 0) {
             console.log('Missing digitNumber');
             return convertNumber;
         }
@@ -184,5 +190,54 @@ export class Calculator {
 
     static getY(x, a, b, c, d) {
         return (d - c) / (b - a) * (x - a) + c;
+    }
+
+
+    /**
+     * 회전하는 좌표 구하기
+     * @param pivot 사각형의 중심점
+     * @param point 계산하고 싶은 포인트
+     * @param angle 회전각 degrees
+     * @returns {{x: (number|*), y: (number|*)}}
+     */
+    static getRotationPoint(pivot, point, angle) {
+        var diffX = point.x - pivot.x;
+        var diffY = point.y - pivot.y;
+        var dist = Math.sqrt(diffX * diffX + diffY * diffY);
+        var ca = Math.atan2(diffY, diffX) * 180 / Math.PI;
+        var na = ((ca + angle) % 360) * Math.PI / 180;
+        var x = (pivot.x + dist * Math.cos(na) + 0.5) | 0;
+        var y = (pivot.y + dist * Math.sin(na) + 0.5) | 0;
+        return {x: x, y: y};
+    }
+
+
+    /**
+     * 회전각과 사각형의 포인트를 넘겨주면 회전된 사각형의 포인트를 전달합니다.
+     * @param pivot 사각형의 pivot(anchor) 포인트
+     * @param rectanglePoints 사각형 좌표 (leftTop, rightTop, rightBottom, leftBottom)
+     * @param angle 각도 degress
+     * @returns {{lt: ({x, y}|{x: (number|*), y: (number|*)}), rt: ({x, y}|{x: (number|*), y: (number|*)}), rb: ({x, y}|{x: (number|*), y: (number|*)}), lb: ({x, y}|{x: (number|*), y: (number|*)})}}
+     */
+    static getRotationRectanglePoints(pivot, rectanglePoints, angle) {
+        var lt = Calculator.getRotationPoint(pivot, rectanglePoints.lt, angle);
+        var rt = Calculator.getRotationPoint(pivot, rectanglePoints.rt, angle);
+        var rb = Calculator.getRotationPoint(pivot, rectanglePoints.rb, angle);
+        var lb = Calculator.getRotationPoint(pivot, rectanglePoints.lb, angle);
+        return {lt:lt, rt:rt, rb:rb, lb:lb};
+    }
+
+
+    /**
+     * 사각형의 좌표를 가지고 바운드를 계산합니다.
+     * @param rectanglePoints 사각형 좌표 (leftTop, rightTop, rightBottom, leftBottom)
+     * @returns {{x: number, y: number, width: number, height: number}}
+     */
+    static getBoundsRectangle(rectanglePoints) {
+        var x1 = Math.min(rectanglePoints.lt.x, rectanglePoints.rt.x, rectanglePoints.rb.x, rectanglePoints.lb.x);
+        var y1 = Math.min(rectanglePoints.lt.y, rectanglePoints.rt.y, rectanglePoints.rb.y, rectanglePoints.lb.y);
+        var x2 = Math.max(rectanglePoints.lt.x, rectanglePoints.rt.x, rectanglePoints.rb.x, rectanglePoints.lb.x);
+        var y2 = Math.max(rectanglePoints.lt.y, rectanglePoints.rt.y, rectanglePoints.rb.y, rectanglePoints.lb.y);
+        return {x: x1, y: y1, width: x2 - x1, height: y2 - y1};
     }
 }
