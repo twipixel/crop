@@ -6,6 +6,13 @@ export class ImageUI extends PIXI.Container {
 
     initialize(imageElement) {
         this.imageElement = imageElement;
+
+        /*this.base = new PIXI.BaseTexture(this.imageElement);
+        this.texture = new PIXI.Texture(this.base);
+        this.image = new PIXI.Sprite(this.texture);
+        this.image.anchor = {x:0.5, y:0.5};
+        this.addChild(this.image);*/
+
         this.image = new PIXI.Sprite(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         this.image.x = -this.image.width / 2;
         this.image.y = -this.image.height / 2;
@@ -27,9 +34,22 @@ export class ImageUI extends PIXI.Container {
         this.addChild(this.rt);
         this.addChild(this.rb);
         this.addChild(this.lb);
-
-
-        console.log(this.lt.x, this.lt.y, this.rt.x, this.rt.y, this.rb.x, this.rb.y, this.lb.x, this.lb.y);
     }
+
+
+    /**
+     * 글로벌 좌표로 포인트를 반환합니다.
+     * @returns {{lt: PIXI.Point, rt: PIXI.Point, rb: PIXI.Point, lb: PIXI.Point}}
+     */
+    getGlobalBoundsPoints() {
+        return {
+            lt: this.toGlobal(this.lt.position),
+            rt: this.toGlobal(this.rt.position),
+            rb: this.toGlobal(this.rb.position),
+            lb: this.toGlobal(this.lb.position)
+        }
+    }
+
+
 
 }
