@@ -13,7 +13,7 @@ export class ResizeUI extends PIXI.Container {
         this.origianlImageHeight = originalImageHeight;
 
         this.offset = -1;
-        this.imageRect = new PIXI.Graphics();
+        this.resizeImage = new PIXI.Graphics();
         this.lt = new CornerShape(CornerShape.LEFT_TOP);
         this.rt = new CornerShape(CornerShape.RIGHT_TOP);
         this.rb = new CornerShape(CornerShape.RIGHT_BOTTOM);
@@ -26,7 +26,7 @@ export class ResizeUI extends PIXI.Container {
         this.rtControl = new ControlArea(ControlArea.CORNER);
         this.rbControl = new ControlArea(ControlArea.CORNER);
         this.lbControl = new ControlArea(ControlArea.CORNER);
-        this.addChild(this.imageRect);
+        this.addChild(this.resizeImage);
         this.addChild(this.lt);
         this.addChild(this.rt);
         this.addChild(this.rb);
@@ -86,15 +86,15 @@ export class ResizeUI extends PIXI.Container {
     }
 
     drawImageRect() {
-        this.imageRect.clear();
-        this.imageRect.lineStyle(2, 0x9e9e9e);
+        this.resizeImage.clear();
+        this.resizeImage.lineStyle(2, 0x9e9e9e);
         //this.imageRect.beginFill(0xFF3300, 0.2);
         //this.imageRect.drawRect(boundsX, boundsY, boundsWidth, boundssHeight);
-        this.imageRect.moveTo(this.lt.x, this.lt.y);
-        this.imageRect.lineTo(this.rt.x, this.lt.y);
-        this.imageRect.lineTo(this.rt.x, this.rb.y);
-        this.imageRect.lineTo(this.lt.x, this.rb.y);
-        this.imageRect.lineTo(this.lt.x, this.lt.y);
-        this.imageRect.endFill();
+        this.resizeImage.moveTo(this.lt.x, this.lt.y);
+        this.resizeImage.lineTo(this.rt.x, this.lt.y);
+        this.resizeImage.lineTo(this.rt.x, this.rb.y);
+        this.resizeImage.lineTo(this.lt.x, this.rb.y);
+        this.resizeImage.lineTo(this.lt.x, this.lt.y);
+        this.resizeImage.endFill();
     }
 }

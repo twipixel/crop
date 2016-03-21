@@ -27,42 +27,38 @@ export class Calculator {
         return Calculator._DEG180_TO_RAD;
     }
 
+
     /**
-     * 비율 유지되는 리사이즈 이미지를 구합니다.
-     *
-     * @param resizeWidth 리사이즈 되는 넓이
-     * @param originalImageWidth 원본 이미지 넓이
-     * @param resizeHeight 리사이즈 되는 높이
-     * @param originalImageHeight 원본 이미지 높이
-     * @returns {{width: number, height: number}}
+     * 원본 비율을 유지한 리사이즈 정보를 구합니다.
+     * @param originalRect 원본 이미지 정보
+     * @param resizeRect 리사이즈 된 이미지 정보
+     * @returns {{x: number, y: number, width: number, height: number}}
      */
-    static getImageSizeKeepAspectRatio(resizeWidth, originalImageWidth, resizeHeight, originalImageHeight) {
-        var scale = Calculator.getResizeMinScaleKeepAspectRatio(resizeWidth, originalImageWidth, resizeHeight, originalImageHeight);
-        var resizeWidth = scale * originalImageWidth;
-        var resizeHeight = scale * originalImageHeight;
+    static getImageSizeKeepAspectRatio(originalRect, resizeRect) {
+        var scale = Calculator.getScaleKeepAspectRatio(originalRect, resizeRect);
+        var minScale = scale.min;
+        var resizeWidth = minScale * originalRect.width;
+        var resizeHeight = minScale * originalRect.height;
         return {x: 0, y: 0, width: resizeWidth, height: resizeHeight};
     }
 
+
     /**
-     * 리사이즈 되는 이미지의 가로 / 세로 비율 중 작은 비율을 가져 옵니다.
-     *
-     * @param resizeWidth 리사이즈 되는 넓이
-     * @param originalImageWidth 원본 이미지 넓이
-     * @param resizeHeight 리사이즈 되는 높이
-     * @param originalImageHeight 원본 이미지 높이
-     * @returns {number} 리사이즈 되는 비율 중 작은 비율 (Ratio)
+     * 원본 비율을 구합니다.
+     * @param originalRect 원본 사이즈
+     * @param resizeRect 변화된 사이즈
+     * @returns {*} 최대, 최소 비율
      */
-    static getResizeMinScaleKeepAspectRatio(resizeWidth, originalImageWidth, resizeHeight, originalImageHeight) {
-        var widthRatio = resizeWidth / originalImageWidth;
-        var heightRatio = resizeHeight / originalImageHeight;
-        return Math.min(widthRatio, heightRatio);
+    static getScaleKeepAspectRatio(originalRect, resizeRect) {
+        var widthRatio = resizeRect.width / originalRect.width;
+        var heightRatio = resizeRect.height / originalRect.height;
+
+        if(widthRatio < heightRatio)
+            return {min:widthRatio, max:heightRatio};
+        else
+            return {max:widthRatio, min:heightRatio};
     }
 
-    static getResizeMaxScaleKeepAspectRatio(resizeWidth, originalImageWidth, resizeHeight, originalImageHeight) {
-        var widthRatio = resizeWidth / originalImageWidth;
-        var heightRatio = resizeHeight / originalImageHeight;
-        return Math.max(widthRatio, heightRatio);
-    }
 
     static getRotation(centerPoint, mousePoint) {
         var dx = mousePoint.x - centerPoint.x;
@@ -188,7 +184,8 @@ export class Calculator {
     }
 
 
-    static getY(x, a, b, c, d) {
+
+    static getOneToOne(x, a, b, c, d) {
         return (d - c) / (b - a) * (x - a) + c;
     }
 

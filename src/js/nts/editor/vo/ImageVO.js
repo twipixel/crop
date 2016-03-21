@@ -9,10 +9,10 @@ export class ImageVO {
     initialize(imageElement) {
         this.imageElement = imageElement;
         this._rotateion = 0;
-        this._limitRotationRadian = 0;
         this._rotationScale = 0;
         this._minRotationRadian = 0;
         this._maxRotationRadian = 0;
+        this._limitRotationRadian = 0;
     }
 
 
@@ -22,8 +22,7 @@ export class ImageVO {
      * @returns {{x, y, width, height}|{width: number, height: number}}
      */
     getSizeByBounds(bounds) {
-        return Calculator.getImageSizeKeepAspectRatio(
-            bounds.width, this._originalWidth, bounds.height, this._originalHeight);
+        return Calculator.getImageSizeKeepAspectRatio(this.originalBounds, bounds);
     }
 
 
@@ -53,6 +52,8 @@ export class ImageVO {
         this._imageElement = value;
         this._originalWidth = this._imageElement.width;
         this._originalHeight = this._imageElement.height;
+        this.originalBounds.width = this._originalWidth;
+        this.originalBounds.height = this._originalHeight;
     }
 
 
@@ -112,6 +113,13 @@ export class ImageVO {
     // originalWidth, originalHeight
     //////////////////////////////////////////////////////////////////////////
 
+
+    get originalBounds() {
+        if(this._originalBounds === undefined || this._originalBounds === null)
+            this._originalBounds = {x:0, y:0, width:this._originalWidth, height:this._originalHeight};
+
+        return this._originalBounds;
+    }
 
     get originalWidth() {
         return this._originalWidth;

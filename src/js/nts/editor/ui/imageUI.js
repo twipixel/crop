@@ -51,5 +51,8 @@ export class ImageUI extends PIXI.Container {
     }
 
 
+    getGlobalPoints() {
+        
+    }
 
 }

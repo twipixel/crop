@@ -56,6 +56,12 @@ export class RotateUI extends PIXI.Sprite {
     onMouseDown(e) {
         this.prevRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.data.global.x, y:e.data.global.y});
 
+        this.emit('startRotation', {
+            prevRotation: this.prevRotation,
+            currentRotation: this.prevRotation,
+            currentRadian: Calculator.getRadians(this.prevRotation)
+        });
+
         e.stopPropagation();
         this.addMouseMoveEvent();
         this.removeMouseDownEvent();
