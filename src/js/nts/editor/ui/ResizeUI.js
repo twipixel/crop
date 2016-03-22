@@ -7,6 +7,7 @@ export class ResizeUI extends PIXI.Container {
         this.initialize(canvas, originalImageWidth, originalImageHeight);
     }
 
+
     initialize(canvas, originalImageWidth, originalImageHeight) {
         this.canvas = canvas;
         this.originalImageWidth = originalImageWidth;
@@ -84,6 +85,7 @@ export class ResizeUI extends PIXI.Container {
         this.lbControl.x = this.lb.x;
         this.lbControl.y = this.lb.y;
     }
+
 
     drawImageRect() {
         this.resizeImage.clear();

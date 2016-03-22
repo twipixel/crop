@@ -53,6 +53,7 @@ export class RotateUI extends PIXI.Sprite {
         window.document.removeEventListener('mouseup', this._mouseUpListener);
     }
 
+
     onMouseDown(e) {
         this.prevRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.data.global.x, y:e.data.global.y});
 

@@ -16,7 +16,7 @@ export class Cropper extends PIXI.Container {
 
     initialize(canvas, imageElement) {
 
-        var Config = function() {
+        var Config = function () {
             this.offset = 0;
             this.width = 0;
             this.height = 0;
@@ -24,7 +24,7 @@ export class Cropper extends PIXI.Container {
 
         //////////////////////////////////////////////////////////////
         //TODO 테스트
-        this.gui =new dat.GUI();
+        /*this.gui = new dat.GUI();
         this.config = new Config();
         var offset = this.gui.add(this.config, 'offset', -200, 200);
         var width = this.gui.add(this.config, 'width').step(1);
@@ -45,13 +45,15 @@ export class Cropper extends PIXI.Container {
         height.onFinishChange((value) => {
             this.scaledImageHeight = this.vo.originalHeight + value;
             console.log(this.scaledImageHeight);
-        });
-
+        });*/
 
         this.isOut = false;
         //////////////////////////////////////////////////////////////
 
-
+        window.document.addEventListener('keydown', function(){
+            console.clear();
+            console.log('[KEYDOWN, CLEAR]');
+        });
 
         this.paddingX = 216;
         this.paddingY = 158;
@@ -119,8 +121,8 @@ export class Cropper extends PIXI.Container {
             scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
 
             /*var o = this.vo.originalBounds;
-            scale = Calculator.getScaleKeepAspectRatio(
-                {width:o.width - 300, height:o.height - 300}, bounds);*/
+             scale = Calculator.getScaleKeepAspectRatio(
+             {width:o.width - 300, height:o.height - 300}, bounds);*/
 
             this.image.scale.x = scale.min;
             this.image.scale.y = scale.min;
@@ -129,19 +131,19 @@ export class Cropper extends PIXI.Container {
             scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
 
             //scale = Calculator.getScaleKeepAspectRatio(
-                //{width:this.scaledImageWidth, height:this.scaledImageHeight}, bounds);
+            //{width:this.scaledImageWidth, height:this.scaledImageHeight}, bounds);
 
-                //this.vo.originalBounds, {width:bounds.width + this.dw, height:bounds.height + this.dh});
+            //this.vo.originalBounds, {width:bounds.width + this.dw, height:bounds.height + this.dh});
 
-                //this.vo.originalBounds, {width:bounds.width + this.iw, height:bounds.height + this.ih});
+            //this.vo.originalBounds, {width:bounds.width + this.iw, height:bounds.height + this.ih});
 
-                //{width: this.scaledImageWidth, height: this.scaledImageHeight}, bounds);
+            //{width: this.scaledImageWidth, height: this.scaledImageHeight}, bounds);
 
-                /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
-                {width:this.canvas.width, height:this.canvas.height});*/
+            /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
+             {width:this.canvas.width, height:this.canvas.height});*/
 
-                /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
-                {width:bounds.width + this.dw, height:bounds.height + this.dh});*/
+            /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
+             {width:bounds.width + this.dw, height:bounds.height + this.dh});*/
 
 
             this.image.width = this.scaledImageWidth * scale.min;
@@ -172,6 +174,8 @@ export class Cropper extends PIXI.Container {
         this.resizeImageRect.x = this.centerPoint.x - this.resizeImageRect.width / 2;
         this.resizeImageRect.y = this.centerPoint.y - this.resizeImageRect.height / 2;
         this.isRotationScaleZero = (this.vo.rotationScale === 0);
+
+        this.recordImageInfo();
         console.log('isRotationScaleZero', this.isRotationScaleZero, this.imageScaleX, this.imageScaleY);
     }
 
@@ -185,7 +189,7 @@ export class Cropper extends PIXI.Container {
         if (this.image.rotation > this.vo.maxRotationRadian)
             this.image.rotation = this.vo.maxRotationRadian;
 
-        if(this.isRotationScaleZero) {
+        if (this.isRotationScaleZero) {
             var rotationRectanglePoints = Calculator.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calculator.getDegrees(this.image.rotation));
             var rotationRectangleBounds = Calculator.getBoundsRectangle(rotationRectanglePoints);
             var scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
@@ -195,18 +199,18 @@ export class Cropper extends PIXI.Container {
 
         // TODO 테스트 코드
         /*this.dsx = scale.max - this.imageScaleX;
-        this.dsy = scale.max - this.imageScaleY;
-        this.dw = rotationRectangleBounds.width - this.imageWidth;
-        this.dh = rotationRectangleBounds.height - this.imageHeight;
-        this.iw = this.dw * this.dsx;
-        this.ih = this.dh * this.dsy;
-        this.scaledImageWidth = this.vo.originalWidth + this.dw;
-        this.scaledImageHeight = this.vo.originalHeight + this.dh;
-        console.log('[', this.vo.originalWidth, ']',
-            Calculator.digitNumber(this.dw, 2),
-            Calculator.digitNumber(this.dsx, 2),
-            Calculator.digitNumber(this.iw, 2),
-            this.scaledImageWidth);*/
+         this.dsy = scale.max - this.imageScaleY;
+         this.dw = rotationRectangleBounds.width - this.imageWidth;
+         this.dh = rotationRectangleBounds.height - this.imageHeight;
+         this.iw = this.dw * this.dsx;
+         this.ih = this.dh * this.dsy;
+         this.scaledImageWidth = this.vo.originalWidth + this.dw;
+         this.scaledImageHeight = this.vo.originalHeight + this.dh;
+         console.log('[', this.vo.originalWidth, ']',
+         Calculator.digitNumber(this.dw, 2),
+         Calculator.digitNumber(this.dsx, 2),
+         Calculator.digitNumber(this.iw, 2),
+         this.scaledImageWidth);*/
 
 
         if (this.isImageOutOfBounds === false) {
@@ -216,9 +220,262 @@ export class Cropper extends PIXI.Container {
 
             var rotationRectanglePoints = Calculator.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calculator.getDegrees(this.image.rotation));
             var rotationRectangleBounds = Calculator.getBoundsRectangle(rotationRectanglePoints);
+
+            // TODO 스케일 체크 필요
             var scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
             this.image.scale.x = scale.max;
             this.image.scale.y = scale.max;
+
+            var lt = this.image.lt;
+            var rt = this.image.rt;
+            var rb = this.image.rb;
+            var lb = this.image.lb;
+
+            var x;
+            var y;
+            var line;
+            var distance;
+
+            console.log('ROTATE [', Calculator.digitNumber(this.image.x), Calculator.digitNumber(this.image.y), ']');
+
+            var maxDistance = 40;
+
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.lt) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.left;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[LT | LEFT]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x - Math.abs(x);
+                        this.image.y = this.image.y - Math.abs(y);
+                    }
+                } else {
+                    line = this.image.top;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[LT | TOP]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x - Math.abs(x);
+                        this.image.y = this.image.y - Math.abs(y);
+                    }
+                }
+            }
+
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.lb) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.left;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lb);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[LB | LEFT]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x - Math.abs(x);
+                        this.image.y = this.image.y + Math.abs(y);
+                    }
+                } else {
+                    line = this.image.bottom;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lb);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[LB | BOTTOM]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x - Math.abs(x);
+                        this.image.y = this.image.y + Math.abs(y);
+                    }
+                }
+            }
+
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.rt) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.right;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RT | RIGHT]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x + Math.abs(x);
+                        this.image.y = this.image.y - Math.abs(y);
+                    }
+                } else {
+                    line = this.image.top;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RT | TOP]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x + Math.abs(x);
+                        this.image.y = this.image.y - Math.abs(y);
+                    }
+                }
+            }
+
+
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.rb) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.right;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rb);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RB | RIGHT]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x + Math.abs(x);
+                        this.image.y = this.image.y + Math.abs(y);
+                    }
+                } else {
+                    line = this.image.bottom;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rb);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RB | BOTTOM]', '[', Calculator.digitNumber(distance), ']',
+                        'isReachedLimitLine', this.isReachedLimitLine,
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x + Math.abs(x);
+                        this.image.y = this.image.y + Math.abs(y);
+                    }
+                }
+            }
+
+            /*
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.lt) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.left;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[LT | LEFT]', '[', Calculator.digitNumber(distance), ']',
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x - x;
+                        this.image.y = this.image.y + y;
+                    }
+                } else {
+                    line = this.image.top;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[LT | TOP]', '[', Calculator.digitNumber(distance), ']',
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x - x;
+                        this.image.y = this.image.y + y;
+                    }
+                }
+            }
+
+
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.rt) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.right;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RT | RIGHT]', '[', Calculator.digitNumber(distance), ']',
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x + x;
+                        this.image.y = this.image.y + y;
+                    }
+                } else {
+                    line = this.image.top;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rt);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RT | TOP]', '[', Calculator.digitNumber(distance), ']',
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x + x;
+                        this.image.y = this.image.y - y;
+                    }
+                }
+            }
+
+
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.rb) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.right;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rb);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RB | RIGHT]', '[', Calculator.digitNumber(distance), ']',
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x - x;
+                        this.image.y = this.image.y + y;
+                    }
+                } else {
+                    line = this.image.bottom;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.rb);
+                    x = distance * Math.cos(this.image.rotation);
+                    y = distance * Math.sin(this.image.rotation);
+                    console.log('[RB | BOTTOM]', '[', Calculator.digitNumber(distance), ']',
+                        '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+
+                    if(distance < maxDistance) {
+                        this.image.x = this.image.x + x;
+                        this.image.y = this.image.y + y;
+                    }
+                }
+            }
+
+            if (Calculator.isInsideSquare(lt, rt, rb, lb, this.resizeUI.lb) === false) {
+                if(this.isReachedLimitLine) {
+                    line = this.image.left;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lb);
+
+                    if(distance < maxDistance) {
+                        x = distance * Math.cos(this.image.rotation);
+                        y = distance * Math.sin(this.image.rotation);
+                        this.image.x = this.image.x - x;
+                        this.image.y = this.image.y + y;
+                        console.log('[LB | LEFT]', '[', Calculator.digitNumber(distance), ']',
+                            '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+                    }
+                } else {
+                    line = this.image.bottom;
+                    distance = Calculator.pointToLineDistance(line.a, line.b, this.resizeUI.lb);
+
+                    if(distance < maxDistance) {
+                        x = distance * Math.cos(this.image.rotation);
+                        y = distance * Math.sin(this.image.rotation);
+                        this.image.x = this.image.x + x;
+                        this.image.y = this.image.y - y;
+                        console.log('[LB | BOTTOM]', '[', Calculator.digitNumber(distance), ']',
+                            '=>', Calculator.digitNumber(x), Calculator.digitNumber(y));
+                    }
+                }
+            }*/
+
 
         } else {
             this.recordImageInfo();
@@ -226,14 +483,12 @@ export class Cropper extends PIXI.Container {
 
         this.vo.rotation = Calculator.getDegrees(this.image.rotation);
         this.vo.rotationScale = Calculator.getOneToOne(Math.abs(this.image.rotation), 0, this.vo.limitRotationRadian, 0, 1);
-        this.imageCenterX = this.image.x;
-        this.imageCenterY = this.image.y;
     }
 
 
     changeMove(e) {
 
-        if(this.isOut == false) {
+        if (this.isOut == false) {
             this.image.x += e.change.x;
             this.image.y += e.change.y;
         } else {
@@ -254,7 +509,7 @@ export class Cropper extends PIXI.Container {
 
 
             this.isOut = true;
-            if(this.returnX === -1) {
+            if (this.returnX === -1) {
                 this.returnX = this.prevImageInfo.x;
                 this.returnY = this.prevImageInfo.y;
             }
@@ -269,7 +524,7 @@ export class Cropper extends PIXI.Container {
 
 
     endMove(e) {
-        if(this.isOut) {
+        if (this.isOut) {
             this.image.x = this.returnX;
             this.image.y = this.returnY;
         }

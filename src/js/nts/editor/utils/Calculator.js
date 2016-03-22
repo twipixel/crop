@@ -53,10 +53,10 @@ export class Calculator {
         var widthRatio = resizeRect.width / originalRect.width;
         var heightRatio = resizeRect.height / originalRect.height;
 
-        if(widthRatio < heightRatio)
-            return {min:widthRatio, max:heightRatio};
+        if (widthRatio < heightRatio)
+            return {min: widthRatio, max: heightRatio};
         else
-            return {max:widthRatio, min:heightRatio};
+            return {max: widthRatio, min: heightRatio};
     }
 
 
@@ -165,7 +165,7 @@ export class Calculator {
 
 
     static getHitPoint(lt, rt, rb, lb, point) {
-        var result = {isHitLeft:false, isHitRight:false, isHitTop:false, isHitBottom:false};
+        var result = {isHitLeft: false, isHitRight: false, isHitTop: false, isHitBottom: false};
 
         if (Calculator.triangleArea(lt, rt, point) > 0)
             result.isHitTop = true;
@@ -193,15 +193,13 @@ export class Calculator {
     }
 
 
-    static digitNumber(convertNumber, digitNumber = 0) {
-        if (digitNumber === 0) {
-            console.log('Missing digitNumber');
-            return convertNumber;
-        }
+    static digitNumber(convertNumber, digitNumber = 2) {
+        if (digitNumber === 0)
+            digitNumber = 1;
+
         var pow = Math.pow(10, digitNumber);
         return parseInt(convertNumber * pow) / pow;
     }
-
 
 
     static getOneToOne(x, a, b, c, d) {
@@ -240,7 +238,7 @@ export class Calculator {
         var rt = Calculator.getRotationPoint(pivot, rectanglePoints.rt, angle);
         var rb = Calculator.getRotationPoint(pivot, rectanglePoints.rb, angle);
         var lb = Calculator.getRotationPoint(pivot, rectanglePoints.lb, angle);
-        return {lt:lt, rt:rt, rb:rb, lb:lb};
+        return {lt: lt, rt: rt, rb: rb, lb: lb};
     }
 
 
@@ -250,10 +248,19 @@ export class Calculator {
      * @returns {{x: number, y: number, width: number, height: number}}
      */
     static getBoundsRectangle(rectanglePoints) {
+        var offset = 8;
         var x1 = Math.min(rectanglePoints.lt.x, rectanglePoints.rt.x, rectanglePoints.rb.x, rectanglePoints.lb.x);
         var y1 = Math.min(rectanglePoints.lt.y, rectanglePoints.rt.y, rectanglePoints.rb.y, rectanglePoints.lb.y);
         var x2 = Math.max(rectanglePoints.lt.x, rectanglePoints.rt.x, rectanglePoints.rb.x, rectanglePoints.lb.x);
         var y2 = Math.max(rectanglePoints.lt.y, rectanglePoints.rt.y, rectanglePoints.rb.y, rectanglePoints.lb.y);
-        return {x: x1, y: y1, width: x2 - x1, height: y2 - y1};
+        return {x: x1 - offset, y: y1 - offset, width: x2 - x1 + offset, height: y2 - y1 + offset};
+    }
+
+
+
+    static pointToLineDistance(a, b, p) {
+        var normalLength = Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
+        return Math.abs((p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x)) / normalLength;
+        //return ((p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x)) / normalLength;
     }
 }
