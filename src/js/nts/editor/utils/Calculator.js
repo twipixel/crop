@@ -164,6 +164,25 @@ export class Calculator {
     }
 
 
+    static getHitPoint(lt, rt, rb, lb, point) {
+        var result = {isHitLeft:false, isHitRight:false, isHitTop:false, isHitBottom:false};
+
+        if (Calculator.triangleArea(lt, rt, point) > 0)
+            result.isHitTop = true;
+
+        if (Calculator.triangleArea(rt, rb, point) > 0)
+            result.isHitRight = true;
+
+        if (Calculator.triangleArea(rb, lb, point) > 0)
+            result.isHitBottom = true;
+
+        if (Calculator.triangleArea(lb, lt, point) > 0)
+            result.isHitLeft = true;
+
+        return result;
+    }
+
+
     static getPointsByBounds(bounds) {
         return {
             lt: {x: bounds.x, y: bounds.y},

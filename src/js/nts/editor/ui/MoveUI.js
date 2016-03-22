@@ -78,6 +78,9 @@ export class MoveUI extends PIXI.Sprite {
     }
 
     onMouseUp(e) {
+
+        this.emit('endMove');
+
         this.addMouseDownEvent();
         this.removeMouseMoveEvent();
     }

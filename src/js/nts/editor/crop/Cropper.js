@@ -15,6 +15,44 @@ export class Cropper extends PIXI.Container {
 
 
     initialize(canvas, imageElement) {
+
+        var Config = function() {
+            this.offset = 0;
+            this.width = 0;
+            this.height = 0;
+        }
+
+        //////////////////////////////////////////////////////////////
+        //TODO 테스트
+        this.gui =new dat.GUI();
+        this.config = new Config();
+        var offset = this.gui.add(this.config, 'offset', -200, 200);
+        var width = this.gui.add(this.config, 'width').step(1);
+        var height = this.gui.add(this.config, 'height').step(1);
+
+        offset.onChange((value) => {
+            this.scaledImageWidth = this.scaledImageWidth + value;
+            this.scaledImageHeight = this.scaledImageHeight + value;
+
+            console.log(this.scaledImageWidth, this.scaledImageHeight);
+        });
+
+        width.onFinishChange((value) => {
+            this.scaledImageWidth = this.vo.originalWidth + value;
+            console.log(this.scaledImageWidth);
+        });
+
+        height.onFinishChange((value) => {
+            this.scaledImageHeight = this.vo.originalHeight + value;
+            console.log(this.scaledImageHeight);
+        });
+
+
+        this.isOut = false;
+        //////////////////////////////////////////////////////////////
+
+
+
         this.paddingX = 216;
         this.paddingY = 158;
         this.canvas = canvas;
@@ -44,6 +82,7 @@ export class Cropper extends PIXI.Container {
         this.rotateUI.on('changeRotation', this.changeRotation.bind(this));
         this.rotateUI.on('startRotation', this.startRotation.bind(this));
         this.moveUI.on('changeMove', this.changeMove.bind(this));
+        this.moveUI.on('endMove', this.endMove.bind(this));
     }
 
 
@@ -78,17 +117,47 @@ export class Cropper extends PIXI.Container {
         // rotationScale는 변경되어야 합니다. 리사이즈 테스트를 위한 임시 코드
         if (this.vo.rotationScale == 0) {
             scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
-        } else {
+
+            /*var o = this.vo.originalBounds;
             scale = Calculator.getScaleKeepAspectRatio(
-                {width:this.scaledImageWidth - 200, height:this.scaledImageHeight - 200}, bounds);
+                {width:o.width - 300, height:o.height - 300}, bounds);*/
+
+            this.image.scale.x = scale.min;
+            this.image.scale.y = scale.min;
+
+        } else {
+            scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
+
+            //scale = Calculator.getScaleKeepAspectRatio(
+                //{width:this.scaledImageWidth, height:this.scaledImageHeight}, bounds);
+
+                //this.vo.originalBounds, {width:bounds.width + this.dw, height:bounds.height + this.dh});
+
+                //this.vo.originalBounds, {width:bounds.width + this.iw, height:bounds.height + this.ih});
+
+                //{width: this.scaledImageWidth, height: this.scaledImageHeight}, bounds);
+
+                /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
+                {width:this.canvas.width, height:this.canvas.height});*/
+
+                /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
+                {width:bounds.width + this.dw, height:bounds.height + this.dh});*/
+
+
+            this.image.width = this.scaledImageWidth * scale.min;
+            this.image.height = this.scaledImageHeight * scale.min;
         }
 
-        this.image.scale.x = scale.min;
-        this.image.scale.y = scale.min;
+
         this.image.x = this.canvas.width / 2;
         this.image.y = this.canvas.height / 2;
 
-        console.log(this.vo.originalWidth, this.scaledImageWidth, this.vo.originalHeight, this.scaledImageHeight);
+        console.log('[', this.vo.originalWidth, this.vo.originalHeight, ']',
+            Calculator.digitNumber(this.scaledImageWidth, 2),
+            Calculator.digitNumber(this.scaledImageHeight, 2),
+            this.scaledImageWidth - this.vo.originalWidth,
+            this.dw
+        );
 
         this.recordImageInfo();
     }
@@ -116,53 +185,93 @@ export class Cropper extends PIXI.Container {
         if (this.image.rotation > this.vo.maxRotationRadian)
             this.image.rotation = this.vo.maxRotationRadian;
 
-        var rotationRectanglePoints = Calculator.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calculator.getDegrees(this.image.rotation));
-        var rotationRectangleBounds = Calculator.getBoundsRectangle(rotationRectanglePoints);
-        var scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
-        this.image.scale.x = scale.max;
-        this.image.scale.y = scale.max;
-
+        if(this.isRotationScaleZero) {
+            var rotationRectanglePoints = Calculator.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calculator.getDegrees(this.image.rotation));
+            var rotationRectangleBounds = Calculator.getBoundsRectangle(rotationRectanglePoints);
+            var scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
+            this.image.scale.x = scale.max;
+            this.image.scale.y = scale.max;
+        }
 
         // TODO 테스트 코드
-        this.dsx = scale.max - this.imageScaleX;
+        /*this.dsx = scale.max - this.imageScaleX;
         this.dsy = scale.max - this.imageScaleY;
-        this.dw = this.image.width - this.resizeImageRect.width;
-        this.dh = this.image.height - this.resizeImageRect.height;
+        this.dw = rotationRectangleBounds.width - this.imageWidth;
+        this.dh = rotationRectangleBounds.height - this.imageHeight;
+        this.iw = this.dw * this.dsx;
+        this.ih = this.dh * this.dsy;
+        this.scaledImageWidth = this.vo.originalWidth + this.dw;
+        this.scaledImageHeight = this.vo.originalHeight + this.dh;
+        console.log('[', this.vo.originalWidth, ']',
+            Calculator.digitNumber(this.dw, 2),
+            Calculator.digitNumber(this.dsx, 2),
+            Calculator.digitNumber(this.iw, 2),
+            this.scaledImageWidth);*/
 
 
         if (this.isImageOutOfBounds === false) {
             //this.image.scale.x = this.prevImageScaleX;
             //this.image.scale.y = this.prevImageScaleY;
             //this.image.rotation = this.prevImageRotation;
+
+            var rotationRectanglePoints = Calculator.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calculator.getDegrees(this.image.rotation));
+            var rotationRectangleBounds = Calculator.getBoundsRectangle(rotationRectanglePoints);
+            var scale = Calculator.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
+            this.image.scale.x = scale.max;
+            this.image.scale.y = scale.max;
+
         } else {
             this.recordImageInfo();
         }
 
         this.vo.rotation = Calculator.getDegrees(this.image.rotation);
         this.vo.rotationScale = Calculator.getOneToOne(Math.abs(this.image.rotation), 0, this.vo.limitRotationRadian, 0, 1);
-
-        this.increaseWidth = this.vo.originalWidth * this.dsx;
-        this.increaseHeight = this.vo.originalHeight * this.dsy;
-        //this.scaledImageWidth = this.vo.originalWidth - this.increaseWidth;
-        //this.scaledImageHeight = this.vo.originalHeight - this.increaseHeight;
-        this.scaledImageWidth = this.vo.originalWidth - this.dw * this.dsx;
-        this.scaledImageHeight = this.vo.originalHeight - this.dh * this.dsy;
-
-        //console.log(this.vo.originalWidth, this.image.width, this.scaledImageWidth, this.vo.originalWidth * scale.max);
+        this.imageCenterX = this.image.x;
+        this.imageCenterY = this.image.y;
     }
 
 
     changeMove(e) {
-        this.image.x += e.change.x;
-        this.image.y += e.change.y;
 
-        console.log('changeMove', this.image.x, this.image.y);
+        if(this.isOut == false) {
+            this.image.x += e.change.x;
+            this.image.y += e.change.y;
+        } else {
+            //this.image.x += e.change.x * 0.3;
+            //this.image.y += e.change.y * 0.3;
+        }
+
+        console.log('isReachedLimitLine', this.isReachedLimitLine);
 
         if (this.isImageOutOfBounds === false) {
-            this.image.x = this.prevImageInfo.x;
-            this.image.y = this.prevImageInfo.y;
+
+            //this.image.x = this.prevImageInfo.x;
+            //this.image.y = this.prevImageInfo.y;
+            var x = this.prevImageInfo.x + e.change.x * Math.cos(this.image.rotation);
+            var y = this.prevImageInfo.y + e.change.x * Math.sin(this.image.rotation);
+            this.image.x = x;
+            this.image.y = y;
+
+
+            this.isOut = true;
+            if(this.returnX === -1) {
+                this.returnX = this.prevImageInfo.x;
+                this.returnY = this.prevImageInfo.y;
+            }
         } else {
+            this.returnX = -1;
+            this.returnY = -1;
+            this.isOut = false;
+
             this.recordImageInfo();
+        }
+    }
+
+
+    endMove(e) {
+        if(this.isOut) {
+            this.image.x = this.returnX;
+            this.image.y = this.returnY;
         }
     }
 
@@ -269,6 +378,36 @@ export class Cropper extends PIXI.Container {
         }
 
         return isInBounds;
+    }
+
+
+    get isReachedLimitLine() {
+        var isReached = false;
+        var image = this.image;
+        //var bounds = Calculator.getPointsByBounds(this.resizeUI.getBounds());
+        var bounds = [this.resizeUI.lt, this.resizeUI.rt, this.resizeUI.rb, this.resizeUI.lb];
+
+        var imagePoints = image.getGlobalBoundsPoints();
+        var lt = imagePoints.lt;
+        var rt = imagePoints.rt;
+        var rb = imagePoints.rb;
+        var lb = imagePoints.lb;
+
+        // 왼쪽 도달
+        if (Calculator.triangleArea(lb, lt, this.resizeUI.lt) > 0)
+            isReached = true;
+
+        if (Calculator.triangleArea(lb, lt, this.resizeUI.lb) > 0)
+            isReached = true;
+
+        // 오른쪽 도달
+        if (Calculator.triangleArea(rt, rb, this.resizeUI.rt) > 0)
+            isReached = true;
+
+        if (Calculator.triangleArea(rt, rb, this.resizeUI.rb) > 0)
+            isReached = true;
+
+        return isReached;
     }
 
 
