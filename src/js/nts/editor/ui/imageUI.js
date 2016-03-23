@@ -1,3 +1,5 @@
+import {Calc} from './../utils/Calculator';
+
 export class ImageUI extends PIXI.Container {
     constructor(imageElement) {
         super();
@@ -18,22 +20,22 @@ export class ImageUI extends PIXI.Container {
         this.image.y = -this.image.height / 2;
         this.addChild(this.image);
 
-        this.lt = new PIXI.Sprite();
-        this.rt = new PIXI.Sprite();
-        this.rb = new PIXI.Sprite();
-        this.lb = new PIXI.Sprite();
-        this.lt.x = this.image.x;
-        this.lt.y = this.image.y;
-        this.rt.x = this.image.x + this.image.width;
-        this.rt.y = this.image.y;
-        this.rb.x = this.image.x + this.image.width;
-        this.rb.y = this.image.y + this.image.height;
-        this.lb.x = this.image.x;
-        this.lb.y = this.image.y + this.image.height;
-        this.addChild(this.lt);
-        this.addChild(this.rt);
-        this.addChild(this.rb);
-        this.addChild(this.lb);
+        this.ltp = new PIXI.Sprite();
+        this.rtp = new PIXI.Sprite();
+        this.rbp = new PIXI.Sprite();
+        this.lbp = new PIXI.Sprite();
+        this.ltp.x = this.image.x;
+        this.ltp.y = this.image.y;
+        this.rtp.x = this.image.x + this.image.width;
+        this.rtp.y = this.image.y;
+        this.rbp.x = this.image.x + this.image.width;
+        this.rbp.y = this.image.y + this.image.height;
+        this.lbp.x = this.image.x;
+        this.lbp.y = this.image.y + this.image.height;
+        this.addChild(this.ltp);
+        this.addChild(this.rtp);
+        this.addChild(this.rbp);
+        this.addChild(this.lbp);
     }
 
 
@@ -43,16 +45,53 @@ export class ImageUI extends PIXI.Container {
      */
     getGlobalBoundsPoints() {
         return {
-            lt: this.toGlobal(this.lt.position),
-            rt: this.toGlobal(this.rt.position),
-            rb: this.toGlobal(this.rb.position),
-            lb: this.toGlobal(this.lb.position)
+            lt: this.lt,
+            rt: this.rt,
+            rb: this.rb,
+            lb: this.lb
         }
     }
 
-
-    getGlobalPoints() {
-        
+    toString() {
+        console.log(
+            'LT[' + Calc.digit(this.lt.x) + ', ' + Calc.digit(this.lt.y) + ']',
+            'RT[' + Calc.digit(this.rt.x) + ', ' + Calc.digit(this.rt.y) + ']',
+            'RB[' + Calc.digit(this.rb.x) + ', ' + Calc.digit(this.rb.y) + ']',
+            'LB[' + Calc.digit(this.lb.x) + ', ' + Calc.digit(this.lb.y) + ']'
+        )
     }
 
+    get lt() {
+        return this.toGlobal(this.ltp.position);
+    }
+
+    get rt() {
+        return this.toGlobal(this.rtp.position);
+    }
+
+    get rb() {
+        return this.toGlobal(this.rbp.position);
+    }
+
+    get lb() {
+        return this.toGlobal(this.lbp.position);
+    }
+
+
+
+    get left() {
+        return {a:this.lb, b:this.lt};
+    }
+
+    get top() {
+        return {a:this.lt, b:this.rt};
+    }
+
+    get right() {
+        return {a:this.rt, b:this.rb};
+    }
+
+    get bottom() {
+        return {a:this.rb, b:this.lb};
+    }
 }

@@ -59,7 +59,6 @@ export class ResizeUI extends PIXI.Container {
         this.rb.y = imageRect.y + imageRect.height + this.offset;
         this.lb.x = this.lt.x - this.offset;
         this.lb.y = this.rb.y + this.offset;
-
     }
 
     resizeControl() {
