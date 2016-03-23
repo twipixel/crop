@@ -1,10 +1,12 @@
 import {CornerShape} from './CornerShape';
 import {ControlArea} from './ControlArea';
+import {Calc} from './../utils/Calculator';
 
 export class ResizeUI extends PIXI.Container {
     constructor(canvas, originalImageWidth, originalImageHeight) {
         super();
         this.initialize(canvas, originalImageWidth, originalImageHeight);
+        this.addCornerDownEvent();
     }
 
 
@@ -41,6 +43,7 @@ export class ResizeUI extends PIXI.Container {
         this.addChild(this.rbControl);
         this.addChild(this.lbControl);
     }
+
 
 
     resize(imageRect) {
@@ -89,8 +92,6 @@ export class ResizeUI extends PIXI.Container {
     drawImageRect() {
         this.resizeImage.clear();
         this.resizeImage.lineStyle(2, 0x9e9e9e);
-        //this.imageRect.beginFill(0xFF3300, 0.2);
-        //this.imageRect.drawRect(boundsX, boundsY, boundsWidth, boundssHeight);
         this.resizeImage.moveTo(this.lt.x, this.lt.y);
         this.resizeImage.lineTo(this.rt.x, this.lt.y);
         this.resizeImage.lineTo(this.rt.x, this.rb.y);
@@ -98,4 +99,73 @@ export class ResizeUI extends PIXI.Container {
         this.resizeImage.lineTo(this.lt.x, this.lt.y);
         this.resizeImage.endFill();
     }
+
+
+
+    //////////////////////////////////////////////////////////////////////
+    // Event Handler
+    //////////////////////////////////////////////////////////////////////
+
+
+    onCornerDown(e) {
+        console.log('onCornerDown!');
+        this.dragStartX = this.prevDragX = e.data.global.x;
+        this.dragStartY = this.prevDragY = e.data.global.y;
+
+        this.addCornerMoveEvent();
+    }
+
+    onCornerMove(e) {
+        this.currentDragX = e.clientX;
+        this.currentDragY = e.clientY;
+
+
+        this.dx = this.currentDragX - this.prevDragX;
+        this.dy = this.currentDragY - this.prevDragY;
+
+        console.log('dx:' + Calc.digit(this.dx) + ',' + Calc.digit(this.dy));
+
+        this.prevDragX = this.currentDragX;
+        this.prevDragY = this.currentDragY;
+    }
+
+    onCornerUp(e) {
+        this.removeCornerMoveEvent();
+    }
+
+
+    //////////////////////////////////////////////////////////////////////
+    // Add / Remove MouseEvent
+    //////////////////////////////////////////////////////////////////////
+
+
+    addCornerDownEvent() {
+
+        this._cornerDownListener = this.onCornerDown.bind(this);
+        this.lt.on('mousedown', this._cornerDownListener);
+    }
+
+    removeCornerDownEvent() {
+        this.lt.off('mousedown', this._cornerDownListener);
+    }
+
+    addCornerMoveEvent() {
+        this._cornerMoveListener = this.onCornerMove.bind(this);
+        this._cornerUpListener = this.onCornerUp.bind(this);
+
+        window.document.addEventListener('mousemove', this._cornerMoveListener);
+        window.document.addEventListener('mouseup', this._cornerUpListener);
+    }
+
+    removeCornerMoveEvent() {
+        window.document.removeEventListener('mousemove', this._cornerMoveListener);
+        window.document.removeEventListener('mouseup', this._cornerUpListener);
+    }
+
+
+
+
+
+
+
 }
