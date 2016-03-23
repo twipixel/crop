@@ -1,4 +1,4 @@
-import {Calculator} from './../utils/Calculator';
+import {Calc} from './../utils/Calculator';
 
 export class RotateUI extends PIXI.Sprite {
     constructor(canvas) {
@@ -55,12 +55,12 @@ export class RotateUI extends PIXI.Sprite {
 
 
     onMouseDown(e) {
-        this.prevRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.data.global.x, y:e.data.global.y});
+        this.prevRotation = Calc.getRotation({x:this.centerX, y:this.centerY}, {x:e.data.global.x, y:e.data.global.y});
 
         this.emit('startRotation', {
             prevRotation: this.prevRotation,
             currentRotation: this.prevRotation,
-            currentRadian: Calculator.getRadians(this.prevRotation)
+            currentRadian: Calc.toRadians(this.prevRotation)
         });
 
         e.stopPropagation();
@@ -69,7 +69,7 @@ export class RotateUI extends PIXI.Sprite {
     }
 
     onMouseMove(e) {
-        this.currentRotation = Calculator.getRotation({x:this.centerX, y:this.centerY}, {x:e.clientX, y:e.clientY});
+        this.currentRotation = Calc.getRotation({x:this.centerX, y:this.centerY}, {x:e.clientX, y:e.clientY});
 
         this.change = this.currentRotation - this.prevRotation;
         this.absChange = (this.change < 0) ? this.change * -1 : this.change;
@@ -78,8 +78,8 @@ export class RotateUI extends PIXI.Sprite {
             this.emit('changeRotation', {
                 prevRotation: this.prevRotation,
                 currentRotation: this.currentRotation,
-                currentRadian: Calculator.getRadians(this.currentRotation),
-                change: Calculator.getRadians(this.change),
+                currentRadian: Calc.toRadians(this.currentRotation),
+                change: Calc.toRadians(this.change),
             });
         }
 

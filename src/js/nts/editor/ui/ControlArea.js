@@ -53,7 +53,6 @@ export class ControlArea extends PIXI.Sprite {
     }
 
     addMouseDownEvent() {
-        console.log('ControlArea.addMouseDownEvent()');
         this._mouseDownListener = this.onMouseDown.bind(this);
         this.on('mousedown', this._mouseDownListener);
     }
@@ -82,7 +81,7 @@ export class ControlArea extends PIXI.Sprite {
     }
 
     onMouseMove(e) {
-        console.log('ControlArea.' + this.type, e.clientX, e.clientY);
+        //console.log('ControlArea.' + this.type, e.clientX, e.clientY);
     }
 
     onMouseUp(e) {

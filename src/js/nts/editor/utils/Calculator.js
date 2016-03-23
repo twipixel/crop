@@ -1,30 +1,30 @@
-export class Calculator {
+export class Calc {
     constructor() {
 
     }
 
     static get DEG_TO_RAD() {
-        if (Calculator._DEG_TO_RAD)
-            return Calculator._DEG_TO_RAD;
+        if (Calc._DEG_TO_RAD)
+            return Calc._DEG_TO_RAD;
 
-        Calculator._DEG_TO_RAD = Math.PI / 180;
-        return Calculator._DEG_TO_RAD;
+        Calc._DEG_TO_RAD = Math.PI / 180;
+        return Calc._DEG_TO_RAD;
     }
 
     static get RAD_TO_DEG() {
-        if (Calculator._RAD_TO_DEG)
-            return Calculator._RAD_TO_DEG;
+        if (Calc._RAD_TO_DEG)
+            return Calc._RAD_TO_DEG;
 
-        Calculator._RAD_TO_DEG = 180 / Math.PI;
-        return Calculator._RAD_TO_DEG;
+        Calc._RAD_TO_DEG = 180 / Math.PI;
+        return Calc._RAD_TO_DEG;
     }
 
     static get DEG180_TO_RAD() {
-        if (Calculator._DEG180_TO_RAD)
-            return Calculator._DEG180_TO_RAD;
+        if (Calc._DEG180_TO_RAD)
+            return Calc._DEG180_TO_RAD;
 
-        Calculator._DEG180_TO_RAD = 180 * Math.PI / 180;
-        return Calculator._DEG180_TO_RAD;
+        Calc._DEG180_TO_RAD = 180 * Math.PI / 180;
+        return Calc._DEG180_TO_RAD;
     }
 
 
@@ -35,7 +35,7 @@ export class Calculator {
      * @returns {{x: number, y: number, width: number, height: number}}
      */
     static getImageSizeKeepAspectRatio(originalRect, resizeRect) {
-        var scale = Calculator.getScaleKeepAspectRatio(originalRect, resizeRect);
+        var scale = Calc.getScaleKeepAspectRatio(originalRect, resizeRect);
         var minScale = scale.min;
         var resizeWidth = minScale * originalRect.width;
         var resizeHeight = minScale * originalRect.height;
@@ -64,7 +64,7 @@ export class Calculator {
         var dx = mousePoint.x - centerPoint.x;
         var dy = mousePoint.y - centerPoint.y;
         var radians = Math.atan2(dy, dx);
-        var rotation = Calculator.getDegrees(radians);
+        var rotation = Calc.toDegrees(radians);
         //var rotation = Calculator.getDegrees(radians) + Calculator.getDegrees(Math.PI);
         //rotation = (rotation <= 0) ? 180 : -180;
         return rotation;
@@ -91,12 +91,12 @@ export class Calculator {
         return originalWidth * newHeight / originalHeight;
     }
 
-    static getRadians(degree) {
-        return degree * Calculator.DEG_TO_RAD;
+    static toRadians(degree) {
+        return degree * Calc.DEG_TO_RAD;
     }
 
-    static getDegrees(radians) {
-        return radians * Calculator.RAD_TO_DEG;
+    static toDegrees(radians) {
+        return radians * Calc.RAD_TO_DEG;
     }
 
     /**
@@ -158,7 +158,7 @@ export class Calculator {
          parseInt(point.x), parseInt(point.y)
          );*/
 
-        if (Calculator.triangleArea(lt, rt, point) > 0 || Calculator.triangleArea(rt, rb, point) > 0 || Calculator.triangleArea(rb, lb, point) > 0 || Calculator.triangleArea(lb, lt, point) > 0)
+        if (Calc.triangleArea(lt, rt, point) > 0 || Calc.triangleArea(rt, rb, point) > 0 || Calc.triangleArea(rb, lb, point) > 0 || Calc.triangleArea(lb, lt, point) > 0)
             return false;
         return true;
     }
@@ -167,16 +167,16 @@ export class Calculator {
     static getHitPoint(lt, rt, rb, lb, point) {
         var result = {isHitLeft: false, isHitRight: false, isHitTop: false, isHitBottom: false};
 
-        if (Calculator.triangleArea(lt, rt, point) > 0)
+        if (Calc.triangleArea(lt, rt, point) > 0)
             result.isHitTop = true;
 
-        if (Calculator.triangleArea(rt, rb, point) > 0)
+        if (Calc.triangleArea(rt, rb, point) > 0)
             result.isHitRight = true;
 
-        if (Calculator.triangleArea(rb, lb, point) > 0)
+        if (Calc.triangleArea(rb, lb, point) > 0)
             result.isHitBottom = true;
 
-        if (Calculator.triangleArea(lb, lt, point) > 0)
+        if (Calc.triangleArea(lb, lt, point) > 0)
             result.isHitLeft = true;
 
         return result;
@@ -193,7 +193,7 @@ export class Calculator {
     }
 
 
-    static digitNumber(convertNumber, digitNumber = 2) {
+    static digit(convertNumber, digitNumber = 1) {
         if (digitNumber === 0)
             digitNumber = 1;
 
@@ -234,10 +234,10 @@ export class Calculator {
      * @returns {{lt: ({x, y}|{x: (number|*), y: (number|*)}), rt: ({x, y}|{x: (number|*), y: (number|*)}), rb: ({x, y}|{x: (number|*), y: (number|*)}), lb: ({x, y}|{x: (number|*), y: (number|*)})}}
      */
     static getRotationRectanglePoints(pivot, rectanglePoints, angle) {
-        var lt = Calculator.getRotationPoint(pivot, rectanglePoints.lt, angle);
-        var rt = Calculator.getRotationPoint(pivot, rectanglePoints.rt, angle);
-        var rb = Calculator.getRotationPoint(pivot, rectanglePoints.rb, angle);
-        var lb = Calculator.getRotationPoint(pivot, rectanglePoints.lb, angle);
+        var lt = Calc.getRotationPoint(pivot, rectanglePoints.lt, angle);
+        var rt = Calc.getRotationPoint(pivot, rectanglePoints.rt, angle);
+        var rb = Calc.getRotationPoint(pivot, rectanglePoints.rb, angle);
+        var lb = Calc.getRotationPoint(pivot, rectanglePoints.lb, angle);
         return {lt: lt, rt: rt, rb: rb, lb: lb};
     }
 
@@ -257,10 +257,33 @@ export class Calculator {
     }
 
 
-
-    static pointToLineDistance(a, b, p) {
-        var normalLength = Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
-        return Math.abs((p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x)) / normalLength;
-        //return ((p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x)) / normalLength;
+    static sqr(x) {
+        return x * x;
     }
+
+    static dist2(a, b) {
+        return Calc.sqr(a.x - b.x) + Calc.sqr(a.y - b.y);
+    }
+
+    static getShortestDistancePoint(point, lineA, lineB) {
+        var l2 = Calc.dist2(lineA, lineB);
+        if (l2 == 0) return lineA;
+        var t = ((point.x - lineA.x) * (lineB.x - lineA.x) + (point.y - lineA.y) * (lineB.y - lineA.y)) / l2;
+        t = Math.max(0, Math.min(1, t));
+        return {x:lineA.x + t * (lineB.x - lineA.x), y:lineA.y + t * (lineB.y - lineA.y)};
+    }
+
+    static distToSegmentSquared(point, lineA, lineB) {
+        var distPoint = Calc.getShortestDistancePoint(point, lineA, lineB);
+        return Calc.dist2(point, distPoint);
+    }
+
+    static distToSegment(point, lineA, lineB) {
+        return Math.sqrt(Calc.distToSegmentSquared(point, lineA, lineB));
+    }
+
+    static getReturnPoint(point, distancePoint) {
+        return {x:point.x - distancePoint.x, y:point.y - distancePoint.y};
+    }
+
 }

@@ -1,4 +1,4 @@
-import {Calculator} from './../utils/Calculator';
+import {Calc} from './../utils/Calculator';
 
 export class MoveUI extends PIXI.Sprite {
     constructor(canvas) {
@@ -30,7 +30,6 @@ export class MoveUI extends PIXI.Sprite {
     }
 
     addMouseDownEvent() {
-        console.log('MoveUI.addMouseDownEvent()');
         this._mouseDownListener = this.onMouseDown.bind(this);
         this.on('mousedown', this._mouseDownListener);
     }

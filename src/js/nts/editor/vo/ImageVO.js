@@ -1,4 +1,4 @@
-import {Calculator} from './../utils/Calculator';
+import {Calc} from './../utils/Calculator';
 
 
 export class ImageVO {
@@ -22,7 +22,7 @@ export class ImageVO {
      * @returns {{x, y, width, height}|{width: number, height: number}}
      */
     getSizeByBounds(bounds) {
-        return Calculator.getImageSizeKeepAspectRatio(this.originalBounds, bounds);
+        return Calc.getImageSizeKeepAspectRatio(this.originalBounds, bounds);
     }
 
 
@@ -33,8 +33,8 @@ export class ImageVO {
      * @returns {{width: number, height: number}}
      */
     getImageMaxSize(imageWidth, imageHeight) {
-        var height = Calculator.getDiagonal(imageWidth, imageHeight);
-        var width = Calculator.getRectangleWidth(imageWidth, imageHeight, height);
+        var height = Calc.getDiagonal(imageWidth, imageHeight);
+        var width = Calc.getRectangleWidth(imageWidth, imageHeight, height);
         return {width: width, height: height}
     }
 
