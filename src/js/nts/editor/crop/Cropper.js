@@ -182,14 +182,50 @@ export class Cropper extends PIXI.Container {
             y:this.canvas.height / 2 - size.height / 2,
             width: size.width,
             height: size.height
-        }
+        };
+
+
+        var centerX = this.canvas.width / 2;
+        var centerY = this.canvas.height / 2;
+
+        // 중앙점 차이 구하기
+        var resizeRectX = resizeRect.x + resizeRect.width / 2;
+        var resizeRectY = resizeRect.y + resizeRect.height / 2;
+        var dx = centerX - resizeRectX;
+        var dy = centerY - resizeRectY;
+
+        console.log('DX[' + Calc.digit(dx) + ',' + Calc.digit(dy) + ']');
+
+        // 리사이즈 에서 커지는 사이즈 비율 구하기
+        var imageScaleX = changeResizeRect.width / resizeRect.width;
+        var imageSclaeY = changeResizeRect.height / resizeRect.height;
+        var scale = Math.max(imageScaleX, imageSclaeY);
+
+        console.log('Image X: ' + Calc.digit(this.image.lt.x) + ', -> X: ' + Calc.digit(this.image.rt.x) + ', W: ' + Calc.digit(this.image.rt.x - this.image.lt.x));
+        console.log('Image Y: ' + Calc.digit(this.image.lt.y) + ', -> Y: ' + Calc.digit(this.image.lb.y) + ', H: ' + Calc.digit(this.image.lb.y - this.image.lt.y));
+
+        console.log(
+            ' Point[' + Calc.digit(resizeRectX) + ',' + Calc.digit(resizeRectY) + ']\n',
+            'Rect[' + Calc.digit(resizeRect.width) + ',' + Calc.digit(resizeRect.height) + ']\n',
+            'Change[' + Calc.digit(changeResizeRect.width) + ',' + Calc.digit(changeResizeRect.height) + ']\n',
+            'Scale[' + Calc.digit(imageScaleX) + ',' + Calc.digit(imageSclaeY) + ']\n'
+        );
+
+        // 중앙점 비율 곱하기
+        var returnX = dx * scale;
+        var returnY = dy * scale;
+
+        // 위에서 구한 비율을 이미지 비율에 더해주기
+        this.image.scale.x = (imageScaleX);
+        this.image.scale.y = (imageSclaeY);
+
+        // 이미지를 중앙 좌표로 이동 시키기
+        this.image.x += returnX;
+        this.image.y += returnY;
+
 
         this.resizeUI.resetSize(changeResizeRect);
-
-
     }
-
-
 
 
     displayImageInfo() {
@@ -200,6 +236,9 @@ export class Cropper extends PIXI.Container {
             'Image[' + Calc.digit(this.image.width) + ',' + Calc.digit(this.image.height) + ']\n',
             'Scale[' + Calc.digit(this.image.scale.x) + ',' + Calc.digit(this.image.scale.y) + ']\n'
         );
+
+
+        //var bounds = this.getBounds();
     }
 
 

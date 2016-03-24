@@ -39,7 +39,7 @@ export class Calc {
         var minScale = scale.min;
         var resizeWidth = minScale * originalRect.width;
         var resizeHeight = minScale * originalRect.height;
-        return {x: 0, y: 0, width: resizeWidth, height: resizeHeight};
+        return {width: resizeWidth, height: resizeHeight};
     }
 
 
@@ -285,5 +285,7 @@ export class Calc {
     static getReturnPoint(point, distancePoint) {
         return {x:point.x - distancePoint.x, y:point.y - distancePoint.y};
     }
+
+
 
 }
