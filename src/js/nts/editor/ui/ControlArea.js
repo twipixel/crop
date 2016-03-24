@@ -17,7 +17,7 @@ export class ControlArea extends PIXI.Sprite {
         super();
         this.initialize(type);
         this.draw(type);
-        this.addMouseDownEvent();
+        //this.addMouseDownEvent();
     }
 
 
@@ -52,7 +52,7 @@ export class ControlArea extends PIXI.Sprite {
         this.graphics.endFill();
     }
 
-    addMouseDownEvent() {
+    /*addMouseDownEvent() {
         this._mouseDownListener = this.onMouseDown.bind(this);
         this.on('mousedown', this._mouseDownListener);
     }
@@ -87,6 +87,6 @@ export class ControlArea extends PIXI.Sprite {
     onMouseUp(e) {
         this.addMouseDownEvent();
         this.removeMouseMoveEvent();
-    }
+    }*/
 
 }

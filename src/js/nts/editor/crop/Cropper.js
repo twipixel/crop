@@ -77,13 +77,13 @@ export class Cropper extends PIXI.Container {
         this.bounds = new PIXI.Graphics();
         this.image = new ImageUI(this.imageElement);
         this.rotateUI = new RotateUI(this.canvas);
-        this.resizeUI = new ResizeUI(this.canvas, this.vo.originalWidth, this.vo.originalHeight);
         this.moveUI = new MoveUI(this.canvas);
+        this.resizeUI = new ResizeUI(this.canvas, this.vo.originalWidth, this.vo.originalHeight);
         this.addChild(this.bounds);
         this.addChild(this.image);
         this.addChild(this.rotateUI);
-        this.addChild(this.resizeUI);
         this.addChild(this.moveUI);
+        this.addChild(this.resizeUI);
     }
 
 
@@ -125,47 +125,32 @@ export class Cropper extends PIXI.Container {
 
 
     resizeImage(bounds, resizeImageRect) {
-
         var scale;
-
         // rotationScale는 변경되어야 합니다. 리사이즈 테스트를 위한 임시 코드
         if (this.vo.rotationScale == 0) {
             scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
-
             /*var o = this.vo.originalBounds;
              scale = Calculator.getScaleKeepAspectRatio(
              {width:o.width - 300, height:o.height - 300}, bounds);*/
-
             this.image.scale.x = scale.min;
             this.image.scale.y = scale.min;
 
         } else {
             scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
-
-            //scale = Calculator.getScaleKeepAspectRatio(
-            //{width:this.scaledImageWidth, height:this.scaledImageHeight}, bounds);
-
-            //this.vo.originalBounds, {width:bounds.width + this.dw, height:bounds.height + this.dh});
-
-            //this.vo.originalBounds, {width:bounds.width + this.iw, height:bounds.height + this.ih});
-
-            //{width: this.scaledImageWidth, height: this.scaledImageHeight}, bounds);
-
+            /*scale = Calculator.getScaleKeepAspectRatio(
+            {width:this.scaledImageWidth, height:this.scaledImageHeight}, bounds);*/
+            /*this.vo.originalBounds, {width:bounds.width + this.dw, height:bounds.height + this.dh});*/
+            /*this.vo.originalBounds, {width:bounds.width + this.iw, height:bounds.height + this.ih});*/
+            /*{width: this.scaledImageWidth, height: this.scaledImageHeight}, bounds);*/
             /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
              {width:this.canvas.width, height:this.canvas.height});*/
-
             /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
              {width:bounds.width + this.dw, height:bounds.height + this.dh});*/
-
-
             this.image.width = this.scaledImageWidth * scale.min;
             this.image.height = this.scaledImageHeight * scale.min;
         }
-
-
         this.image.x = this.canvas.width / 2;
         this.image.y = this.canvas.height / 2;
-
         this.recordImageInfo();
     }
 
@@ -173,6 +158,7 @@ export class Cropper extends PIXI.Container {
     zoomImage() {
 
     }
+
 
     displayImageInfo() {
         console.log(

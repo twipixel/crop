@@ -12,7 +12,7 @@ export class ResizeUI extends PIXI.Container {
 
     initialize(canvas, originalImageWidth, originalImageHeight) {
         this.canvas = canvas;
-        this.interactive = true;
+        //this.interactive = true;
         this.originalImageWidth = originalImageWidth;
         this.origianlImageHeight = originalImageHeight;
 
@@ -136,10 +136,16 @@ export class ResizeUI extends PIXI.Container {
 
 
     onCornerDown(e) {
+        console.log('1. onCornerDown');
+        e.stopPropagation();
+
         this.selectedTarget = e.target;
         this.dragStartX = this.prevDragX = e.data.global.x;
         this.dragStartY = this.prevDragY = e.data.global.y;
+
+
         this.addCornerMoveEvent();
+        this.removeCornerDownEvent();
 
         this.emit('cornerResizeStart', {
             target: this.selectedTarget,
@@ -168,6 +174,9 @@ export class ResizeUI extends PIXI.Container {
     }
 
     onCornerUp(e) {
+
+        console.log('3. onCornerUp');
+        this.addCornerDownEvent();
         this.removeCornerMoveEvent();
 
         this.emit('cornerResizeEnd', {
@@ -201,16 +210,16 @@ export class ResizeUI extends PIXI.Container {
     }
 
     addCornerMoveEvent() {
-        this._cornerMoveListener = this.onCornerMove.bind(this);
         this._cornerUpListener = this.onCornerUp.bind(this);
+        this._cornerMoveListener = this.onCornerMove.bind(this);
 
-        window.document.addEventListener('mousemove', this._cornerMoveListener);
         window.document.addEventListener('mouseup', this._cornerUpListener);
+        window.document.addEventListener('mousemove', this._cornerMoveListener);
     }
 
     removeCornerMoveEvent() {
-        window.document.removeEventListener('mousemove', this._cornerMoveListener);
         window.document.removeEventListener('mouseup', this._cornerUpListener);
+        window.document.removeEventListener('mousemove', this._cornerMoveListener);
     }
 
 
