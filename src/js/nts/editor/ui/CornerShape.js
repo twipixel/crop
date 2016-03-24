@@ -25,12 +25,17 @@ export class CornerShape extends PIXI.Sprite {
 
     initialize(type) {
         this.type = type;
+        this.interactive = true;
         this.graphics = new PIXI.Graphics();
+        this.buttonArea = new PIXI.Graphics();
         this.addChild(this.graphics);
+        this.addChild(this.buttonArea);
     }
 
 
     draw(type) {
+        this.drawButtonArea();
+
         switch (type) {
             case CornerShape.LEFT_TOP:
                 this.drawLeftTop();
@@ -45,6 +50,13 @@ export class CornerShape extends PIXI.Sprite {
                 this.drawLeftBottom();
                 break;
         }
+    }
+
+    drawButtonArea() {
+        this.buttonArea.clear();
+        this.buttonArea.beginFill(0x4285f4, 0.1);
+        this.buttonArea.drawRect(-16, -16, 32, 32);
+        this.buttonArea.endFill();
     }
 
     drawLeftTop() {

@@ -57,7 +57,7 @@ export class RotateUI extends PIXI.Sprite {
     onMouseDown(e) {
         this.prevRotation = Calc.getRotation({x:this.centerX, y:this.centerY}, {x:e.data.global.x, y:e.data.global.y});
 
-        this.emit('startRotation', {
+        this.emit('rotateStart', {
             prevRotation: this.prevRotation,
             currentRotation: this.prevRotation,
             currentRadian: Calc.toRadians(this.prevRotation)
@@ -75,7 +75,7 @@ export class RotateUI extends PIXI.Sprite {
         this.absChange = (this.change < 0) ? this.change * -1 : this.change;
 
         if(this.absChange < 100) {
-            this.emit('changeRotation', {
+            this.emit('rotateChange', {
                 prevRotation: this.prevRotation,
                 currentRotation: this.currentRotation,
                 currentRadian: Calc.toRadians(this.currentRotation),
@@ -87,6 +87,7 @@ export class RotateUI extends PIXI.Sprite {
     }
 
     onMouseUp(e) {
+        this.emit('rotateEnd');
         this.addMouseDownEvent();
         this.removeMouseMoveEvent();
     }

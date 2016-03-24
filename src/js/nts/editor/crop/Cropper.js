@@ -4,6 +4,7 @@ import {RotateUI} from './../ui/RotateUI';
 import {MoveUI} from './../ui/MoveUI';
 import {ImageUI} from './../ui/ImageUI';
 import {ImageVO} from './../vo/ImageVO';
+import {KeyCode} from './../const/KeyCode';
 
 
 export class Cropper extends PIXI.Container {
@@ -50,9 +51,16 @@ export class Cropper extends PIXI.Container {
         this.isOut = false;
         //////////////////////////////////////////////////////////////
 
-        window.document.addEventListener('keydown', function () {
-            console.clear();
-            console.log('[KEYDOWN, CLEAR]');
+        window.document.addEventListener('keyup', (e) => {
+            switch (e.keyCode) {
+                case KeyCode.SPACE:
+                    console.clear();
+                    break;
+
+                case KeyCode.R:
+                    this.zoomImage();
+                    break;
+            }
         });
 
         this.paddingX = 216;
@@ -80,11 +88,15 @@ export class Cropper extends PIXI.Container {
 
 
     addEvent() {
-        this.addImageMouseDownEvent();
-        this.rotateUI.on('changeRotation', this.changeRotation.bind(this));
-        this.rotateUI.on('startRotation', this.startRotation.bind(this));
-        this.moveUI.on('changeMove', this.changeMove.bind(this));
-        this.moveUI.on('endMove', this.endMove.bind(this));
+        this.moveUI.on('moveStart', this.moveStart.bind(this));
+        this.moveUI.on('moveChange', this.moveChange.bind(this));
+        this.moveUI.on('moveEnd', this.moveEnd.bind(this));
+        this.rotateUI.on('rotateStart', this.rotateStart.bind(this));
+        this.rotateUI.on('rotateChange', this.rotateChange.bind(this));
+        this.rotateUI.on('rotateStart', this.rotateStart.bind(this));
+        this.resizeUI.on('cornerResizeStart', this.cornerResizeStart.bind(this));
+        this.resizeUI.on('cornerResizeChange', this.cornerResizeChange.bind(this));
+        this.resizeUI.on('cornerResizeEnd', this.cornerResizeEnd.bind(this));
     }
 
 
@@ -158,7 +170,92 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    startRotation(e) {
+    zoomImage() {
+
+    }
+
+    displayImageInfo() {
+        console.log(
+            'X[' + Calc.digit(this.image.x) + ', ' + Calc.digit(this.image.y) + ']',
+            'W[' + Calc.digit(this.image.width) + ', ' + Calc.digit(this.image.height) + ']',
+            'S[' + Calc.digit(this.image.scale.x) + ', ' + Calc.digit(this.image.scale.y) + ']',
+            'R[' + Calc.digit(Calc.toDegrees(this.image.rotation)) + ', ' + Calc.digit(this.image.rotation) + ']'
+        );
+
+        this.image.toString();
+    }
+
+
+    recordImageInfo() {
+        this.prevImageInfo.x = this.image.x;
+        this.prevImageInfo.y = this.image.y;
+        this.prevImageInfo.scale = this.image.scale;
+        this.prevImageInfo.width = this.image.width;
+        this.prevImageInfo.height = this.image.height;
+        this.prevImageInfo.rotation = this.image.rotation;
+    }
+
+
+    drawBounds(bounds) {
+        this.bounds.clear();
+        this.bounds.lineStyle(1, 0xff3300, 0.4);
+        this.bounds.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.bounds.endFill();
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////
+    // Event Handler
+    //////////////////////////////////////////////////////////////////////////
+
+
+    moveStart(e) {
+        console.log('moveStart');
+    }
+
+    moveChange(e) {
+        if (this.isOut == false) {
+            this.image.x += e.change.x;
+            this.image.y += e.change.y;
+        } else {
+            //this.image.x += e.change.x * 0.3;
+            //this.image.y += e.change.y * 0.3;
+        }
+
+        console.log('isReachedLimitLine', this.isReachedLimitLine);
+
+        if (this.isImageOutOfBounds === false) {
+            //this.image.x = this.prevImageInfo.x;
+            //this.image.y = this.prevImageInfo.y;
+            var x = this.prevImageInfo.x + e.change.x * Math.cos(this.image.rotation);
+            var y = this.prevImageInfo.y + e.change.x * Math.sin(this.image.rotation);
+            this.image.x = x;
+            this.image.y = y;
+
+            this.isOut = true;
+            if (this.returnX === -1) {
+                this.returnX = this.prevImageInfo.x;
+                this.returnY = this.prevImageInfo.y;
+            }
+        } else {
+            this.returnX = -1;
+            this.returnY = -1;
+            this.isOut = false;
+
+            this.recordImageInfo();
+        }
+    }
+
+
+    moveEnd(e) {
+        /*if (this.isOut) {
+         this.image.x = this.returnX;
+         this.image.y = this.returnY;
+         }*/
+    }
+
+
+    rotateStart(e) {
         this.imageScaleX = this.image.scale.x;
         this.imageScaleY = this.image.scale.y;
         this.imageWidth = this.image.width;
@@ -173,7 +270,7 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    changeRotation(e) {
+    rotateChange(e) {
         this.image.rotation += e.change;
 
         if (this.image.rotation < this.vo.minRotationRadian)
@@ -301,133 +398,28 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    displayImageInfo() {
-        console.log(
-            'X[' + Calc.digit(this.image.x) + ', ' + Calc.digit(this.image.y) + ']',
-            'W[' + Calc.digit(this.image.width) + ', ' + Calc.digit(this.image.height) + ']',
-            'S[' + Calc.digit(this.image.scale.x) + ', ' + Calc.digit(this.image.scale.y) + ']',
-            'R[' + Calc.digit(Calc.toDegrees(this.image.rotation)) + ', ' + Calc.digit(this.image.rotation) + ']'
-        );
-
-        this.image.toString();
+    rotateEnd(e) {
+        console.log('rotateEnd');
     }
 
 
-    changeMove(e) {
-        if (this.isOut == false) {
-            this.image.x += e.change.x;
-            this.image.y += e.change.y;
-        } else {
-            //this.image.x += e.change.x * 0.3;
-            //this.image.y += e.change.y * 0.3;
-        }
-
-        console.log('isReachedLimitLine', this.isReachedLimitLine);
-
-        if (this.isImageOutOfBounds === false) {
-            //this.image.x = this.prevImageInfo.x;
-            //this.image.y = this.prevImageInfo.y;
-            var x = this.prevImageInfo.x + e.change.x * Math.cos(this.image.rotation);
-            var y = this.prevImageInfo.y + e.change.x * Math.sin(this.image.rotation);
-            this.image.x = x;
-            this.image.y = y;
-
-            this.isOut = true;
-            if (this.returnX === -1) {
-                this.returnX = this.prevImageInfo.x;
-                this.returnY = this.prevImageInfo.y;
-            }
-        } else {
-            this.returnX = -1;
-            this.returnY = -1;
-            this.isOut = false;
-
-            this.recordImageInfo();
-        }
+    cornerResizeStart(e) {
+        console.log('resizeStart', e.target);
     }
 
+    cornerResizeChange(e) {
+        console.log('reszieChange', e.target);
 
-    endMove(e) {
-        /*if (this.isOut) {
-            this.image.x = this.returnX;
-            this.image.y = this.returnY;
-        }*/
+        var target = e.target;
+        target.x += e.dx;
+        target.y += e.dy;
+
+        this.resizeUI.cornerResize(target);
     }
 
-
-    recordImageInfo() {
-        this.prevImageInfo.x = this.image.x;
-        this.prevImageInfo.y = this.image.y;
-        this.prevImageInfo.scale = this.image.scale;
-        this.prevImageInfo.width = this.image.width;
-        this.prevImageInfo.height = this.image.height;
-        this.prevImageInfo.rotation = this.image.rotation;
+    cornerResizeEnd(e) {
+        console.log('resizeEnd', e.target);
     }
-
-
-    drawBounds(bounds) {
-        this.bounds.clear();
-        this.bounds.lineStyle(1, 0xff3300, 0.4);
-        this.bounds.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
-        this.bounds.endFill();
-    }
-
-
-    //////////////////////////////////////////////////////////////////////////
-    // MouseEvent
-    //////////////////////////////////////////////////////////////////////////
-
-
-    addImageMouseDownEvent() {
-        this.recordImageInfo();
-        this._imageMouseDownListener = this.onImageDown.bind(this);
-        this.image.on('mousedown', this._imageMouseDownListener);
-    }
-
-
-    removeImageMouseDownEvent() {
-        this.image.off('mousedown', this._imageMouseDownListener);
-    }
-
-
-    addImageMouseMoveEvent() {
-        this._imageMouseMoveListener = this.onImageMove.bind(this);
-        this._imageMouseUpListener = this.onImageUp.bind(this);
-
-        window.document.addEventListener('mousemove', this._imageMouseMoveListener);
-        window.document.addEventListener('mouseup', this._imageMouseUpListener);
-    }
-
-
-    removeImageMouseMoveEvent() {
-        window.document.removeEventListener('mousemove', this._imageMouseMoveListener);
-        window.document.removeEventListener('mouseup', this._imageMouseUpListener);
-    }
-
-
-    onImageDown(e) {
-        this.imageScaleX = this.image.scale.x;
-        this.imageScaleY = this.image.scale.y;
-        this.isRotationScaleZero = (this.vo.rotationScale === 0);
-        console.log('isRotationScaleZero', this.isRotationScaleZero, this.imageScaleX, this.imageScaleY);
-
-        e.stopPropagation();
-        this.addImageMouseMoveEvent();
-        this.removeImageMouseDownEvent();
-    }
-
-
-    onImageMove(e) {
-        this.lastImageX = this.image.x;
-        this.lastImageY = this.image.y;
-    }
-
-
-    onImageUp(e) {
-        this.addImageMouseDownEvent();
-        this.removeImageMouseMoveEvent();
-    }
-
 
     //////////////////////////////////////////////////////////////////////////
     // Getter & Setter

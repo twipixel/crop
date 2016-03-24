@@ -54,6 +54,8 @@ export class MoveUI extends PIXI.Sprite {
     onMouseDown(e) {
         this.prevMousePoint = {x:e.data.global.x, y:e.data.global.y};
 
+        this.emit('moveStart');
+
         e.stopPropagation();
         this.addMouseMoveEvent();
         this.removeMouseDownEvent();
@@ -67,7 +69,7 @@ export class MoveUI extends PIXI.Sprite {
             y:this.currentMousePoint.y - this.prevMousePoint.y
         };
 
-        this.emit('changeMove', {
+        this.emit('moveChange', {
             prevMousePoint: this.prevMousePoint,
             currentMousePoint: this.currentMousePoint,
             change: this.change,
@@ -78,7 +80,7 @@ export class MoveUI extends PIXI.Sprite {
 
     onMouseUp(e) {
 
-        this.emit('endMove');
+        this.emit('moveEnd');
 
         this.addMouseDownEvent();
         this.removeMouseMoveEvent();
