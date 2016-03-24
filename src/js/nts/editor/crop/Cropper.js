@@ -55,6 +55,7 @@ export class Cropper extends PIXI.Container {
             switch (e.keyCode) {
                 case KeyCode.SPACE:
                     console.clear();
+                    this.displayImageInfo();
                     break;
 
                 case KeyCode.R:
@@ -166,22 +167,24 @@ export class Cropper extends PIXI.Container {
         var ow = this.vo.originalWidth;
         var oh = this.vo.originalHeight;
 
-        console.log('RESIZEUI:', resizeRect.x, resizeRect.y, resizeRect.width, resizeRect.height);
+        var size = Calc.getImageSizeKeepAspectRatio(resizeRect, bounds);
 
-        //var scale = Calc.getScaleKeepAspectRatio(resizeRect, bounds);
-        var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
-        var scaleWidth = this.resizeUI.width * scale.min;
-        var scaleHeight = this.resizeUI.height * scale.min;
-
-
-        this.resizeUI.resetSize(
-            {
-                x:this.canvas.width / 2 - scaleWidth / 2,
-                y:this.canvas.height / 2 - scaleHeight / 2,
-                width: scaleWidth,
-                height: scaleHeight
-            }
+        console.log(
+            ' RESIZE:', Calc.digit(resizeRect.width), Calc.digit(resizeRect.height), '\n',
+            'ScaleWidth', size.width,
+            'ScaleHeight', size.height
         );
+
+        this.displayImageInfo();
+
+        var changeResizeRect = {
+            x:this.canvas.width / 2 - size.width / 2,
+            y:this.canvas.height / 2 - size.height / 2,
+            width: size.width,
+            height: size.height
+        }
+
+        this.resizeUI.resetSize(changeResizeRect);
 
 
     }
@@ -191,13 +194,12 @@ export class Cropper extends PIXI.Container {
 
     displayImageInfo() {
         console.log(
-            'X[' + Calc.digit(this.image.x) + ', ' + Calc.digit(this.image.y) + ']',
-            'W[' + Calc.digit(this.image.width) + ', ' + Calc.digit(this.image.height) + ']',
-            'S[' + Calc.digit(this.image.scale.x) + ', ' + Calc.digit(this.image.scale.y) + ']',
-            'R[' + Calc.digit(Calc.toDegrees(this.image.rotation)) + ', ' + Calc.digit(this.image.rotation) + ']'
+            ' Canvas[' + Calc.digit(this.canvas.width) + ',' + Calc.digit(this.canvas.height) + ']\n',
+            'ORIGINAL[' + Calc.digit(this.vo.originalWidth) + ',' + Calc.digit(this.vo.originalHeight) + ']\n',
+            'Bounds[' + Calc.digit(this.getBounds().width) + ',' + Calc.digit(this.getBounds().height) + ']\n',
+            'Image[' + Calc.digit(this.image.width) + ',' + Calc.digit(this.image.height) + ']\n',
+            'Scale[' + Calc.digit(this.image.scale.x) + ',' + Calc.digit(this.image.scale.y) + ']\n'
         );
-
-        this.image.toString();
     }
 
 
@@ -423,8 +425,6 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeChange(e) {
-        console.log('reszieChange', e.target);
-
         var target = e.target;
         target.x += e.dx;
         target.y += e.dy;
@@ -433,7 +433,7 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeEnd(e) {
-        console.log('resizeEnd', e.target);
+        console.log('resizeEnd');
         this.zoomImage();
     }
 

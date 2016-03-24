@@ -22,10 +22,10 @@ export class ResizeUI extends PIXI.Container {
         this.bottomControl = new ControlArea(ControlArea.ROW);
         this.leftControl = new ControlArea(ControlArea.COL);
         this.rightControl = new ControlArea(ControlArea.COL);
-        this.ltControl = new ControlArea(ControlArea.CORNER);
+        /*this.ltControl = new ControlArea(ControlArea.CORNER);
         this.rtControl = new ControlArea(ControlArea.CORNER);
         this.rbControl = new ControlArea(ControlArea.CORNER);
-        this.lbControl = new ControlArea(ControlArea.CORNER);
+        this.lbControl = new ControlArea(ControlArea.CORNER);*/
         this.lt = new CornerShape(CornerShape.LEFT_TOP);
         this.rt = new CornerShape(CornerShape.RIGHT_TOP);
         this.rb = new CornerShape(CornerShape.RIGHT_BOTTOM);
@@ -35,10 +35,10 @@ export class ResizeUI extends PIXI.Container {
         this.addChild(this.bottomControl);
         this.addChild(this.leftControl);
         this.addChild(this.rightControl);
-        this.addChild(this.ltControl);
+        /*this.addChild(this.ltControl);
         this.addChild(this.rtControl);
         this.addChild(this.rbControl);
-        this.addChild(this.lbControl);
+        this.addChild(this.lbControl);*/
         this.addChild(this.lt);
         this.addChild(this.rt);
         this.addChild(this.rb);
@@ -80,14 +80,14 @@ export class ResizeUI extends PIXI.Container {
         this.rightControl.y = this.rt.y;
         this.rightControl.height = this.leftControl.height;
 
-        this.ltControl.x = this.lt.x;
+        /*this.ltControl.x = this.lt.x;
         this.ltControl.y = this.lt.y;
         this.rtControl.x = this.rt.x;
         this.rtControl.y = this.rt.y;
         this.rbControl.x = this.rb.x;
         this.rbControl.y = this.rb.y;
         this.lbControl.x = this.lb.x;
-        this.lbControl.y = this.lb.y;
+        this.lbControl.y = this.lb.y;*/
     }
 
 
