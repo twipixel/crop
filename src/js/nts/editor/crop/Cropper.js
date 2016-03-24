@@ -129,30 +129,10 @@ export class Cropper extends PIXI.Container {
 
 
     resizeImage(bounds, resizeImageRect) {
-        var scale;
-        // rotationScale는 변경되어야 합니다. 리사이즈 테스트를 위한 임시 코드
-        if (this.vo.rotationScale == 0) {
-            scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
-            /*var o = this.vo.originalBounds;
-             scale = Calculator.getScaleKeepAspectRatio(
-             {width:o.width - 300, height:o.height - 300}, bounds);*/
-            this.image.scale.x = scale.min;
-            this.image.scale.y = scale.min;
+        var size = Calc.getImageSizeKeepAspectRatio(this.vo.originalBounds, bounds);
+        this.image.width = size.width;
+        this.image.height = size.height;
 
-        } else {
-            scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
-            /*scale = Calculator.getScaleKeepAspectRatio(
-            {width:this.scaledImageWidth, height:this.scaledImageHeight}, bounds);*/
-            /*this.vo.originalBounds, {width:bounds.width + this.dw, height:bounds.height + this.dh});*/
-            /*this.vo.originalBounds, {width:bounds.width + this.iw, height:bounds.height + this.ih});*/
-            /*{width: this.scaledImageWidth, height: this.scaledImageHeight}, bounds);*/
-            /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
-             {width:this.canvas.width, height:this.canvas.height});*/
-            /*{width:this.scaledImageWidth, height:this.scaledImageHeight},
-             {width:bounds.width + this.dw, height:bounds.height + this.dh});*/
-            this.image.width = this.scaledImageWidth * scale.min;
-            this.image.height = this.scaledImageHeight * scale.min;
-        }
         this.image.x = this.canvas.width / 2;
         this.image.y = this.canvas.height / 2;
         this.recordImageInfo();
@@ -169,10 +149,15 @@ export class Cropper extends PIXI.Container {
         var centerX = this.canvas.width / 2;
         var centerY = this.canvas.height / 2;
 
+
+
+
         var image = this.image;
         var bounds = this.getBounds();
-        var rubberband = this.resizeUI.bounds;
 
+        var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
+
+        var rubberband = this.resizeUI.bounds;
         var newRubberband = Calc.getImageSizeKeepAspectRatio(rubberband, bounds);
         newRubberband.x = this.canvas.width / 2 - newRubberband.width / 2;
         newRubberband.y = this.canvas.height / 2 - newRubberband.height / 2;
@@ -186,6 +171,9 @@ export class Cropper extends PIXI.Container {
         this.displayImageInfo();
 
 
+
+
+
         // 기존 러버 밴드 위치, 사이즈
         // 바뀐 러버 밴드 위치, 사이즈
         // 기존 러버 밴드와 바뀐 러버 밴드 비율
@@ -194,13 +182,12 @@ export class Cropper extends PIXI.Container {
 
         console.log('Rubberband: [' + Calc.digit(rubberband.x) + ',' + Calc.digit(rubberband.y) + '], [' + Calc.digit(rubberband.width) + ',' + Calc.digit(rubberband.height) + ']');
         console.log('NewRubberband: [' + Calc.digit(newRubberband.x) + ',' + Calc.digit(newRubberband.y) + '], [' + Calc.digit(newRubberband.width) + ',' + Calc.digit(newRubberband.height) + ']');
-        console.log('Rubber Scale X: ' + Calc.digit(scaleX) + ', Y:' + Calc.digit(scaleY));
         console.log('Image: [' + Calc.digit(image.x) + ',' + Calc.digit(image.y) + '], [' + Calc.digit(image.width) + ',' + Calc.digit(image.height) + ']');
         console.log('Image Scale X: ' + Calc.digit(image.scale.x) + ', Y:' + Calc.digit(image.scale.y));
 
         // 위에서 구한 비율을 이미지 비율에 더해주기
-        this.image.scale.x = scale;
-        this.image.scale.y = scale;
+        //this.image.scale.x = scale;
+        //this.image.scale.y = scale;
 
 
         this.resizeUI.setSize(newRubberband);
@@ -315,30 +302,20 @@ export class Cropper extends PIXI.Container {
         if (this.image.rotation > this.vo.maxRotationRadian)
             this.image.rotation = this.vo.maxRotationRadian;
 
-        // TODO 테스트 코드
-        /*this.dsx = scale.max - this.imageScaleX;
-         this.dsy = scale.max - this.imageScaleY;
-         this.dw = rotationRectangleBounds.width - this.imageWidth;
-         this.dh = rotationRectangleBounds.height - this.imageHeight;
-         this.iw = this.dw * this.dsx;
-         this.ih = this.dh * this.dsy;
-         this.scaledImageWidth = this.vo.originalWidth + this.dw;
-         this.scaledImageHeight = this.vo.originalHeight + this.dh;
-         console.log('[', this.vo.originalWidth, ']',
-         Calculator.digitNumber(this.dw, 2),
-         Calculator.digitNumber(this.dsx, 2),
-         Calculator.digitNumber(this.iw, 2),
-         this.scaledImageWidth);*/
-
 
         if (this.isImageOutOfBounds === false) {
             var rotationRectanglePoints = Calc.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calc.toDegrees(this.image.rotation));
             var rotationRectangleBounds = Calc.getBoundsRectangle(rotationRectanglePoints);
 
             // TODO 스케일 체크 필요
-            var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
+            /*var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
             this.image.scale.x = scale.max;
-            this.image.scale.y = scale.max;
+            this.image.scale.y = scale.max;*/
+
+            var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
+            this.image.width = scale.max * this.vo.originalBounds.width;
+            this.image.height = scale.max * this.vo.originalBounds.height;
+
 
             var lt = this.image.lt;
             var rt = this.image.rt;
@@ -421,9 +398,9 @@ export class Cropper extends PIXI.Container {
             if (this.isRotationScaleZero) {
                 var rotationRectanglePoints = Calc.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calc.toDegrees(this.image.rotation));
                 var rotationRectangleBounds = Calc.getBoundsRectangle(rotationRectanglePoints);
-                var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
+                /*var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
                 this.image.scale.x = scale.max;
-                this.image.scale.y = scale.max;
+                this.image.scale.y = scale.max;*/
             }
 
             this.recordImageInfo();
