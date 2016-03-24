@@ -156,6 +156,14 @@ export class Cropper extends PIXI.Container {
 
 
     zoomImage() {
+        var bounds = this.getBounds();
+        var resizeRect = this.resizeUI.bounds;
+
+        console.log(resizeRect.x, resizeRect.y, resizeRect.width, resizeRect.height);
+
+        var frameRect = Calc.getImageSizeKeepAspectRatio(this.vo.originalBounds, resizeRect);
+
+        console.log(frameRect.width, frameRect.height);
 
     }
 
@@ -499,6 +507,12 @@ export class Cropper extends PIXI.Container {
 
 
     getBounds(canvasWidth, canvasHeight) {
+        if(canvasWidth == null)
+            canvasWidth = this.canvas.width;
+
+        if(canvasHeight == null)
+            canvasHeight = this.canvas.height;
+
         var boundsWidth = canvasWidth - this.paddingX;
         var boundsHeight = canvasHeight - this.paddingY;
         var boundsX = canvasWidth / 2 - boundsWidth / 2;

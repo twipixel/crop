@@ -188,7 +188,7 @@ export class ResizeUI extends PIXI.Container {
 
 
     //////////////////////////////////////////////////////////////////////
-    // Add / Remove MouseEvent
+    // Add & Remove MouseEvent
     //////////////////////////////////////////////////////////////////////
 
 
@@ -225,7 +225,19 @@ export class ResizeUI extends PIXI.Container {
 
 
 
+    //////////////////////////////////////////////////////////////////////
+    // Getter & Setter
+    //////////////////////////////////////////////////////////////////////
 
+
+    get bounds() {
+        return {
+            x:this.lt.x,
+            y:this.lt.y,
+            width:this.rt.x - this.lt.x,
+            height:this.rb.y - this.rt.y
+        }
+    }
 
 
 }
