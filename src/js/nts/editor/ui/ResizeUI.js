@@ -130,6 +130,26 @@ export class ResizeUI extends PIXI.Container {
     }
 
 
+    resetSize(rect) {
+        var x = rect.x;
+        var y = rect.y;
+        var width = rect.width;
+        var height = rect.height;
+
+        console.log('resetSize(',Calc.digit(x), Calc.digit(y), Calc.digit(width), Calc.digit(height),')');
+
+        this.lt.x = x;
+        this.lt.y = y;
+        this.rt.x = x + width;
+        this.rt.y = y;
+        this.rb.x = this.rt.x;
+        this.rb.y = y + height;
+        this.lb.x = x;
+        this.lb.y = this.rb.y;
+
+        this.drawImageRect();
+    }
+
     //////////////////////////////////////////////////////////////////////
     // Event Handler
     //////////////////////////////////////////////////////////////////////

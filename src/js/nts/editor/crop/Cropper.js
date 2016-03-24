@@ -159,13 +159,34 @@ export class Cropper extends PIXI.Container {
         var bounds = this.getBounds();
         var resizeRect = this.resizeUI.bounds;
 
-        console.log(resizeRect.x, resizeRect.y, resizeRect.width, resizeRect.height);
+        var sx = this.image.scale.x;
+        var sy = this.image.scale.y;
+        var w = this.image.width;
+        var h = this.image.height;
+        var ow = this.vo.originalWidth;
+        var oh = this.vo.originalHeight;
 
-        var frameRect = Calc.getImageSizeKeepAspectRatio(this.vo.originalBounds, resizeRect);
+        console.log('RESIZEUI:', resizeRect.x, resizeRect.y, resizeRect.width, resizeRect.height);
 
-        console.log(frameRect.width, frameRect.height);
+        //var scale = Calc.getScaleKeepAspectRatio(resizeRect, bounds);
+        var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
+        var scaleWidth = this.resizeUI.width * scale.min;
+        var scaleHeight = this.resizeUI.height * scale.min;
+
+
+        this.resizeUI.resetSize(
+            {
+                x:this.canvas.width / 2 - scaleWidth / 2,
+                y:this.canvas.height / 2 - scaleHeight / 2,
+                width: scaleWidth,
+                height: scaleHeight
+            }
+        );
+
 
     }
+
+
 
 
     displayImageInfo() {
@@ -413,6 +434,7 @@ export class Cropper extends PIXI.Container {
 
     cornerResizeEnd(e) {
         console.log('resizeEnd', e.target);
+        this.zoomImage();
     }
 
     //////////////////////////////////////////////////////////////////////////
