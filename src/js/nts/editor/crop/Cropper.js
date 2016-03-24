@@ -106,6 +106,9 @@ export class Cropper extends PIXI.Container {
     }
 
 
+
+
+
     resize(canvasWidth, canvasHeight) {
         var bounds = this.getBounds(canvasWidth, canvasHeight);
 
@@ -157,78 +160,55 @@ export class Cropper extends PIXI.Container {
 
 
     zoomImage() {
-        var bounds = this.getBounds();
-        var resizeRect = this.resizeUI.bounds;
-
-        var sx = this.image.scale.x;
-        var sy = this.image.scale.y;
         var w = this.image.width;
         var h = this.image.height;
+        var sx = this.image.scale.x;
+        var sy = this.image.scale.y;
         var ow = this.vo.originalWidth;
         var oh = this.vo.originalHeight;
-
-        var size = Calc.getImageSizeKeepAspectRatio(resizeRect, bounds);
-
-        console.log(
-            ' RESIZE:', Calc.digit(resizeRect.width), Calc.digit(resizeRect.height), '\n',
-            'ScaleWidth', size.width,
-            'ScaleHeight', size.height
-        );
-
-        this.displayImageInfo();
-
-        var changeResizeRect = {
-            x:this.canvas.width / 2 - size.width / 2,
-            y:this.canvas.height / 2 - size.height / 2,
-            width: size.width,
-            height: size.height
-        };
-
-
         var centerX = this.canvas.width / 2;
         var centerY = this.canvas.height / 2;
 
-        // 중앙점 차이 구하기
-        var resizeRectX = resizeRect.x + resizeRect.width / 2;
-        var resizeRectY = resizeRect.y + resizeRect.height / 2;
-        var dx = centerX - resizeRectX;
-        var dy = centerY - resizeRectY;
+        var image = this.image;
+        var bounds = this.getBounds();
+        var rubberband = this.resizeUI.bounds;
 
-        console.log('DX[' + Calc.digit(dx) + ',' + Calc.digit(dy) + ']');
+        var newRubberband = Calc.getImageSizeKeepAspectRatio(rubberband, bounds);
+        newRubberband.x = this.canvas.width / 2 - newRubberband.width / 2;
+        newRubberband.y = this.canvas.height / 2 - newRubberband.height / 2;
+        var rubberbandCenterX = rubberband.x + rubberband.width / 2;
+        var rubberbandCenterY = rubberband.y + rubberband.height / 2;
 
-        // 리사이즈 에서 커지는 사이즈 비율 구하기
-        var imageScaleX = changeResizeRect.width / resizeRect.width;
-        var imageSclaeY = changeResizeRect.height / resizeRect.height;
-        var scale = Math.max(imageScaleX, imageSclaeY);
+        // 처음 리사이즈 시 사각형의 실제 사이즈
 
-        console.log('Image X: ' + Calc.digit(this.image.lt.x) + ', -> X: ' + Calc.digit(this.image.rt.x) + ', W: ' + Calc.digit(this.image.rt.x - this.image.lt.x));
-        console.log('Image Y: ' + Calc.digit(this.image.lt.y) + ', -> Y: ' + Calc.digit(this.image.lb.y) + ', H: ' + Calc.digit(this.image.lb.y - this.image.lt.y));
 
-        console.log(
-            ' Point[' + Calc.digit(resizeRectX) + ',' + Calc.digit(resizeRectY) + ']\n',
-            'Rect[' + Calc.digit(resizeRect.width) + ',' + Calc.digit(resizeRect.height) + ']\n',
-            'Change[' + Calc.digit(changeResizeRect.width) + ',' + Calc.digit(changeResizeRect.height) + ']\n',
-            'Scale[' + Calc.digit(imageScaleX) + ',' + Calc.digit(imageSclaeY) + ']\n'
-        );
 
-        // 중앙점 비율 곱하기
-        var returnX = dx * scale;
-        var returnY = dy * scale;
+        this.displayImageInfo();
+
+
+        // 기존 러버 밴드 위치, 사이즈
+        // 바뀐 러버 밴드 위치, 사이즈
+        // 기존 러버 밴드와 바뀐 러버 밴드 비율
+        // 이미지 위치, 사이즈
+        // 이미지 스케일
+
+        console.log('Rubberband: [' + Calc.digit(rubberband.x) + ',' + Calc.digit(rubberband.y) + '], [' + Calc.digit(rubberband.width) + ',' + Calc.digit(rubberband.height) + ']');
+        console.log('NewRubberband: [' + Calc.digit(newRubberband.x) + ',' + Calc.digit(newRubberband.y) + '], [' + Calc.digit(newRubberband.width) + ',' + Calc.digit(newRubberband.height) + ']');
+        console.log('Rubber Scale X: ' + Calc.digit(scaleX) + ', Y:' + Calc.digit(scaleY));
+        console.log('Image: [' + Calc.digit(image.x) + ',' + Calc.digit(image.y) + '], [' + Calc.digit(image.width) + ',' + Calc.digit(image.height) + ']');
+        console.log('Image Scale X: ' + Calc.digit(image.scale.x) + ', Y:' + Calc.digit(image.scale.y));
 
         // 위에서 구한 비율을 이미지 비율에 더해주기
-        this.image.scale.x = (imageScaleX);
-        this.image.scale.y = (imageSclaeY);
-
-        // 이미지를 중앙 좌표로 이동 시키기
-        this.image.x += returnX;
-        this.image.y += returnY;
+        this.image.scale.x = scale;
+        this.image.scale.y = scale;
 
 
-        this.resizeUI.resetSize(changeResizeRect);
+        this.resizeUI.setSize(newRubberband);
     }
 
 
     displayImageInfo() {
+        console.log('------------------------------------');
         console.log(
             ' Canvas[' + Calc.digit(this.canvas.width) + ',' + Calc.digit(this.canvas.height) + ']\n',
             'ORIGINAL[' + Calc.digit(this.vo.originalWidth) + ',' + Calc.digit(this.vo.originalHeight) + ']\n',
@@ -236,7 +216,7 @@ export class Cropper extends PIXI.Container {
             'Image[' + Calc.digit(this.image.width) + ',' + Calc.digit(this.image.height) + ']\n',
             'Scale[' + Calc.digit(this.image.scale.x) + ',' + Calc.digit(this.image.scale.y) + ']\n'
         );
-
+        console.log('------------------------------------');
 
         //var bounds = this.getBounds();
     }
@@ -476,6 +456,7 @@ export class Cropper extends PIXI.Container {
         this.zoomImage();
     }
 
+
     //////////////////////////////////////////////////////////////////////////
     // Getter & Setter
     //////////////////////////////////////////////////////////////////////////
@@ -591,6 +572,7 @@ export class Cropper extends PIXI.Container {
     get vo() {
         return this._vo;
     }
+
 
 
 }

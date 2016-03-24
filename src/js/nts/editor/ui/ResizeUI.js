@@ -130,13 +130,13 @@ export class ResizeUI extends PIXI.Container {
     }
 
 
-    resetSize(rect) {
+    setSize(rect) {
         var x = rect.x;
         var y = rect.y;
         var width = rect.width;
         var height = rect.height;
 
-        console.log('resetSize(',Calc.digit(x), Calc.digit(y), Calc.digit(width), Calc.digit(height),')');
+        //console.log('setSize(',Calc.digit(x), Calc.digit(y), Calc.digit(width), Calc.digit(height),')');
 
         this.lt.x = x;
         this.lt.y = y;
