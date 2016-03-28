@@ -329,14 +329,14 @@ export class Cropper extends PIXI.Container {
 
             if (this.isLtOut) {
                 if (this.isReachedLimitLine) {
-                    line = this.image.left;
+                    line = this.image.leftLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
 
                 } else {
-                    line = this.image.top;
+                    line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
@@ -346,13 +346,13 @@ export class Cropper extends PIXI.Container {
 
             if (this.isLbOut) {
                 if (this.isReachedLimitLine) {
-                    line = this.image.left;
+                    line = this.image.leftLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                 } else {
-                    line = this.image.bottom;
+                    line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
@@ -362,13 +362,13 @@ export class Cropper extends PIXI.Container {
 
             if (this.isRtOut) {
                 if (this.isReachedLimitLine) {
-                    line = this.image.right;
+                    line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                 } else {
-                    line = this.image.top;
+                    line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
@@ -379,13 +379,13 @@ export class Cropper extends PIXI.Container {
 
             if (this.isRbOut) {
                 if (this.isReachedLimitLine) {
-                    line = this.image.right;
+                    line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                 } else {
-                    line = this.image.bottom;
+                    line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
