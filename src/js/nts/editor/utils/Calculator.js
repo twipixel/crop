@@ -29,29 +29,29 @@ export class Calc {
 
 
     /**
-     * 원본 비율을 유지한 리사이즈 정보를 구합니다.
-     * @param originalRect 원본 이미지 정보
-     * @param resizeRect 리사이즈 된 이미지 정보
-     * @returns {{x: number, y: number, width: number, height: number}}
+     * 바운드안에 이미지를 넣을 수 있도록 사이즈를 제공합니다.
+     * @param imageSize 이미지 넓이와 높이
+     * @param boundsSize 바운드 넓이와 높이
+     * @returns {{width: number, height: number}}
      */
-    static getImageSizeKeepAspectRatio(originalRect, resizeRect) {
-        var scale = Calc.getScaleKeepAspectRatio(originalRect, resizeRect);
+    static getImageSizeKeepAspectRatio(imageSize, boundsSize) {
+        var scale = Calc.getScaleKeepAspectRatio(imageSize, boundsSize);
         var minScale = scale.min;
-        var resizeWidth = minScale * originalRect.width;
-        var resizeHeight = minScale * originalRect.height;
+        var resizeWidth = minScale * imageSize.width;
+        var resizeHeight = minScale * imageSize.height;
         return {width: resizeWidth, height: resizeHeight};
     }
 
 
     /**
-     * 원본 비율을 구합니다.
-     * @param originalRect 원본 사이즈
-     * @param resizeRect 변화된 사이즈
+     * 바운드와 이미지의 최소, 최대 비율을 구합니다.
+     * @param imageSizeimageSize 원본 사이즈
+     * @param boundsSizeboundsSize 변화된 사이즈
      * @returns {*} 최대, 최소 비율
      */
-    static getScaleKeepAspectRatio(originalRect, resizeRect) {
-        var widthRatio = resizeRect.width / originalRect.width;
-        var heightRatio = resizeRect.height / originalRect.height;
+    static getScaleKeepAspectRatio(imageSize, boundsSize) {
+        var widthRatio = boundsSize.width / imageSize.width;
+        var heightRatio = boundsSize.height / imageSize.height;
 
         if (widthRatio < heightRatio)
             return {min: widthRatio, max: heightRatio};
