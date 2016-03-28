@@ -23,7 +23,6 @@ export class ImageEditor {
 
          /*var interactive = true;
          this.stage = new PIXI.Stage(0xE6E9EC, interactive);*/
-
         this.stage = new PIXI.Container(0xE6E9EC);
 
         this.cropper = new Cropper(this.canvas, this.imageElement);

@@ -16,41 +16,37 @@ export class Cropper extends PIXI.Container {
 
 
     initialize(canvas, imageElement) {
-
-        var Config = function () {
-            this.offset = 0;
-            this.width = 0;
-            this.height = 0;
-        }
-
-        //////////////////////////////////////////////////////////////
-        //TODO 테스트
-        /*this.gui = new dat.GUI();
-         this.config = new Config();
-         var offset = this.gui.add(this.config, 'offset', -200, 200);
-         var width = this.gui.add(this.config, 'width').step(1);
-         var height = this.gui.add(this.config, 'height').step(1);
-
-         offset.onChange((value) => {
-         this.scaledImageWidth = this.scaledImageWidth + value;
-         this.scaledImageHeight = this.scaledImageHeight + value;
-
-         console.log(this.scaledImageWidth, this.scaledImageHeight);
-         });
-
-         width.onFinishChange((value) => {
-         this.scaledImageWidth = this.vo.originalWidth + value;
-         console.log(this.scaledImageWidth);
-         });
-
-         height.onFinishChange((value) => {
-         this.scaledImageHeight = this.vo.originalHeight + value;
-         console.log(this.scaledImageHeight);
-         });*/
-
         this.isOut = false;
-        //////////////////////////////////////////////////////////////
+        this.paddingX = 216;
+        this.paddingY = 158;
+        this.canvas = canvas;
+        this.isInitialize = false;
+        this.imageElement = imageElement;
 
+        // TODO 필요한 정보인지 체크
+        this.prevImageInfo = {x: 0, y: 0, width: imageElement.width, height: imageElement.height, scale: {x: 0, y: 0}};
+
+        this._vo = new ImageVO(imageElement);
+        this.vo.limitRotationRadian = Calc.toRadians(45);
+
+        this.grid = new PIXI.Graphics();
+        this.boundsGraphics = new PIXI.Graphics();
+        this.scaleBoundsGraphics = new PIXI.Graphics();
+        this.image = new ImageUI(this.imageElement);
+        this.rotateUI = new RotateUI(this.canvas);
+        this.moveUI = new MoveUI(this.canvas);
+        this.resizeUI = new ResizeUI(this.canvas, this.vo.originalWidth, this.vo.originalHeight);
+        this.addChild(this.image);
+        this.addChild(this.rotateUI);
+        this.addChild(this.moveUI);
+        this.addChild(this.resizeUI);
+        this.addChild(this.boundsGraphics);
+        this.addChild(this.scaleBoundsGraphics);
+        this.addChild(this.grid);
+    }
+
+
+    addEvent() {
         window.document.addEventListener('keyup', (e) => {
             switch (e.keyCode) {
                 case KeyCode.SPACE:
@@ -64,31 +60,6 @@ export class Cropper extends PIXI.Container {
             }
         });
 
-        this.paddingX = 216;
-        this.paddingY = 158;
-        this.canvas = canvas;
-        this.imageElement = imageElement;
-
-        // TODO 필요한 정보인지 체크
-        this.prevImageInfo = {x: 0, y: 0, width: imageElement.width, height: imageElement.height, scale: {x: 0, y: 0}};
-
-        this._vo = new ImageVO(imageElement);
-        this.vo.limitRotationRadian = Calc.toRadians(45);
-
-        this.bounds = new PIXI.Graphics();
-        this.image = new ImageUI(this.imageElement);
-        this.rotateUI = new RotateUI(this.canvas);
-        this.moveUI = new MoveUI(this.canvas);
-        this.resizeUI = new ResizeUI(this.canvas, this.vo.originalWidth, this.vo.originalHeight);
-        this.addChild(this.bounds);
-        this.addChild(this.image);
-        this.addChild(this.rotateUI);
-        this.addChild(this.moveUI);
-        this.addChild(this.resizeUI);
-    }
-
-
-    addEvent() {
         this.moveUI.on('moveStart', this.moveStart.bind(this));
         this.moveUI.on('moveChange', this.moveChange.bind(this));
         this.moveUI.on('moveEnd', this.moveEnd.bind(this));
@@ -106,25 +77,28 @@ export class Cropper extends PIXI.Container {
     }
 
 
-
-
-
     resize(canvasWidth, canvasHeight) {
-        var bounds = this.getBounds(canvasWidth, canvasHeight);
+        var bounds = this.bounds;
+
+        this.drawGrid();
 
         this.centerPoint = {x: canvasWidth / 2, y: canvasHeight / 2};
         this.imageBoundsPoints = this.image.getGlobalBoundsPoints();
 
-        this.resizeImageRect = this.vo.getSizeByBounds(bounds);
-        this.resizeImageRect.x = this.centerPoint.x - this.resizeImageRect.width / 2;
-        this.resizeImageRect.y = this.centerPoint.y - this.resizeImageRect.height / 2;
+        if(this.isInitialize == false) {
+            this.isInitialize = true;
 
-        this.drawBounds(bounds);
-        this.resizeImage(bounds, this.image);
-        this.rotateUI.resize(this.resizeImageRect);
-        this.resizeUI.resize(this.resizeImageRect);
-        this.moveUI.resize(this.resizeImageRect);
+            this.resizeImageRect = this.vo.getSizeByBounds(bounds);
+            this.resizeImageRect.x = this.centerPoint.x - this.resizeImageRect.width / 2;
+            this.resizeImageRect.y = this.centerPoint.y - this.resizeImageRect.height / 2;
 
+            this.resizeImage(bounds, this.image);
+            this.rotateUI.resize(this.resizeImageRect);
+            this.resizeUI.resize(this.resizeImageRect);
+            this.moveUI.resize(this.resizeImageRect);
+        }
+
+        this.drawBounds(this.boundsGraphics, this.bounds);
     }
 
 
@@ -133,64 +107,37 @@ export class Cropper extends PIXI.Container {
         this.image.width = size.width;
         this.image.height = size.height;
 
-        this.image.x = this.canvas.width / 2;
-        this.image.y = this.canvas.height / 2;
+        this.image.x = this.canvas.width / 2 - this.image.width / 2;
+        this.image.y = this.canvas.height / 2 - this.image.height / 2;
         this.recordImageInfo();
     }
 
 
-    zoomImage() {
-        var w = this.image.width;
-        var h = this.image.height;
-        var sx = this.image.scale.x;
-        var sy = this.image.scale.y;
-        var ow = this.vo.originalWidth;
-        var oh = this.vo.originalHeight;
-        var centerX = this.canvas.width / 2;
-        var centerY = this.canvas.height / 2;
+    magnifyImage(lens) {
+        // 1. 줌 비율 구하기
+        // 2. 러버밴드 리사이즈 구하기
+        // 3. 러버밴드 설정
+        // 4. 줌 비율에 이미지 리사이즈
+        // 5. 이미지 위치 구하기
+        //      러버밴드 리사이즈 후 위치를 기준 좌료로 삼으면 된다.
 
+        //var lens = this.resizeUI.bounds;
+        var lensX = this.image.lt.x - lens.x;
+        var lensY = this.image.lt.y - lens.y;
 
+        this.zoom = Calc.getBoundsScale(this.bounds, lens).min;
+        var rubberbandBounds = Calc.getImageSizeKeepAspectRatio(lens, this.bounds);
+        rubberbandBounds.x = this.canvas.width / 2 - rubberbandBounds.width / 2;
+        rubberbandBounds.y = this.canvas.height / 2 - rubberbandBounds.height / 2;
+        this.resizeUI.setSize(rubberbandBounds);
 
+        this.image.width = this.image.width * this.zoom;
+        this.image.height = this.image.height * this.zoom;
 
-        var image = this.image;
-        var bounds = this.getBounds();
-
-        var scale = Calc.getBoundsScale(this.vo.originalBounds, bounds);
-
-        var rubberband = this.resizeUI.bounds;
-        var newRubberband = Calc.getImageSizeKeepAspectRatio(rubberband, bounds);
-        newRubberband.x = this.canvas.width / 2 - newRubberband.width / 2;
-        newRubberband.y = this.canvas.height / 2 - newRubberband.height / 2;
-        var rubberbandCenterX = rubberband.x + rubberband.width / 2;
-        var rubberbandCenterY = rubberband.y + rubberband.height / 2;
-
-        // 처음 리사이즈 시 사각형의 실제 사이즈
-
-
-
-        this.displayImageInfo();
-
-
-
-
-
-        // 기존 러버 밴드 위치, 사이즈
-        // 바뀐 러버 밴드 위치, 사이즈
-        // 기존 러버 밴드와 바뀐 러버 밴드 비율
-        // 이미지 위치, 사이즈
-        // 이미지 스케일
-
-        console.log('Rubberband: [' + Calc.digit(rubberband.x) + ',' + Calc.digit(rubberband.y) + '], [' + Calc.digit(rubberband.width) + ',' + Calc.digit(rubberband.height) + ']');
-        console.log('NewRubberband: [' + Calc.digit(newRubberband.x) + ',' + Calc.digit(newRubberband.y) + '], [' + Calc.digit(newRubberband.width) + ',' + Calc.digit(newRubberband.height) + ']');
-        console.log('Image: [' + Calc.digit(image.x) + ',' + Calc.digit(image.y) + '], [' + Calc.digit(image.width) + ',' + Calc.digit(image.height) + ']');
-        console.log('Image Scale X: ' + Calc.digit(image.scale.x) + ', Y:' + Calc.digit(image.scale.y));
-
-        // 위에서 구한 비율을 이미지 비율에 더해주기
-        //this.image.scale.x = scale;
-        //this.image.scale.y = scale;
-
-
-        this.resizeUI.setSize(newRubberband);
+        var posX = lensX * this.zoom;
+        var posY = lensY * this.zoom;
+        this.image.x = rubberbandBounds.x + posX;
+        this.image.y = rubberbandBounds.y + posY;
     }
 
 
@@ -199,13 +146,11 @@ export class Cropper extends PIXI.Container {
         console.log(
             ' Canvas[' + Calc.digit(this.canvas.width) + ',' + Calc.digit(this.canvas.height) + ']\n',
             'ORIGINAL[' + Calc.digit(this.vo.originalWidth) + ',' + Calc.digit(this.vo.originalHeight) + ']\n',
-            'Bounds[' + Calc.digit(this.getBounds().width) + ',' + Calc.digit(this.getBounds().height) + ']\n',
+            'Bounds[' + Calc.digit(this.bounds.width) + ',' + Calc.digit(this.bounds.height) + ']\n',
             'Image[' + Calc.digit(this.image.width) + ',' + Calc.digit(this.image.height) + ']\n',
             'Scale[' + Calc.digit(this.image.scale.x) + ',' + Calc.digit(this.image.scale.y) + ']\n'
         );
         console.log('------------------------------------');
-
-        //var bounds = this.getBounds();
     }
 
 
@@ -219,13 +164,45 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    drawBounds(bounds) {
-        this.bounds.clear();
-        this.bounds.lineStyle(1, 0xff3300, 0.4);
-        this.bounds.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
-        this.bounds.endFill();
+    drawBounds(graphics, bounds, color = 0xFF3300, alpha = 0.7) {
+        graphics.clear();
+        graphics.lineStyle(1, color, alpha);
+        graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        graphics.endFill();
     }
 
+
+    drawGrid() {
+        var g = this.grid;
+        g.clear();
+
+        var heavyAlpha = 0.3;
+        var lightAlpha = 0.1;
+        var w = this.canvas.width;
+        var h = this.canvas.height;
+
+        for (var x = 0.5; x < w; x += 10) {
+            if ((x - 0.5) % 50 === 0)
+                g.lineStyle(1, 0x999999, heavyAlpha);
+            else
+                g.lineStyle(1, 0xdddddd, lightAlpha);
+
+            g.moveTo(x, 0);
+            g.lineTo(x, h);
+        }
+
+        for (var y = 0.5; y < h; y += 10) {
+            if ((y - 0.5) % 50 === 0)
+                g.lineStyle(1, 0x999999, heavyAlpha);
+            else
+                g.lineStyle(1, 0xdddddd, lightAlpha);
+
+            g.moveTo(0, y);
+            g.lineTo(w, y);
+        }
+
+        g.endFill();
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // Event Handler
@@ -283,7 +260,7 @@ export class Cropper extends PIXI.Container {
         this.imageScaleY = this.image.scale.y;
         this.imageWidth = this.image.width;
         this.imageHeight = this.image.height;
-        this.resizeImageRect = this.vo.getSizeByBounds(this.getBounds(this.canvas.width, this.canvas.height));
+        this.resizeImageRect = this.vo.getSizeByBounds(this.bounds);
         this.resizeImageRect.x = this.centerPoint.x - this.resizeImageRect.width / 2;
         this.resizeImageRect.y = this.centerPoint.y - this.resizeImageRect.height / 2;
         this.isRotationScaleZero = (this.vo.rotationScale === 0);
@@ -417,20 +394,75 @@ export class Cropper extends PIXI.Container {
 
 
     cornerResizeStart(e) {
-        console.log('resizeStart', e.target);
+        this.lensBounds = this.resizeUI.bounds;
     }
 
     cornerResizeChange(e) {
         var target = e.target;
-        target.x += e.dx;
-        target.y += e.dy;
+        var tx = target.x + e.dx;
+        var ty = target.y + e.dy;
+
+        //var dx = Math.abs(e.dx);
+        //var dy = Math.abs(e.dy);
+
+        // 2배
+        var dx = Math.abs(e.dx) * 2;
+        var dy = Math.abs(e.dy) * 2;
+
+        var lens = this.resizeUI.bounds;
+
+        var isOutX = false;
+        var isOutY = false;
+
+
+        if (tx > this.lensBounds.x && tx < (this.lensBounds.x + this.lensBounds.width) && ty > this.lensBounds.y && ty < (this.lensBounds.y + this.lensBounds.height)) {
+            target.x = tx;
+            target.y = ty;
+            this.resizeUI.cornerResize(target);
+        } else {
+            if(tx < lens.x) {
+                isOutX = true;
+                lens.x = lens.x - dx;
+                lens.width = lens.width + dx;
+                this.magnifyImage(lens);
+            } else if (tx > lens.x + lens.width) {
+                isOutX = true;
+                lens.width = lens.width + dx;
+                this.magnifyImage(lens);
+            } else {
+                //
+            }
+
+            if(ty < lens.y) {
+                isOutY = true;
+                lens.y = lens.y - dy;
+                lens.height = lens.height + dy;
+                this.magnifyImage(lens);
+            } else if(ty > lens.y + lens.height) {
+                isOutY = true;
+                lens.height = lens.height + dy;
+                this.magnifyImage(lens);
+            } else {
+                //
+            }
+
+            console.log('lens x: ' + lens.x + ', y: ' + lens.y + ', w: ' + lens.width + ', h: ' + lens.height);
+        }
+
+        if(isOutX === false)
+            target.x = tx;
+
+        if(isOutY === false)
+            target.y = ty;
 
         this.resizeUI.cornerResize(target);
+        this.drawBounds(this.scaleBoundsGraphics, this.lensBounds, 0xFF00FF, 0.7);
     }
 
     cornerResizeEnd(e) {
-        console.log('resizeEnd');
-        this.zoomImage();
+        this.moveUI.resize(this.resizeUI.bounds);
+        this.magnifyImage(this.resizeUI.bounds);
+        this.scaleBoundsGraphics.clear();
     }
 
 
@@ -446,7 +478,6 @@ export class Cropper extends PIXI.Container {
     get isImageOutOfBounds() {
         var isInBounds = true;
         var image = this.image;
-        //var bounds = Calculator.getPointsByBounds(this.resizeUI.getBounds());
         var bounds = [this.resizeUI.lt, this.resizeUI.rt, this.resizeUI.rb, this.resizeUI.lb];
 
         var imagePoints = image.getGlobalBoundsPoints();
@@ -513,7 +544,7 @@ export class Cropper extends PIXI.Container {
 
 
     get isImageMininumSize() {
-        var bounds = this.getBounds(this.canvas.width, this.canvas.height);
+        var bounds = this.bounds;
 
         var errorRange = 0.3;
         var scale = Calc.getBoundsScale(this.vo.originalBounds, bounds);
@@ -525,12 +556,9 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    getBounds(canvasWidth, canvasHeight) {
-        if(canvasWidth == null)
-            canvasWidth = this.canvas.width;
-
-        if(canvasHeight == null)
-            canvasHeight = this.canvas.height;
+    get bounds() {
+        var canvasWidth = this.canvas.width;
+        var canvasHeight = this.canvas.height;
 
         var boundsWidth = canvasWidth - this.paddingX;
         var boundsHeight = canvasHeight - this.paddingY;
