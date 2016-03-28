@@ -79,19 +79,46 @@ export class ImageUI extends PIXI.Container {
 
 
 
-    get left() {
+    get leftLine() {
         return {a:this.lb, b:this.lt};
     }
 
-    get top() {
+    get topLine() {
         return {a:this.lt, b:this.rt};
     }
 
-    get right() {
+    get rightLine() {
         return {a:this.rt, b:this.rb};
     }
 
-    get bottom() {
+    get bottomLine() {
         return {a:this.rb, b:this.lb};
+    }
+
+
+
+    get left() {
+        return Math.min(this.lt.x, this.lb.x);
+    }
+
+    get right() {
+        return Math.max(this.rt.x, this.rb.x);
+    }
+
+    get top() {
+        return Math.min(this.lt.y, this.rt.y);
+    }
+
+    get bottom() {
+        return Math.max(this.lb.y, this.rb.y);
+    }
+
+
+
+    get size() {
+        return {
+            width: this.rt.x - this.lt.x,
+            height: this.lb.y - this.lt.y
+        };
     }
 }
