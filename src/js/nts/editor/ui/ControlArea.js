@@ -52,42 +52,4 @@ export class ControlArea extends PIXI.Sprite {
 
         this.graphics.endFill();
     }
-
-    /*addMouseDownEvent() {
-        this._mouseDownListener = this.onMouseDown.bind(this);
-        this.on('mousedown', this._mouseDownListener);
-    }
-
-    removeMouseDownEvent() {
-        this.off('mousedown', this._mouseDownListener);
-    }
-
-    addMouseMoveEvent() {
-        this._mouseMoveListener = this.onMouseMove.bind(this);
-        this._mouseUpListener = this.onMouseUp.bind(this);
-
-        window.document.addEventListener('mousemove', this._mouseMoveListener);
-        window.document.addEventListener('mouseup', this._mouseUpListener);
-    }
-
-    removeMouseMoveEvent() {
-        window.document.removeEventListener('mousemove', this._mouseMoveListener);
-        window.document.removeEventListener('mouseup', this._mouseUpListener);
-    }
-
-    onMouseDown(e) {
-        e.stopPropagation();
-        this.addMouseMoveEvent();
-        this.removeMouseDownEvent();
-    }
-
-    onMouseMove(e) {
-        //console.log('ControlArea.' + this.type, e.clientX, e.clientY);
-    }
-
-    onMouseUp(e) {
-        this.addMouseDownEvent();
-        this.removeMouseMoveEvent();
-    }*/
-
 }
