@@ -155,7 +155,7 @@ export class Cropper extends PIXI.Container {
         var image = this.image;
         var bounds = this.getBounds();
 
-        var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
+        var scale = Calc.getBoundsScale(this.vo.originalBounds, bounds);
 
         var rubberband = this.resizeUI.bounds;
         var newRubberband = Calc.getImageSizeKeepAspectRatio(rubberband, bounds);
@@ -312,7 +312,7 @@ export class Cropper extends PIXI.Container {
             this.image.scale.x = scale.max;
             this.image.scale.y = scale.max;*/
 
-            var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, rotationRectangleBounds);
+            var scale = Calc.getBoundsScale(this.vo.originalBounds, rotationRectangleBounds);
             this.image.width = scale.max * this.vo.originalBounds.width;
             this.image.height = scale.max * this.vo.originalBounds.height;
 
@@ -516,7 +516,7 @@ export class Cropper extends PIXI.Container {
         var bounds = this.getBounds(this.canvas.width, this.canvas.height);
 
         var errorRange = 0.3;
-        var scale = Calc.getScaleKeepAspectRatio(this.vo.originalBounds, bounds);
+        var scale = Calc.getBoundsScale(this.vo.originalBounds, bounds);
         var minScale = Calc.digit(scale.min, 2) + errorRange;
         var scaleX = Calc.digit(this.image.scale.x, 2);
         var scaleY = Calc.digit(this.image.scale.y, 2);

@@ -35,7 +35,7 @@ export class Calc {
      * @returns {{width: number, height: number}}
      */
     static getImageSizeKeepAspectRatio(imageSize, boundsSize) {
-        var scale = Calc.getScaleKeepAspectRatio(imageSize, boundsSize);
+        var scale = Calc.getBoundsScale(boundsSize, imageSize);
         var minScale = scale.min;
         var resizeWidth = minScale * imageSize.width;
         var resizeHeight = minScale * imageSize.height;
@@ -45,18 +45,18 @@ export class Calc {
 
     /**
      * 바운드와 이미지의 최소, 최대 비율을 구합니다.
-     * @param imageSizeimageSize 원본 사이즈
-     * @param boundsSizeboundsSize 변화된 사이즈
+     * @param boundsSize 바운드의 넓이와 높이
+     * @param imageSize 이미지의 넓이와 높이
      * @returns {*} 최대, 최소 비율
      */
-    static getScaleKeepAspectRatio(imageSize, boundsSize) {
-        var widthRatio = boundsSize.width / imageSize.width;
-        var heightRatio = boundsSize.height / imageSize.height;
+    static getBoundsScale(boundsSize, imageSize) {
+        var scaleX = boundsSize.width / imageSize.width;
+        var scaleY = boundsSize.height / imageSize.height;
 
-        if (widthRatio < heightRatio)
-            return {min: widthRatio, max: heightRatio};
+        if (scaleX < scaleY)
+            return {min: scaleX, max: scaleY};
         else
-            return {max: widthRatio, min: heightRatio};
+            return {max: scaleX, min: scaleY};
     }
 
 
