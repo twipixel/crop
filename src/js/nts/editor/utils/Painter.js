@@ -63,7 +63,7 @@ export class Painter {
         // 2. distancePoint -> point 연결하기
         // 3. distancePoint -> returnPoint 연결하기
 
-        var radius = 2;
+        var radius = 3;
         var lineAlpha = 0.2;
         var shapeAlpha = 0.2;
 
@@ -81,6 +81,7 @@ export class Painter {
         graphics.moveTo(distancePoint.x, distancePoint.y);
         graphics.lineTo(point.x, point.y);
         graphics.drawCircle(point.x, point.y, radius);
+        graphics.beginFill(0xFF3300, 1);
         graphics.drawCircle(distancePoint.x, distancePoint.y, radius);
 
         // 3

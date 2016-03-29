@@ -45,18 +45,20 @@ export class ImageUI extends PIXI.Container {
 
 
     addDebugPoint() {
-        var ltd = Painter.getDebugPoint();
-        var rtd = Painter.getDebugPoint();
-        var rbd = Painter.getDebugPoint();
-        var lbd = Painter.getDebugPoint();
-        ltd.x = 5;
-        ltd.y = 5;
-        rtd.x = -5;
-        rtd.y = 5;
-        rbd.x = -5;
-        rbd.y = -5;
-        lbd.x = 5;
-        lbd.y = -5;
+        var size = 4;
+        var half = size / 2;
+        var ltd = Painter.getRect(size);
+        var rtd = Painter.getRect(size);
+        var rbd = Painter.getRect(size);
+        var lbd = Painter.getRect(size);
+        ltd.x = half;
+        ltd.y = half;
+        rtd.x = -half;
+        rtd.y = half;
+        rbd.x = -half;
+        rbd.y = -half;
+        lbd.x = half;
+        lbd.y = -half;
         this.ltp.addChild(ltd);
         this.rtp.addChild(rtd);
         this.rbp.addChild(rbd);

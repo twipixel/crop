@@ -218,79 +218,117 @@ export class Cropper extends PIXI.Container {
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-
-                    console.log('LT LEFT', line.a, line.b);
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
+
+                    console.log('LT LEFT',
+                        'point[' + parseInt(this.resizeUI.lt.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 } else {
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-
-                    console.log('LT TOP', line.a, line.b);
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
+
+                    console.log('LT TOP',
+                        'point[' + parseInt(this.resizeUI.lt.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 }
             }
 
             if (this.isLbOut) {
                 if (this.isHitSide) {
-                    console.log('LB LEFT');
                     line = this.image.leftLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
+
+                    console.log('LB LEFT',
+                        'point[' + parseInt(this.resizeUI.lb.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 } else {
-                    console.log('LB BOTTOM');
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
+
+                    console.log('LB BOTTOM',
+                        'point[' + parseInt(this.resizeUI.lb.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 }
             }
 
             if (this.isRtOut) {
                 if (this.isHitSide) {
-                    console.log('RT RIGHT');
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
+
+                    console.log('RT RIGHT',
+                        'point[' + parseInt(this.resizeUI.rt.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 } else {
-                    console.log('RT TOP');
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
+
+                    console.log('RT TOP',
+                        'point[' + parseInt(this.resizeUI.rt.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 }
             }
 
 
             if (this.isRbOut) {
                 if (this.isHitSide) {
-                    console.log('RB RIGHT');
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
+                    Painter.drawDistToSegment(this.gLine, parseInt(this.resizeUI.rb), parseInt(line.a), parseInt(line.b), parseInt(distancePoint));
+
+                    console.log('RB RIGHT',
+                        'point[' + parseInt(this.resizeUI.rb.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 } else {
-                    console.log('RB BOTTOM');
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
+                    Painter.drawDistToSegment(this.gLine, parseInt(this.resizeUI.rb), parseInt(line.a), parseInt(line.b), parseInt(distancePoint));
+
+                    console.log('RB BOTTOM',
+                        'point[' + parseInt(this.resizeUI.rb.x) + ', ' + parseInt(this.resizeUI.lt.y) + '], ' +
+                        'lineA[' + parseInt(line.a.x) + ', ' + parseInt(line.a.y) + '], ' +
+                        'lineB[' + parseInt(line.b.x) + ', ' + parseInt(line.b.y) + '], ' +
+                        'dist[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + ']');
                 }
             }
         }
