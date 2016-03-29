@@ -15,9 +15,7 @@ export class Cropper extends PIXI.Container {
         this.addEvent();
     }
 
-
     initialize(canvas, imageElement) {
-
         this.paddingX = 216;
         this.paddingY = 158;
         this.canvas = canvas;
@@ -30,10 +28,6 @@ export class Cropper extends PIXI.Container {
 
         //console.log('maxRotation:' + this.maxRotation + ', minRotation:' + this.minRotation);
 
-        this.grid = new PIXI.Graphics();
-        this.boundsGraphics = new PIXI.Graphics();
-        this.scaleBoundsGraphics = new PIXI.Graphics();
-        this.debugGraphics = new PIXI.Graphics();
         this.image = new ImageUI(this.imageElement);
         this.rotateUI = new RotateUI(this.canvas);
         this.moveUI = new MoveUI(this.canvas);
@@ -42,12 +36,18 @@ export class Cropper extends PIXI.Container {
         this.addChild(this.rotateUI);
         this.addChild(this.moveUI);
         this.addChild(this.resizeUI);
-        this.addChild(this.boundsGraphics);
-        this.addChild(this.scaleBoundsGraphics);
-        this.addChild(this.grid);
-        this.addChild(this.debugGraphics);
-    }
 
+        this.gGrid = new PIXI.Graphics();
+        this.gLine = new PIXI.Graphics();
+        this.gLens = new PIXI.Graphics();
+        this.gDebug = new PIXI.Graphics();
+        this.gBounds = new PIXI.Graphics();
+        this.addChild(this.gLens);
+        this.addChild(this.gLine);
+        this.addChild(this.gGrid);
+        this.addChild(this.gDebug);
+        this.addChild(this.gBounds);
+    }
 
     addEvent() {
         window.document.addEventListener('keyup', (e) => {
@@ -55,10 +55,6 @@ export class Cropper extends PIXI.Container {
                 case KeyCode.SPACE:
                     console.clear();
                     this.displayImageInfo();
-                    break;
-
-                case KeyCode.R:
-                    this.zoomImage();
                     break;
             }
         });
@@ -74,11 +70,7 @@ export class Cropper extends PIXI.Container {
         this.resizeUI.on('cornerResizeEnd', this.cornerResizeEnd.bind(this));
     }
 
-
-    update() {
-        //
-    }
-
+    update() {}
 
     resize() {
         var bounds = this.bounds;
@@ -87,7 +79,7 @@ export class Cropper extends PIXI.Container {
         this.cx = this.cw / 2;
         this.cy = this.ch / 2;
 
-        Painter.drawGrid(this.grid, this.cw, this.ch);
+        //Painter.drawGrid(this.gGrid, this.cw, this.ch);
 
         if(this.isInitialize == false) {
             this.isInitialize = true;
@@ -102,9 +94,8 @@ export class Cropper extends PIXI.Container {
             this.moveUI.resize(imageBounds);
         }
 
-        Painter.drawBounds(this.boundsGraphics, bounds);
+        Painter.drawBounds(this.gBounds, bounds);
     }
-
 
     resizeImage() {
         var size = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
@@ -117,15 +108,16 @@ export class Cropper extends PIXI.Container {
         //this.setImageMaxScale();
     }
 
-
+    /**
+     * 1. 줌 비율 구하기
+     * 2. 러버밴드 리사이즈 구하기
+     * 3. 러버밴드 설정
+     * 4. 줌 비율에 이미지 리사이즈 하기
+     * 5. 이미지 위치 구하기
+     * 6. 이미지 위치 구할 때 러버밴드 리사이즈 후 위치를 기준 좌표로 삼으면 됩니다.
+     * @param lens : 확대 / 축소 하기 위해 설정한 Rectangle
+     */
     magnifyImage(lens) {
-        // 1. 줌 비율 구하기
-        // 2. 러버밴드 리사이즈 구하기
-        // 3. 러버밴드 설정
-        // 4. 줌 비율에 이미지 리사이즈
-        // 5. 이미지 위치 구하기
-        //      러버밴드 리사이즈 후 위치를 기준 좌료로 삼으면 된다.
-
         var lensX = this.image.lt.x - lens.x;
         var lensY = this.image.lt.y - lens.y;
 
@@ -147,31 +139,14 @@ export class Cropper extends PIXI.Container {
         this.image.y = rubberbandBounds.y + posY + centerOffsetY;
     }
 
-
-    displayImageInfo() {
-        console.log('------------------------------------');
-        console.log(
-            ' Canvas[' + Calc.digit(this.canvas.width) + ',' + Calc.digit(this.canvas.height) + ']\n',
-            'ORIGINAL[' + Calc.digit(this.vo.originalWidth) + ',' + Calc.digit(this.vo.originalHeight) + ']\n',
-            'Bounds[' + Calc.digit(this.bounds.width) + ',' + Calc.digit(this.bounds.height) + ']\n',
-            'Image[' + Calc.digit(this.image.width) + ',' + Calc.digit(this.image.height) + ']\n'
-        );
-        console.log('------------------------------------');
-    }
-
-
     //////////////////////////////////////////////////////////////////////////
     // Event Handler
     //////////////////////////////////////////////////////////////////////////
 
-
     moveStart(e) {
-        console.log('moveStart');
-
         this.prevImageX = this.image.x;
         this.prevImageY = this.image.y;
     }
-
 
     moveChange(e) {
         this.image.x += e.change.x;
@@ -196,17 +171,15 @@ export class Cropper extends PIXI.Container {
         this.prevImageY = this.image.y;
     }
 
-
     moveEnd(e) {
         //
     }
 
-
     rotateStart(e) {
         //this.setImageMaxScale();
         //this.imagePoints = this.image.points;
+        this.gLine.clear();
     }
-
 
     rotateChange(e) {
         this.image.rotation += e.change;
@@ -232,10 +205,9 @@ export class Cropper extends PIXI.Container {
                 this.image.height = scaleHeight;
             }
 
+            //console.log('rotate', 'deg:', Calc.digit(Calc.toDegrees(this.image.rotation)), 'max:', Calc.digit(max, 2), 'w:', parseInt(this.image.width), 'h:', parseInt(this.image.height));
 
-            console.log('rotate', 'deg:', Calc.digit(Calc.toDegrees(this.image.rotation)), 'max:', Calc.digit(max, 2), 'w:', parseInt(this.image.width), 'h:', parseInt(this.image.height));
-
-            Painter.drawBounds(this.boundsGraphics, rotationRect, 1, 0xFF00FF, 1);
+            Painter.drawBounds(this.gBounds, rotationRect, 1, 0xFF00FF, 1);
 
             var line, distancePoint, returnPoint;
 
@@ -246,61 +218,79 @@ export class Cropper extends PIXI.Container {
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+
+                    console.log('LT LEFT', line.a, line.b);
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
                 } else {
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+
+                    console.log('LT TOP', line.a, line.b);
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
                 }
             }
 
             if (this.isLbOut) {
                 if (this.isHitSide) {
+                    console.log('LB LEFT');
                     line = this.image.leftLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
                 } else {
+                    console.log('LB BOTTOM');
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
                 }
             }
 
             if (this.isRtOut) {
                 if (this.isHitSide) {
+                    console.log('RT RIGHT');
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
                 } else {
+                    console.log('RT TOP');
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
                 }
             }
 
 
             if (this.isRbOut) {
                 if (this.isHitSide) {
+                    console.log('RB RIGHT');
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
                 } else {
+                    console.log('RB BOTTOM');
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
+                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
                 }
             }
         }
@@ -313,70 +303,13 @@ export class Cropper extends PIXI.Container {
         Painter.drawBounds(this.boundsGraphics, rotationRect, 0xFF00FF, 1);*/
     }
 
-    setImageMaxScale() {
-        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
-        var w = imageRect.width;
-        var h = imageRect.height;
-
-        this.imageMaxScaleHeight = Calc.getDiagonal(w, h);
-        this.imageMaxScaleWidth = (w * this.imageMaxScaleHeight) / h;
-        this.imageMaxScaleX = this.imageMaxScaleWidth / w;
-        this.imageMaxScaleY = this.imageMaxScaleHeight / h;
-        this.imageMaxScale = this.imageMaxScaleY;
-
-        console.log('-----------------------------------------');
-        console.log('setImageMaxScale');
-        console.log('imageRect w:' + w + ', h:' + h);
-        console.log('image w:' + this.image.width + ', h:' + this.image.height);
-        console.log('scaleX:' + this.imageMaxScaleX + ', scaleY:' + this.imageMaxScaleY);
-        console.log('-----------------------------------------');
-    }
-
-    displayCurrentImageRotationBounds() {
-        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
-
-        var imagePoint = {
-            lt: {x:0, y:0},
-            rt: {x:imageRect.width, y:0},
-            rb: {x:imageRect.width, y:imageRect.height},
-            lb: {x:0, y:imageRect.height}
-        };
-
-        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
-        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
-        rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
-        rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
-        Painter.drawBounds(this.debugGraphics, rotationRect, 2, 0x00FCFF, 1);
-    }
-
-    getCurrentImageRect() {
-        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
-
-        var imagePoint = {
-            lt: {x:0, y:0},
-            rt: {x:imageRect.width, y:0},
-            rb: {x:imageRect.width, y:imageRect.height},
-            lb: {x:0, y:imageRect.height}
-        };
-
-        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
-        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
-        rotationRect.x = this.image.x;
-        rotationRect.y = this.image.y;
-
-        return rotationRect;
-    }
-
-
     rotateEnd(e) {
 
     }
 
-
     cornerResizeStart(e) {
         this.lensBounds = this.resizeUI.bounds;
     }
-
 
     cornerResizeChange(e) {
         var target = e.target;
@@ -428,22 +361,18 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
-        Painter.drawBounds(this.scaleBoundsGraphics, this.lensBounds, 1, 0xFF00FF, 0.7);
+        Painter.drawBounds(this.gLens, this.lensBounds, 1, 0xFF00FF, 0.7);
     }
-
 
     cornerResizeEnd(e) {
         this.moveUI.resize(this.resizeUI.bounds);
         this.magnifyImage(this.resizeUI.bounds);
-        this.scaleBoundsGraphics.clear();
+        this.gLens.clear();
     }
-
 
     //////////////////////////////////////////////////////////////////////////
     // Getter & Setter
     //////////////////////////////////////////////////////////////////////////
-
-
 
     /**
      * 이미지가 바운드를 벗어 났는지 체크
@@ -469,7 +398,6 @@ export class Cropper extends PIXI.Container {
         return false;
     }
 
-
     get isLtOut() {
         return (Calc.isInsideSquare(
             this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lt) === false);
@@ -489,7 +417,6 @@ export class Cropper extends PIXI.Container {
         return (Calc.isInsideSquare(
             this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lb) === false);
     }
-
 
     get isHitSide() {
         var isHit = false;
@@ -516,7 +443,6 @@ export class Cropper extends PIXI.Container {
         return isHit;
     }
 
-
     get bounds() {
         var canvasWidth = this.canvas.width;
         var canvasHeight = this.canvas.height;
@@ -532,5 +458,74 @@ export class Cropper extends PIXI.Container {
             x: boundsX,
             y: boundsY
         }
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // Debug Util Function
+    //////////////////////////////////////////////////////////////////////////
+
+    setImageMaxScale() {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+        var w = imageRect.width;
+        var h = imageRect.height;
+
+        this.imageMaxScaleHeight = Calc.getDiagonal(w, h);
+        this.imageMaxScaleWidth = (w * this.imageMaxScaleHeight) / h;
+        this.imageMaxScaleX = this.imageMaxScaleWidth / w;
+        this.imageMaxScaleY = this.imageMaxScaleHeight / h;
+        this.imageMaxScale = this.imageMaxScaleY;
+
+        console.log('-----------------------------------------');
+        console.log('setImageMaxScale');
+        console.log('imageRect w:' + w + ', h:' + h);
+        console.log('image w:' + this.image.width + ', h:' + this.image.height);
+        console.log('scaleX:' + this.imageMaxScaleX + ', scaleY:' + this.imageMaxScaleY);
+        console.log('-----------------------------------------');
+    }
+
+    displayCurrentImageRotationBounds() {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+
+        var imagePoint = {
+            lt: {x:0, y:0},
+            rt: {x:imageRect.width, y:0},
+            rb: {x:imageRect.width, y:imageRect.height},
+            lb: {x:0, y:imageRect.height}
+        };
+
+        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+        rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
+        rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
+        Painter.drawBounds(this.gDebug, rotationRect, 2, 0x00FCFF, 1);
+    }
+
+    getCurrentImageRect() {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+
+        var imagePoint = {
+            lt: {x:0, y:0},
+            rt: {x:imageRect.width, y:0},
+            rb: {x:imageRect.width, y:imageRect.height},
+            lb: {x:0, y:imageRect.height}
+        };
+
+        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+        rotationRect.x = this.image.x;
+        rotationRect.y = this.image.y;
+
+        return rotationRect;
+    }
+
+    displayImageInfo() {
+        console.log('------------------------------------');
+        console.log(
+            ' Canvas[' + Calc.digit(this.canvas.width) + ',' + Calc.digit(this.canvas.height) + ']\n',
+            'ORIGINAL[' + Calc.digit(this.vo.originalWidth) + ',' + Calc.digit(this.vo.originalHeight) + ']\n',
+            'Bounds[' + Calc.digit(this.bounds.width) + ',' + Calc.digit(this.bounds.height) + ']\n',
+            'Image[' + Calc.digit(this.image.width) + ',' + Calc.digit(this.image.height) + ']\n'
+        );
+        console.log('------------------------------------');
     }
 }

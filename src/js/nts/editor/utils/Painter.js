@@ -4,17 +4,22 @@ export class Painter {
     }
 
 
-    static getDebugPoint(rect, color = 0xFF3300, alpha = 1) {
-        if(!rect)
-            rect = {x:-5, y:-5, width:10, height:10};
-
-        var point = new PIXI.Graphics();
-        point.beginFill(color, alpha);
-        point.drawRect(rect.x, rect.y, rect.width, rect.height);
-        point.endFill();
-        return point;
+    static getRect(size = 4, color = 0xFF3300, alpha = 1) {
+        var half = size / 2;
+        var rect = new PIXI.Graphics();
+        rect.beginFill(color, alpha);
+        rect.drawRect(-half, -half, size, size);
+        rect.endFill();
+        return rect;
     }
 
+    static getCircle(radius = 2, color = 0xFF3300, alpha = 1) {
+        var cicle = new PIXI.Graphics();
+        cicle.beginFill(color, alpha);
+        cicle.drawRect(0, 0, radius);
+        cicle.endFill();
+        return cicle;
+    }
 
     static drawBounds(graphics, bounds, thickness = 1, color = 0xFF3300, alpha = 0.7) {
         graphics.clear();
@@ -50,6 +55,50 @@ export class Painter {
             graphics.lineTo(width, y);
         }
 
+        graphics.endFill();
+    }
+
+    static drawDistToSegment(graphics, point, lineA, lineB, distancePoint) {
+        // 1. 라인 그리기
+        // 2. distancePoint -> point 연결하기
+        // 3. distancePoint -> returnPoint 연결하기
+
+        var radius = 2;
+        var lineAlpha = 0.2;
+        var shapeAlpha = 0.2;
+
+        // 1
+        graphics.beginFill(0xCCFFCC, shapeAlpha);
+        graphics.lineStyle(1, 0x66FF00, lineAlpha);
+        graphics.moveTo(lineA.x, lineA.y);
+        graphics.lineTo(lineB.x, lineB.y);
+        graphics.drawCircle(lineA.x, lineA.y, radius);
+        graphics.drawCircle(lineB.x, lineB.y, radius);
+
+        // 2
+        graphics.beginFill(0xCCCCFF, shapeAlpha);
+        graphics.lineStyle(1, 0x9999CC, lineAlpha);
+        graphics.moveTo(distancePoint.x, distancePoint.y);
+        graphics.lineTo(point.x, point.y);
+        graphics.drawCircle(point.x, point.y, radius);
+        graphics.drawCircle(distancePoint.x, distancePoint.y, radius);
+
+        // 3
+        /*graphics.beginFill(0xFF0066, shapeAlpha);
+        graphics.lineStyle(1, 0xFF3399, lineAlpha);
+        graphics.moveTo(point.x, point.y);
+        graphics.lineTo(point.x, distancePoint.y);
+        graphics.lineTo(distancePoint.x, distancePoint.y);
+        graphics.drawCircle(point.x, point.y, radius);
+        graphics.drawCircle(distancePoint.x, distancePoint.y, radius);*/
+
+        graphics.endFill();
+    }
+
+    static drawLine(graphics, p1, p2, thickness = 1, color = 0xFF3300, alpha = 1) {
+        graphics.lineStyle(thickness, color, alpha);
+        graphics.moveTo(p1.x, p1.y);
+        graphics.lineTo(p2.x, p2.y);
         graphics.endFill();
     }
 }

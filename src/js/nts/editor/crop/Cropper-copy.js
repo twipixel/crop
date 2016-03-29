@@ -23,9 +23,9 @@ export class Cropper extends PIXI.Container {
         this.isInitialize = false;
         this.imageElement = imageElement;
 
-        this.grid = new PIXI.Graphics();
-        this.boundsGraphics = new PIXI.Graphics();
-        this.scaleBoundsGraphics = new PIXI.Graphics();
+        this.gGrid = new PIXI.Graphics();
+        this.gBounds = new PIXI.Graphics();
+        this.gLens = new PIXI.Graphics();
         this.image = new ImageUI(this.imageElement);
         this.rotateUI = new RotateUI(this.canvas);
         this.moveUI = new MoveUI(this.canvas);
@@ -34,9 +34,9 @@ export class Cropper extends PIXI.Container {
         this.addChild(this.rotateUI);
         this.addChild(this.moveUI);
         this.addChild(this.resizeUI);
-        this.addChild(this.boundsGraphics);
-        this.addChild(this.scaleBoundsGraphics);
-        this.addChild(this.grid);
+        this.addChild(this.gBounds);
+        this.addChild(this.gLens);
+        this.addChild(this.gGrid);
     }
 
 
@@ -92,7 +92,7 @@ export class Cropper extends PIXI.Container {
             this.moveUI.resize(this.resizeImageRect);
         }
 
-        this.drawBounds(this.boundsGraphics, this.bounds);
+        this.drawBounds(this.gBounds, this.bounds);
     }
 
 
@@ -167,7 +167,7 @@ export class Cropper extends PIXI.Container {
 
 
     drawGrid() {
-        var g = this.grid;
+        var g = this.gGrid;
         g.clear();
 
         var heavyAlpha = 0.3;
@@ -442,13 +442,13 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
-        this.drawBounds(this.scaleBoundsGraphics, this.lensBounds, 0xFF00FF, 0.7);
+        this.drawBounds(this.gLens, this.lensBounds, 0xFF00FF, 0.7);
     }
 
     cornerResizeEnd(e) {
         this.moveUI.resize(this.resizeUI.bounds);
         this.magnifyImage(this.resizeUI.bounds);
-        this.scaleBoundsGraphics.clear();
+        this.gLens.clear();
     }
 
 

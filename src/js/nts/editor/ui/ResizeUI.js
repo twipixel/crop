@@ -140,7 +140,6 @@ export class ResizeUI extends PIXI.Container {
         this.dragStartX = this.prevDragX = e.data.global.x;
         this.dragStartY = this.prevDragY = e.data.global.y;
 
-
         this.addCornerMoveEvent();
         this.removeCornerDownEvent();
 
