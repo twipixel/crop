@@ -150,13 +150,13 @@ export class Calc {
      * @returns {boolean} 사각형안에 포인트가 있는지 여부
      */
     static isInsideSquare(lt, rt, rb, lb, point) {
-        /*console.log(
-         parseInt(lt.x), parseInt(lt.y),
-         parseInt(rt.x), parseInt(rt.y),
-         parseInt(rb.x), parseInt(rb.y),
-         parseInt(lb.x), parseInt(lb.y),
-         parseInt(point.x), parseInt(point.y)
-         );*/
+        //console.log(
+        //    parseInt(lt.x), parseInt(lt.y),
+        //    parseInt(rt.x), parseInt(rt.y),
+        //    parseInt(rb.x), parseInt(rb.y),
+        //    parseInt(lb.x), parseInt(lb.y),
+        //    parseInt(point.x), parseInt(point.y)
+        //);
 
         if (Calc.triangleArea(lt, rt, point) > 0 || Calc.triangleArea(rt, rb, point) > 0 || Calc.triangleArea(rb, lb, point) > 0 || Calc.triangleArea(lb, lt, point) > 0)
             return false;
@@ -211,7 +211,7 @@ export class Calc {
      * 회전하는 좌표 구하기
      * @param pivot 사각형의 중심점
      * @param point 계산하고 싶은 포인트
-     * @param angle 회전각 degrees
+     * @param angle2 회전각 degrees
      * @returns {{x: (number|*), y: (number|*)}}
      */
     static getRotationPoint(pivot, point, angle) {
@@ -247,13 +247,13 @@ export class Calc {
      * @param rectanglePoints 사각형 좌표 (leftTop, rightTop, rightBottom, leftBottom)
      * @returns {{x: number, y: number, width: number, height: number}}
      */
-    static getBoundsRectangle(rectanglePoints) {
-        var offset = 8;
+    static getBoundsRectangle(rectanglePoints, space = 0) {
+        var half = space / 2;
         var x1 = Math.min(rectanglePoints.lt.x, rectanglePoints.rt.x, rectanglePoints.rb.x, rectanglePoints.lb.x);
         var y1 = Math.min(rectanglePoints.lt.y, rectanglePoints.rt.y, rectanglePoints.rb.y, rectanglePoints.lb.y);
         var x2 = Math.max(rectanglePoints.lt.x, rectanglePoints.rt.x, rectanglePoints.rb.x, rectanglePoints.lb.x);
         var y2 = Math.max(rectanglePoints.lt.y, rectanglePoints.rt.y, rectanglePoints.rb.y, rectanglePoints.lb.y);
-        return {x: x1 - offset, y: y1 - offset, width: x2 - x1 + offset, height: y2 - y1 + offset};
+        return {x: x1 - half, y: y1 - half, width: x2 - x1 + space, height: y2 - y1 + space};
     }
 
 
@@ -285,7 +285,6 @@ export class Calc {
     static getReturnPoint(point, distancePoint) {
         return {x:point.x - distancePoint.x, y:point.y - distancePoint.y};
     }
-
 
 
 }

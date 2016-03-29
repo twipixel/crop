@@ -5,6 +5,7 @@ import {MoveUI} from './../ui/MoveUI';
 import {ImageUI} from './../ui/ImageUI';
 import {ImageVO} from './../vo/ImageVO';
 import {KeyCode} from './../const/KeyCode';
+import {Painter} from './../utils/Painter';
 
 
 export class Cropper extends PIXI.Container {
@@ -16,22 +17,23 @@ export class Cropper extends PIXI.Container {
 
 
     initialize(canvas, imageElement) {
-        this.isOut = false;
+
         this.paddingX = 216;
         this.paddingY = 158;
         this.canvas = canvas;
         this.isInitialize = false;
         this.imageElement = imageElement;
 
-        // TODO 필요한 정보인지 체크
-        this.prevImageInfo = {x: 0, y: 0, width: imageElement.width, height: imageElement.height};
+        this.isImageMoveOut = false;
+        this.maxRotation = Calc.toRadians(45);
+        this.minRotation = -this.maxRotation;
 
-        this._vo = new ImageVO(imageElement);
-        this.vo.limitRotationRadian = Calc.toRadians(45);
+        //console.log('maxRotation:' + this.maxRotation + ', minRotation:' + this.minRotation);
 
         this.grid = new PIXI.Graphics();
         this.boundsGraphics = new PIXI.Graphics();
         this.scaleBoundsGraphics = new PIXI.Graphics();
+        this.debugGraphics = new PIXI.Graphics();
         this.image = new ImageUI(this.imageElement);
         this.rotateUI = new RotateUI(this.canvas);
         this.moveUI = new MoveUI(this.canvas);
@@ -43,6 +45,7 @@ export class Cropper extends PIXI.Container {
         this.addChild(this.boundsGraphics);
         this.addChild(this.scaleBoundsGraphics);
         this.addChild(this.grid);
+        this.addChild(this.debugGraphics);
     }
 
 
@@ -77,41 +80,40 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    resize(canvasWidth, canvasHeight) {
+    resize() {
         var bounds = this.bounds;
+        this.cw = this.canvas.width;
+        this.ch = this.canvas.height;
+        this.cx = this.cw / 2;
+        this.cy = this.ch / 2;
 
-        this.drawGrid();
-
-        this.centerPoint = {x: canvasWidth / 2, y: canvasHeight / 2};
-        this.imageBoundsPoints = this.image.getGlobalBoundsPoints();
+        Painter.drawGrid(this.grid, this.cw, this.ch);
 
         if(this.isInitialize == false) {
             this.isInitialize = true;
 
-            this.image.x = this.centerPoint.x;
-            this.image.y = this.centerPoint.y;
-            this.resizeImageRect = this.vo.getSizeByBounds(bounds);
-            this.resizeImageRect.x = this.centerPoint.x - this.resizeImageRect.width / 2;
-            this.resizeImageRect.y = this.centerPoint.y - this.resizeImageRect.height / 2;
+            var imageBounds = Calc.getImageSizeKeepAspectRatio(this.image, bounds);
+            imageBounds.x = this.cw / 2 - imageBounds.width / 2;
+            imageBounds.y = this.ch / 2 - imageBounds.height / 2;
 
             this.resizeImage(bounds, this.image);
-            this.rotateUI.resize(this.resizeImageRect);
-            this.resizeUI.resize(this.resizeImageRect);
-            this.moveUI.resize(this.resizeImageRect);
+            this.rotateUI.resize(imageBounds);
+            this.resizeUI.resize(imageBounds);
+            this.moveUI.resize(imageBounds);
         }
 
-        this.drawBounds(this.boundsGraphics, this.bounds);
+        Painter.drawBounds(this.boundsGraphics, bounds);
     }
 
 
-    resizeImage(bounds, resizeImageRect) {
-        var size = Calc.getImageSizeKeepAspectRatio(this.vo.originalBounds, bounds);
+    resizeImage() {
+        var size = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
         this.image.width = size.width;
         this.image.height = size.height;
+        this.image.x = this.cx;
+        this.image.y = this.cy;
 
-        this.image.x = this.canvas.width / 2 - this.image.width / 2;
-        this.image.y = this.canvas.height / 2 - this.image.height / 2;
-        this.recordImageInfo();
+        this.setImageMaxScale();
     }
 
 
@@ -123,7 +125,6 @@ export class Cropper extends PIXI.Container {
         // 5. 이미지 위치 구하기
         //      러버밴드 리사이즈 후 위치를 기준 좌료로 삼으면 된다.
 
-        //var lens = this.resizeUI.bounds;
         var lensX = this.image.lt.x - lens.x;
         var lensY = this.image.lt.y - lens.y;
 
@@ -138,8 +139,11 @@ export class Cropper extends PIXI.Container {
 
         var posX = lensX * this.zoom;
         var posY = lensY * this.zoom;
-        this.image.x = rubberbandBounds.x + posX;
-        this.image.y = rubberbandBounds.y + posY;
+        var centerOffsetX = this.image.x - this.image.lt.x;
+        var centerOffsetY = this.image.y - this.image.lt.y;
+
+        this.image.x = rubberbandBounds.x + posX + centerOffsetX;
+        this.image.y = rubberbandBounds.y + posY + centerOffsetY;
     }
 
 
@@ -155,56 +159,6 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    recordImageInfo() {
-        this.prevImageInfo.x = this.image.x;
-        this.prevImageInfo.y = this.image.y;
-        this.prevImageInfo.width = this.image.width;
-        this.prevImageInfo.height = this.image.height;
-        this.prevImageInfo.rotation = this.image.rotation;
-    }
-
-
-    drawBounds(graphics, bounds, color = 0xFF3300, alpha = 0.7) {
-        graphics.clear();
-        graphics.lineStyle(1, color, alpha);
-        graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
-        graphics.endFill();
-    }
-
-
-    drawGrid() {
-        var g = this.grid;
-        g.clear();
-
-        var heavyAlpha = 0.3;
-        var lightAlpha = 0.1;
-        var w = this.canvas.width;
-        var h = this.canvas.height;
-
-        for (var x = 0.5; x < w; x += 10) {
-            if ((x - 0.5) % 50 === 0)
-                g.lineStyle(1, 0x999999, heavyAlpha);
-            else
-                g.lineStyle(1, 0xdddddd, lightAlpha);
-
-            g.moveTo(x, 0);
-            g.lineTo(x, h);
-        }
-
-        for (var y = 0.5; y < h; y += 10) {
-            if ((y - 0.5) % 50 === 0)
-                g.lineStyle(1, 0x999999, heavyAlpha);
-            else
-                g.lineStyle(1, 0xdddddd, lightAlpha);
-
-            g.moveTo(0, y);
-            g.lineTo(w, y);
-        }
-
-        g.endFill();
-    }
-
-
     //////////////////////////////////////////////////////////////////////////
     // Event Handler
     //////////////////////////////////////////////////////////////////////////
@@ -212,173 +166,126 @@ export class Cropper extends PIXI.Container {
 
     moveStart(e) {
         console.log('moveStart');
+
+        this.prevImageX = this.image.x;
+        this.prevImageY = this.image.y;
     }
 
+
     moveChange(e) {
-        if (this.isOut == false) {
-            this.image.x += e.change.x;
-            this.image.y += e.change.y;
-        } else {
-            //this.image.x += e.change.x * 0.3;
-            //this.image.y += e.change.y * 0.3;
-        }
+        this.image.x += e.change.x;
+        this.image.y += e.change.y;
 
-        console.log('isReachedLimitLine', this.isReachedLimitLine);
+        //console.log('isHitSide', this.isHitSide, 'isImageOutOfBounds', this.isImageOutOfBounds);
 
-        if (this.isImageOutOfBounds === false) {
-            //this.image.x = this.prevImageInfo.x;
-            //this.image.y = this.prevImageInfo.y;
-            var x = this.prevImageInfo.x + e.change.x * Math.cos(this.image.rotation);
-            var y = this.prevImageInfo.y + e.change.x * Math.sin(this.image.rotation);
-            this.image.x = x;
-            this.image.y = y;
+        if (this.isImageOutOfBounds) {
 
-            this.isOut = true;
-            if (this.returnX === -1) {
-                this.returnX = this.prevImageInfo.x;
-                this.returnY = this.prevImageInfo.y;
+            if(this.isHitSide === false) {
+                var x = this.prevImageX + e.change.x * Math.cos(this.image.rotation);
+                var y = this.prevImageY + e.change.x * Math.sin(this.image.rotation);
+                this.image.x = x;
+                this.image.y = y;
+            } else {
+                this.image.x = this.prevImageX;
+                this.image.y = this.prevImageY;
             }
-        } else {
-            this.returnX = -1;
-            this.returnY = -1;
-            this.isOut = false;
-
-            this.recordImageInfo();
         }
+
+        this.prevImageX = this.image.x;
+        this.prevImageY = this.image.y;
     }
 
 
     moveEnd(e) {
-        /*if (this.isOut) {
-         this.image.x = this.returnX;
-         this.image.y = this.returnY;
-         }*/
+        //
     }
 
 
     rotateStart(e) {
-        /*this.resizeImageRect = this.vo.getSizeByBounds(this.bounds);
-        this.resizeImageRect.x = this.centerPoint.x - this.resizeImageRect.width / 2;
-        this.resizeImageRect.y = this.centerPoint.y - this.resizeImageRect.height / 2;*/
-
-        this.recordImageInfo();
+        this.setImageMaxScale();
+        this.imagePoints = this.image.points;
+        this.imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
     }
 
 
     rotateChange(e) {
         this.image.rotation += e.change;
 
-        if (this.image.rotation < this.vo.minRotationRadian)
-            this.image.rotation = this.vo.minRotationRadian;
+        if (this.image.rotation < this.minRotation)
+            this.image.rotation = this.minRotation;
 
-        if (this.image.rotation > this.vo.maxRotationRadian)
-            this.image.rotation = this.vo.maxRotationRadian;
-
-
-        if (this.isImageOutOfBounds === false) {
-            var rotationRectanglePoints = Calc.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calc.toDegrees(this.image.rotation));
-            var rotationRectangleBounds = Calc.getBoundsRectangle(rotationRectanglePoints);
-
-            var scale = Calc.getBoundsScale(this.vo.originalBounds, rotationRectangleBounds);
-            this.image.width = scale.max * this.vo.originalBounds.width;
-            this.image.height = scale.max * this.vo.originalBounds.height;
+        if (this.image.rotation > this.maxRotation)
+            this.image.rotation = this.maxRotation;
 
 
-            var lt = this.image.lt;
-            var rt = this.image.rt;
-            var rb = this.image.rb;
-            var lb = this.image.lb;
+        this.displayCurrentImageRotationBounds();
 
-            var x, y, line, distancePoint, returnPoint;
+        if(this.isImageOutOfBounds) {
 
+            // 현재 이미지가 최대 사이즈가 아니라면 커지고 이동
+            var rotationPoints = Calc.getRotationRectanglePoints({x:this.image.x, y:this.image.y}, this.imagePoints, Calc.toDegrees(this.image.rotation));
+            var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+            var scale = Calc.getBoundsScale(rotationRect, this.image);
+            var max = scale.max > this.imageMaxScale ? this.imageMaxScale : scale.max;
 
-            /*
-            if (this.isLtOut) {
-                if (this.isReachedLimitLine) {
-                    line = this.image.leftLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                } else {
-                    line = this.image.topLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-                }
+            if(max < this.imageMaxScale) {
+                this.image.width = this.image.width * max;
+                this.image.height = this.image.height * max;
             }
 
-            if (this.isLbOut) {
-                if (this.isReachedLimitLine) {
-                    line = this.image.leftLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-                } else {
-                    line = this.image.bottomLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-                }
-            }
+            console.log('rotate', 'max:', max, 'w:', this.image.width, 'h:', this.image.height);
 
-            if (this.isRtOut) {
-                if (this.isReachedLimitLine) {
-                    line = this.image.rightLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-                } else {
-                    line = this.image.topLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-                }
-            }
+            Painter.drawBounds(this.boundsGraphics, rotationRect, 1, 0xFF00FF, 1);
 
-
-            if (this.isRbOut) {
-                if (this.isReachedLimitLine) {
-                    line = this.image.rightLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-                } else {
-                    line = this.image.bottomLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-                }
-            }
-            */
-
-        } else {
-
-            if (this.isReadyToRotation) {
-                var rotationRectanglePoints = Calc.getRotationRectanglePoints(this.centerPoint, this.imageBoundsPoints, Calc.toDegrees(this.image.rotation));
-                var rotationRectangleBounds = Calc.getBoundsRectangle(rotationRectanglePoints);
-            }
-
-            this.recordImageInfo();
         }
 
-        this.vo.rotation = Calc.toDegrees(this.image.rotation);
-        this.vo.rotationScale = Calc.getOneToOne(Math.abs(this.image.rotation), 0, this.vo.limitRotationRadian, 0, 1);
+        /*var rotationPoints = Calc.getRotationRectanglePoints({x:this.image.x, y:this.image.y}, this.imagePoints, Calc.toDegrees(this.image.rotation));
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+        var scale = Calc.getBoundsScale(rotationRect, this.image);
+        this.image.width = this.image.width * scale.max;
+        this.image.height = this.image.height * scale.max;
+        Painter.drawBounds(this.boundsGraphics, rotationRect, 0xFF00FF, 1);*/
+    }
+
+    setImageMaxScale() {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+        var w = imageRect.width;
+        var h = imageRect.height;
+
+        this.imageMaxScaleHeight = Calc.getDiagonal(w, h);
+        this.imageMaxScaleWidth = (w * this.imageMaxScaleHeight) / h;
+        this.imageMaxScaleX = this.imageMaxScaleWidth / w;
+        this.imageMaxScaleY = this.imageMaxScaleHeight / h;
+        this.imageMaxScale = this.imageMaxScaleY;
+
+        console.log('-----------------------------------------');
+        console.log('setImageMaxScale');
+        console.log('imageRect w:' + w + ', h:' + h);
+        console.log('image w:' + this.image.width + ', h:' + this.image.height);
+        console.log('scaleX:' + this.imageMaxScaleX + ', scaleY:' + this.imageMaxScaleY);
+        console.log('-----------------------------------------');
+    }
+
+    displayCurrentImageRotationBounds() {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+
+        var imagePoint = {
+            lt: {x:0, y:0},
+            rt: {x:imageRect.width, y:0},
+            rb: {x:imageRect.width, y:imageRect.height},
+            lb: {x:0, y:imageRect.height}
+        };
+
+        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+        rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
+        rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
+        Painter.drawBounds(this.debugGraphics, rotationRect, 2, 0x00FCFF, 1);
     }
 
 
     rotateEnd(e) {
-        this.image.pivot = new PIXI.Point(0, 0);
-        //this.image.x = this.prevImageX;
-        //this.image.y = this.prevImageY;
+
     }
 
 
@@ -386,23 +293,17 @@ export class Cropper extends PIXI.Container {
         this.lensBounds = this.resizeUI.bounds;
     }
 
+
     cornerResizeChange(e) {
         var target = e.target;
         var tx = target.x + e.dx;
         var ty = target.y + e.dy;
-
-        //var dx = Math.abs(e.dx);
-        //var dy = Math.abs(e.dy);
-
-        // 2배
         var dx = Math.abs(e.dx) * 2;
         var dy = Math.abs(e.dy) * 2;
 
         var lens = this.resizeUI.bounds;
-
         var isOutX = false;
         var isOutY = false;
-
 
         if (tx > this.lensBounds.x && tx < (this.lensBounds.x + this.lensBounds.width) && ty > this.lensBounds.y && ty < (this.lensBounds.y + this.lensBounds.height)) {
             target.x = tx;
@@ -434,8 +335,6 @@ export class Cropper extends PIXI.Container {
             } else {
                 //
             }
-
-            console.log('lens x: ' + lens.x + ', y: ' + lens.y + ', w: ' + lens.width + ', h: ' + lens.height);
         }
 
         if(isOutX === false)
@@ -445,8 +344,9 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
-        this.drawBounds(this.scaleBoundsGraphics, this.lensBounds, 0xFF00FF, 0.7);
+        Painter.drawBounds(this.scaleBoundsGraphics, this.lensBounds, 1, 0xFF00FF, 0.7);
     }
+
 
     cornerResizeEnd(e) {
         this.moveUI.resize(this.resizeUI.bounds);
@@ -460,40 +360,29 @@ export class Cropper extends PIXI.Container {
     //////////////////////////////////////////////////////////////////////////
 
 
-    get isReadyToRotation() {
-        var imageSize = this.image.size;
-        var resizeUISize = this.resizeUI.bounds;
-
-        var w = Math.abs(resizeUISize.width - imageSize.width);
-        var h = Math.abs(resizeUISize.height - imageSize.height);
-
-        if(w < 2 && h < 2)
-            return true;
-        else
-            return false;
-    }
 
     /**
      * 이미지가 바운드를 벗어 났는지 체크
      * @returns {boolean}
      */
     get isImageOutOfBounds() {
-        var isInBounds = true;
         var image = this.image;
-        var bounds = [this.resizeUI.lt, this.resizeUI.rt, this.resizeUI.rb, this.resizeUI.lb];
+        var lt = image.lt;
+        var rt = image.rt;
+        var rb = image.rb;
+        var lb = image.lb;
+        var boundsPoints = [this.resizeUI.lt, this.resizeUI.rt, this.resizeUI.rb, this.resizeUI.lb];
 
-        var imagePoints = image.getGlobalBoundsPoints();
-        var lt = imagePoints.lt;
-        var rt = imagePoints.rt;
-        var rb = imagePoints.rb;
-        var lb = imagePoints.lb;
+        //console.log(boundsPoints[0].x, boundsPoints[0].y);
+        //console.log(boundsPoints[1].x, boundsPoints[1].y);
+        //console.log(boundsPoints[2].x, boundsPoints[2].y);
+        //console.log(boundsPoints[3].x, boundsPoints[3].y);
 
-        for (let i = 0; i < bounds.length; i++) {
-            if (Calc.isInsideSquare(lt, rt, rb, lb, bounds[i]) === false)
-                isInBounds = false;
+        for (let i = 0; i < boundsPoints.length; i++) {
+            if (Calc.isInsideSquare(lt, rt, rb, lb, boundsPoints[i]) === false)
+                return true;
         }
-
-        return isInBounds;
+        return false;
     }
 
 
@@ -518,8 +407,8 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    get isReachedLimitLine() {
-        var isReached = false;
+    get isHitSide() {
+        var isHit = false;
 
         var lt = this.image.lt;
         var rt = this.image.rt;
@@ -528,19 +417,19 @@ export class Cropper extends PIXI.Container {
 
         // 왼쪽 도달
         if (Calc.triangleArea(lb, lt, this.resizeUI.lt) > 0)
-            isReached = true;
+            isHit = true;
 
         if (Calc.triangleArea(lb, lt, this.resizeUI.lb) > 0)
-            isReached = true;
+            isHit = true;
 
         // 오른쪽 도달
         if (Calc.triangleArea(rt, rb, this.resizeUI.rt) > 0)
-            isReached = true;
+            isHit = true;
 
         if (Calc.triangleArea(rt, rb, this.resizeUI.rb) > 0)
-            isReached = true;
+            isHit = true;
 
-        return isReached;
+        return isHit;
     }
 
 
@@ -560,12 +449,4 @@ export class Cropper extends PIXI.Container {
             y: boundsY
         }
     }
-
-
-    get vo() {
-        return this._vo;
-    }
-
-
-
 }

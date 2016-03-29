@@ -17,12 +17,12 @@ export class RotateUI extends PIXI.Sprite {
 
     render() {
         this.graphics.clear();
-        this.graphics.beginFill(0xFFFFFF, 0.1);
+        this.graphics.beginFill(0xFF00FF, 0.0);
         this.graphics.drawRect(0, 0, 1, 1);
         this.graphics.endFill();
     }
 
-    resize(imageRect) {
+    resize() {
         this.graphics.width = this.canvas.width;
         this.graphics.height = this.canvas.height;
 

@@ -17,7 +17,6 @@ export class ControlArea extends PIXI.Sprite {
         super();
         this.initialize(type);
         this.draw(type);
-        //this.addMouseDownEvent();
     }
 
 

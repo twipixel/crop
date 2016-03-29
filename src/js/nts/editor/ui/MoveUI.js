@@ -17,7 +17,7 @@ export class MoveUI extends PIXI.Sprite {
 
     render() {
         this.graphics.clear();
-        this.graphics.beginFill(0x00A745, 0);
+        this.graphics.beginFill(0x4285f4, 0.1);
         this.graphics.drawRect(0, 0, 1, 1);
         this.graphics.endFill();
     }
@@ -79,9 +79,7 @@ export class MoveUI extends PIXI.Sprite {
     }
 
     onMouseUp(e) {
-
         this.emit('moveEnd');
-
         this.addMouseDownEvent();
         this.removeMouseMoveEvent();
     }
