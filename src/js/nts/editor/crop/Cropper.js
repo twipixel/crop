@@ -113,7 +113,8 @@ export class Cropper extends PIXI.Container {
         this.image.x = this.cx;
         this.image.y = this.cy;
 
-        this.setImageMaxScale();
+        this.imagePoints = this.image.points;
+        //this.setImageMaxScale();
     }
 
 
@@ -202,9 +203,8 @@ export class Cropper extends PIXI.Container {
 
 
     rotateStart(e) {
-        this.setImageMaxScale();
-        this.imagePoints = this.image.points;
-        this.imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+        //this.setImageMaxScale();
+        //this.imagePoints = this.image.points;
     }
 
 
@@ -217,26 +217,92 @@ export class Cropper extends PIXI.Container {
         if (this.image.rotation > this.maxRotation)
             this.image.rotation = this.maxRotation;
 
-
         this.displayCurrentImageRotationBounds();
 
         if(this.isImageOutOfBounds) {
-
-            // 현재 이미지가 최대 사이즈가 아니라면 커지고 이동
             var rotationPoints = Calc.getRotationRectanglePoints({x:this.image.x, y:this.image.y}, this.imagePoints, Calc.toDegrees(this.image.rotation));
             var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
             var scale = Calc.getBoundsScale(rotationRect, this.image);
             var max = scale.max > this.imageMaxScale ? this.imageMaxScale : scale.max;
+            var scaleWidth = this.image.width * max;
+            var scaleHeight = this.image.height * max;
 
-            if(max < this.imageMaxScale) {
-                this.image.width = this.image.width * max;
-                this.image.height = this.image.height * max;
+            if(scaleWidth > this.image.width && scaleHeight > this.image.height) {
+                this.image.width = scaleWidth;
+                this.image.height = scaleHeight;
             }
 
-            console.log('rotate', 'max:', max, 'w:', this.image.width, 'h:', this.image.height);
+
+            console.log('rotate', 'deg:', Calc.digit(Calc.toDegrees(this.image.rotation)), 'max:', Calc.digit(max, 2), 'w:', parseInt(this.image.width), 'h:', parseInt(this.image.height));
 
             Painter.drawBounds(this.boundsGraphics, rotationRect, 1, 0xFF00FF, 1);
 
+            var line, distancePoint, returnPoint;
+
+            if (this.isLtOut) {
+                if (this.isHitSide) {
+                    line = this.image.leftLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                } else {
+                    line = this.image.topLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                }
+            }
+
+            if (this.isLbOut) {
+                if (this.isHitSide) {
+                    line = this.image.leftLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                } else {
+                    line = this.image.bottomLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                }
+            }
+
+            if (this.isRtOut) {
+                if (this.isHitSide) {
+                    line = this.image.rightLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                } else {
+                    line = this.image.topLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                }
+            }
+
+
+            if (this.isRbOut) {
+                if (this.isHitSide) {
+                    line = this.image.rightLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                } else {
+                    line = this.image.bottomLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+                }
+            }
         }
 
         /*var rotationPoints = Calc.getRotationRectanglePoints({x:this.image.x, y:this.image.y}, this.imagePoints, Calc.toDegrees(this.image.rotation));
@@ -281,6 +347,24 @@ export class Cropper extends PIXI.Container {
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
         Painter.drawBounds(this.debugGraphics, rotationRect, 2, 0x00FCFF, 1);
+    }
+
+    getCurrentImageRect() {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+
+        var imagePoint = {
+            lt: {x:0, y:0},
+            rt: {x:imageRect.width, y:0},
+            rb: {x:imageRect.width, y:imageRect.height},
+            lb: {x:0, y:imageRect.height}
+        };
+
+        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+        rotationRect.x = this.image.x;
+        rotationRect.y = this.image.y;
+
+        return rotationRect;
     }
 
 

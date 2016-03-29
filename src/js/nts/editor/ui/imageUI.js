@@ -1,19 +1,17 @@
 import {Calc} from './../utils/Calculator';
+import {Painter} from './../utils/Painter';
 
+//export class ImageUI extends PIXI.Sprite {
 export class ImageUI extends PIXI.Container {
     constructor(imageElement) {
+        //super(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         super();
         this.initialize(imageElement);
+        this.addDebugPoint();
     }
 
     initialize(imageElement) {
         this.imageElement = imageElement;
-
-        /*this.base = new PIXI.BaseTexture(this.imageElement);
-        this.texture = new PIXI.Texture(this.base);
-        this.image = new PIXI.Sprite(this.texture);
-        this.image.anchor = {x:0.5, y:0.5};
-        this.addChild(this.image);*/
 
         this.image = new PIXI.Sprite(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         this.image.x = -this.image.width / 2;
@@ -24,6 +22,7 @@ export class ImageUI extends PIXI.Container {
         this.rtp = new PIXI.Sprite();
         this.rbp = new PIXI.Sprite();
         this.lbp = new PIXI.Sprite();
+
         this.ltp.x = this.image.x;
         this.ltp.y = this.image.y;
         this.rtp.x = this.image.x + this.image.width;
@@ -32,6 +31,12 @@ export class ImageUI extends PIXI.Container {
         this.rbp.y = this.image.y + this.image.height;
         this.lbp.x = this.image.x;
         this.lbp.y = this.image.y + this.image.height;
+
+        /*this.rtp.x = this.width;
+        this.rbp.x = this.width;
+        this.rbp.y = this.height;
+        this.lbp.y = this.height;*/
+
         this.addChild(this.ltp);
         this.addChild(this.rtp);
         this.addChild(this.rbp);
@@ -39,11 +44,31 @@ export class ImageUI extends PIXI.Container {
     }
 
 
+    addDebugPoint() {
+        var ltd = Painter.getDebugPoint();
+        var rtd = Painter.getDebugPoint();
+        var rbd = Painter.getDebugPoint();
+        var lbd = Painter.getDebugPoint();
+        ltd.x = 5;
+        ltd.y = 5;
+        rtd.x = -5;
+        rtd.y = 5;
+        rbd.x = -5;
+        rbd.y = -5;
+        lbd.x = 5;
+        lbd.y = -5;
+        this.ltp.addChild(ltd);
+        this.rtp.addChild(rtd);
+        this.rbp.addChild(rbd);
+        this.lbp.addChild(lbd);
+    }
+
+
     /**
      * 글로벌 좌표로 포인트를 반환합니다.
      * @returns {{lt: PIXI.Point, rt: PIXI.Point, rb: PIXI.Point, lb: PIXI.Point}}
      */
-    getGlobalBoundsPoints() {
+    get points() {
         return {
             lt: this.lt,
             rt: this.rt,
@@ -78,23 +103,21 @@ export class ImageUI extends PIXI.Container {
     }
 
 
-
     get leftLine() {
-        return {a:this.lb, b:this.lt};
+        return {a: this.lb, b: this.lt};
     }
 
     get topLine() {
-        return {a:this.lt, b:this.rt};
+        return {a: this.lt, b: this.rt};
     }
 
     get rightLine() {
-        return {a:this.rt, b:this.rb};
+        return {a: this.rt, b: this.rb};
     }
 
     get bottomLine() {
-        return {a:this.rb, b:this.lb};
+        return {a: this.rb, b: this.lb};
     }
-
 
 
     get left() {
@@ -114,11 +137,13 @@ export class ImageUI extends PIXI.Container {
     }
 
 
-
     get size() {
         return {
             width: this.rt.x - this.lt.x,
             height: this.lb.y - this.lt.y
         };
     }
+
+
+
 }
