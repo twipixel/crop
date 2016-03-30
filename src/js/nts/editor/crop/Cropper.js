@@ -181,6 +181,12 @@ export class Cropper extends PIXI.Container {
     rotateStart(e) {
         //this.setImageMaxScale();
         //this.imagePoints = this.image.points;
+
+        this.prevlt = this.image.lt;
+        this.prevrt = this.image.rt;
+        this.prevrb = this.image.rb;
+        this.prevlb = this.image.lb;
+
         this.gLine.clear();
     }
 
@@ -227,7 +233,7 @@ export class Cropper extends PIXI.Container {
                     this.image.y = this.image.y + returnPoint.y;
 
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
-                    this.reportHit('[LT LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
+                    this.reportCheck('[LT LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
                 } else {
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
@@ -235,7 +241,7 @@ export class Cropper extends PIXI.Container {
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
-                    this.reportHit('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
+                    this.reportCheck('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
                 }
             }
 
@@ -247,7 +253,7 @@ export class Cropper extends PIXI.Container {
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
-                    this.reportHit('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
+                    this.reportCheck('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
                 } else {
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
@@ -255,7 +261,7 @@ export class Cropper extends PIXI.Container {
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
-                    this.reportHit('[LB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
+                    this.reportCheck('[LB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
                 }
             }
 
@@ -267,7 +273,7 @@ export class Cropper extends PIXI.Container {
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
-                    this.reportHit('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
+                    this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
                 } else {
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
@@ -275,7 +281,7 @@ export class Cropper extends PIXI.Container {
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
-                    this.reportHit('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
+                    this.reportCheck('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
                 }
             }
 
@@ -288,7 +294,7 @@ export class Cropper extends PIXI.Container {
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, parseInt(this.resizeUI.rb), parseInt(line.a), parseInt(line.b), parseInt(distancePoint));
-                    this.reportHit('[RB RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
+                    this.reportCheck('[RB RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
                 } else {
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
@@ -296,7 +302,7 @@ export class Cropper extends PIXI.Container {
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
                     Painter.drawDistToSegment(this.gLine, parseInt(this.resizeUI.rb), parseInt(line.a), parseInt(line.b), parseInt(distancePoint));
-                    this.reportHit('[RB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
+                    this.reportCheck('[RB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
                 }
             }
         }
@@ -309,23 +315,48 @@ export class Cropper extends PIXI.Container {
         Painter.drawBounds(this.boundsGraphics, rotationRect, 0xFF00FF, 1);*/
     }
 
-    reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
-        if(Math.abs(returnPoint.x) > 60 || Math.abs(returnPoint.y) > 60) {
+    reportCheck(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
+        var reportValue = 60;
 
-            var report = '  ' + title + ' ' +
-                'RETURN[' + parseInt(returnPoint.x) + ', ' + parseInt(returnPoint.y) + ']\n' +
-                lineALabel + '[' + parseInt(lineA.x) + ', ' + parseInt(lineA.y) + '], ' +
-                lineBLabel + '[' + parseInt(lineB.x) + ', ' + parseInt(lineB.y) + '], ' +
-                'Dt[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + '], ' +
-                'P[' + parseInt(point.x) + ', ' + parseInt(point.y) + ']';
+        if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
+            console.log('CASE MAX RETURN');
+            this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
+        } else {
+            if(
+                Math.abs(this.prevlt.x - this.image.lt.x) > reportValue ||
+                Math.abs(this.prevlt.y - this.image.lt.y) > reportValue ||
+                Math.abs(this.prevrt.x - this.image.rt.x) > reportValue ||
+                Math.abs(this.prevrt.y - this.image.rt.y) > reportValue ||
+                Math.abs(this.prevrb.x - this.image.rb.x) > reportValue ||
+                Math.abs(this.prevrb.y - this.image.rb.y) > reportValue ||
+                Math.abs(this.prevlb.x - this.image.lb.x) > reportValue ||
+                Math.abs(this.prevlb.y - this.image.lb.y) > reportValue) {
 
-            console.log('-------------------------------------------------------');
-            this.image.toString();
-            console.log('-------------------------------------------------------');
-            console.log(report);
-            console.log('-------------------------------------------------------');
+                console.log('CASE MAX MOVE');
+                this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
+            }
         }
+
+        this.prevlt = this.image.lt;
+        this.prevrt = this.image.rt;
+        this.prevrb = this.image.rb;
+        this.prevlb = this.image.lb;
     }
+
+    reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
+        var report = '  ' + title + ' ' +
+            'RETURN[' + parseInt(returnPoint.x) + ', ' + parseInt(returnPoint.y) + ']\n' +
+            lineALabel + '[' + parseInt(lineA.x) + ', ' + parseInt(lineA.y) + '], ' +
+            lineBLabel + '[' + parseInt(lineB.x) + ', ' + parseInt(lineB.y) + '], ' +
+            'Dt[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + '], ' +
+            'P[' + parseInt(point.x) + ', ' + parseInt(point.y) + ']';
+        console.log('------------------------------------------------------------------');
+        this.image.toString();
+        console.log('------------------------------------------------------------------');
+        console.log(report);
+        console.log('------------------------------------------------------------------');
+    }
+
 
     rotateEnd(e) {
 

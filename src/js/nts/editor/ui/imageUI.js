@@ -33,9 +33,9 @@ export class ImageUI extends PIXI.Container {
         this.lbp.y = this.image.y + this.image.height;
 
         /*this.rtp.x = this.width;
-        this.rbp.x = this.width;
-        this.rbp.y = this.height;
-        this.lbp.y = this.height;*/
+         this.rbp.x = this.width;
+         this.rbp.y = this.height;
+         this.lbp.y = this.height;*/
 
         this.addChild(this.ltp);
         this.addChild(this.rtp);
@@ -47,10 +47,10 @@ export class ImageUI extends PIXI.Container {
     addDebugPoint() {
         var size = 4;
         var half = size / 2;
-        var ltd = Painter.getRect(size);
-        var rtd = Painter.getRect(size);
-        var rbd = Painter.getRect(size);
-        var lbd = Painter.getRect(size);
+        var ltd = Painter.getRect(size, 0x009999);
+        var rtd = Painter.getRect(size, 0x009999);
+        var rbd = Painter.getRect(size, 0x009999);
+        var lbd = Painter.getRect(size, 0x009999);
         ltd.x = half;
         ltd.y = half;
         rtd.x = -half;
@@ -64,7 +64,6 @@ export class ImageUI extends PIXI.Container {
         this.rbp.addChild(rbd);
         this.lbp.addChild(lbd);
     }
-
 
     /**
      * 글로벌 좌표로 포인트를 반환합니다.
@@ -80,12 +79,16 @@ export class ImageUI extends PIXI.Container {
     }
 
     toString() {
-        console.log(
-            'LT[' + Calc.digit(this.lt.x) + ', ' + Calc.digit(this.lt.y) + ']',
-            'RT[' + Calc.digit(this.rt.x) + ', ' + Calc.digit(this.rt.y) + ']',
-            'RB[' + Calc.digit(this.rb.x) + ', ' + Calc.digit(this.rb.y) + ']',
-            'LB[' + Calc.digit(this.lb.x) + ', ' + Calc.digit(this.lb.y) + ']'
-        )
+        var str = '' +
+            'LT[' + Calc.leadingZero(parseInt(this.lt.x)) + ', ' + Calc.leadingZero(parseInt(this.lt.y)) + '] ' +
+            'RT[' + Calc.leadingZero(parseInt(this.rt.x)) + ', ' + Calc.leadingZero(parseInt(this.rt.y)) + '] ' +
+            'RB[' + Calc.leadingZero(parseInt(this.rb.x)) + ', ' + Calc.leadingZero(parseInt(this.rb.y)) + '] ' +
+            'LB[' + Calc.leadingZero(parseInt(this.lb.x)) + ', ' + Calc.leadingZero(parseInt(this.lb.y)) + '] ' +
+            'XY[' + Calc.leadingZero(parseInt(this.x)) + ', ' + Calc.leadingZero(parseInt(this.y)) + '] ' +
+            'WH[' + Calc.leadingZero(parseInt(this.width)) + ', ' + Calc.leadingZero(parseInt(this.height)) + ']'
+
+        console.log(str);
+        return str;
     }
 
     get lt() {
@@ -106,7 +109,7 @@ export class ImageUI extends PIXI.Container {
 
 
     get leftLine() {
-        return {a: this.lb, b: this.lt};
+        return {a: this.lt, b: this.lb};
     }
 
     get topLine() {
@@ -118,7 +121,7 @@ export class ImageUI extends PIXI.Container {
     }
 
     get bottomLine() {
-        return {a: this.rb, b: this.lb};
+        return {a: this.lb, b: this.rb};
     }
 
 
@@ -145,7 +148,6 @@ export class ImageUI extends PIXI.Container {
             height: this.lb.y - this.lt.y
         };
     }
-
 
 
 }
