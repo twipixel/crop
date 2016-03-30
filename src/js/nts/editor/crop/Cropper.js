@@ -105,6 +105,8 @@ export class Cropper extends PIXI.Container {
     }
 
     test() {
+        return;
+
         var lineA = 'RT';
         var lineB = 'RB';
 
@@ -412,8 +414,8 @@ export class Cropper extends PIXI.Container {
         var reportValue = 60;
 
         this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
-        //Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
-        //Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
+        Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
+        Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
 
         /*if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
             console.log('\nCASE MAX RETURN');

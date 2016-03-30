@@ -16,7 +16,7 @@ export class ImageUI extends PIXI.Container {
         this.image = new PIXI.Sprite(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         this.image.x = -this.image.width / 2;
         this.image.y = -this.image.height / 2;
-        this.image.alpha = 0.2;
+        //this.image.alpha = 0.2;
         this.addChild(this.image);
 
         this.ltp = new PIXI.Sprite();

@@ -105,6 +105,8 @@ export class Cropper extends PIXI.Container {
     }
 
     test() {
+        return;
+
         var lineA = 'RT';
         var lineB = 'RB';
 
@@ -258,10 +260,12 @@ export class Cropper extends PIXI.Container {
 
             Painter.drawBounds(this.gBounds, rotationRect, true, 1, 0xFF00FF, 0.7);
 
+            var rotation = Calc.toDegrees(this.image.rotation);
             var line, distancePoint, returnPoint;
 
-            if (this.isLtOut) {
-                if (this.isHitSide) {
+            // 위로 회전
+            if(rotation > 0) {
+                if (this.isLtOut) {
                     line = this.image.leftLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
@@ -273,39 +277,13 @@ export class Cropper extends PIXI.Container {
                     this.prevy = this.image.y;
                     //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
                     this.reportCheck('[LT LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
-                } else {
-                    line = this.image.topLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
-                    this.checkMaxMove('[LT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
-                    this.reportCheck('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
                 }
-            }
 
-            if (this.isLbOut) {
-                if (this.isHitSide) {
-                    line = this.image.leftLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.checkMaxMove('[LB LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
-                    this.reportCheck('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
-                } else {
+                if (this.isLbOut) {
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.checkMaxMove('[LT BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
+                    this.checkMaxMove('[LB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
 
@@ -314,22 +292,8 @@ export class Cropper extends PIXI.Container {
                     //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
                     this.reportCheck('[LB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
                 }
-            }
 
-            if (this.isRtOut) {
-                if (this.isHitSide) {
-                    line = this.image.rightLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
-                    this.checkMaxMove('[RT RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
-                    this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
-                } else {
+                if (this.isRtOut) {
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
@@ -342,10 +306,8 @@ export class Cropper extends PIXI.Container {
                     //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
                     this.reportCheck('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
                 }
-            }
 
-            if (this.isRbOut) {
-                if (this.isHitSide) {
+                if (this.isRbOut) {
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
@@ -357,7 +319,51 @@ export class Cropper extends PIXI.Container {
                     this.prevy = this.image.y;
                     //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
                     this.reportCheck('[RB RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
-                } else {
+                }
+            } else {
+                if (this.isLtOut) {
+                    line = this.image.topLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
+                    this.checkMaxMove('[LT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
+                    this.reportCheck('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
+                }
+
+                if (this.isLbOut) {
+                    line = this.image.leftLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
+                    this.checkMaxMove('[LB LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
+                    this.reportCheck('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
+                }
+
+                if (this.isRtOut) {
+                    line = this.image.rightLine;
+                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
+                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
+                    this.checkMaxMove('[RT RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
+                    this.image.x = this.image.x + returnPoint.x;
+                    this.image.y = this.image.y + returnPoint.y;
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
+                    this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
+                }
+
+                if (this.isRbOut) {
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
@@ -407,7 +413,11 @@ export class Cropper extends PIXI.Container {
     reportCheck(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
         var reportValue = 60;
 
-        if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
+        this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
+        Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
+        Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
+
+        /*if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
             console.log('\nCASE MAX RETURN');
             this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
 
@@ -430,7 +440,7 @@ export class Cropper extends PIXI.Container {
                 Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
                 Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
             }
-        }
+        }*/
 
         this.prevlt = this.image.lt;
         this.prevrt = this.image.rt;
