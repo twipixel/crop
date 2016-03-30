@@ -92,6 +92,8 @@ export class Cropper extends PIXI.Container {
             this.moveUI.resize(imageBounds);
 
             this.test();
+        } else {
+            // 리사이즈 코드
         }
 
         Painter.drawBounds(this.gBounds, bounds);
@@ -128,7 +130,6 @@ export class Cropper extends PIXI.Container {
         rubberbandBounds.x = this.canvas.width / 2 - rubberbandBounds.width / 2;
         rubberbandBounds.y = this.canvas.height / 2 - rubberbandBounds.height / 2;
         this.resizeUI.setSize(rubberbandBounds);
-
         this.image.width = this.image.width * this.zoom;
         this.image.height = this.image.height * this.zoom;
 
@@ -136,7 +137,6 @@ export class Cropper extends PIXI.Container {
         var posY = lensY * this.zoom;
         var centerOffsetX = this.image.x - this.image.lt.x;
         var centerOffsetY = this.image.y - this.image.lt.y;
-
         this.image.x = rubberbandBounds.x + posX + centerOffsetX;
         this.image.y = rubberbandBounds.y + posY + centerOffsetY;
     }
