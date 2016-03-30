@@ -342,10 +342,7 @@ export class Cropper extends PIXI.Container {
                     //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
                     this.reportCheck('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
                 }
-            }
-
-
-            if (this.isRbOut) {
+            } else if (this.isRbOut) {
                 if (this.isHitSide) {
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
