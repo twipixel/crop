@@ -42,11 +42,13 @@ export class Cropper extends PIXI.Container {
         this.gLens = new PIXI.Graphics();
         this.gDebug = new PIXI.Graphics();
         this.gBounds = new PIXI.Graphics();
+        this.gRotate = new PIXI.Graphics();
         this.addChild(this.gLens);
         this.addChild(this.gLine);
         this.addChild(this.gGrid);
         this.addChild(this.gDebug);
         this.addChild(this.gBounds);
+        this.addChild(this.gRotate);
     }
 
     addEvent() {
@@ -56,7 +58,7 @@ export class Cropper extends PIXI.Container {
                     console.clear();
                     break;
                 case KeyCode.SPACE:
-                    this.image.toString();
+                    console.log(this.image.toString());
                     break;
             }
         });
@@ -66,6 +68,7 @@ export class Cropper extends PIXI.Container {
         this.moveUI.on('moveEnd', this.moveEnd.bind(this));
         this.rotateUI.on('rotateStart', this.rotateStart.bind(this));
         this.rotateUI.on('rotateChange', this.rotateChange.bind(this));
+        this.rotateUI.on('rotateEnd', this.rotateEnd.bind(this));
         this.rotateUI.on('rotateStart', this.rotateStart.bind(this));
         this.resizeUI.on('cornerResizeStart', this.cornerResizeStart.bind(this));
         this.resizeUI.on('cornerResizeChange', this.cornerResizeChange.bind(this));
@@ -172,6 +175,12 @@ export class Cropper extends PIXI.Container {
     }
 
     moveChange(e) {
+
+        if(this.isRotate === true) {
+            console.log('!!!!!!!!!!!!!!! WHY MOVE!!');
+            return;
+        }
+
         this.image.x += e.change.x;
         this.image.y += e.change.y;
 
@@ -202,12 +211,19 @@ export class Cropper extends PIXI.Container {
         //this.setImageMaxScale();
         //this.imagePoints = this.image.points;
 
+        this.isRotate = true;
+
+        this.prevx = this.image.x;
+        this.prevy = this.image.y;
         this.prevlt = this.image.lt;
         this.prevrt = this.image.rt;
         this.prevrb = this.image.rb;
         this.prevlb = this.image.lb;
 
         this.gLine.clear();
+        this.gRotate.clear();
+
+        this.count = 0;
     }
 
     rotateChange(e) {
@@ -237,10 +253,10 @@ export class Cropper extends PIXI.Container {
             //console.log('rotate', 'deg:', Calc.digit(Calc.toDegrees(this.image.rotation)), 'max:', Calc.digit(max, 2), 'w:', parseInt(this.image.width), 'h:', parseInt(this.image.height));
 
 
-            this.image.toString();
+            console.log(Calc.leadingZero(this.count++, 2) + '|' + this.image.toString());
 
 
-            Painter.drawBounds(this.gBounds, rotationRect, 1, 0xFF00FF, 0.7);
+            Painter.drawBounds(this.gBounds, rotationRect, true, 1, 0xFF00FF, 0.7);
 
             var line, distancePoint, returnPoint;
 
@@ -249,18 +265,25 @@ export class Cropper extends PIXI.Container {
                     line = this.image.leftLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
+                    this.checkMaxMove('[LT LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
 
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
                     this.reportCheck('[LT LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
                 } else {
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
+                    this.checkMaxMove('[LT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
                     this.reportCheck('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
                 }
             }
@@ -270,17 +293,25 @@ export class Cropper extends PIXI.Container {
                     line = this.image.leftLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
+                    this.checkMaxMove('[LB LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
                     this.reportCheck('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
                 } else {
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
+                    this.checkMaxMove('[LT BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
                     this.reportCheck('[LB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
                 }
             }
@@ -290,17 +321,25 @@ export class Cropper extends PIXI.Container {
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
+                    this.checkMaxMove('[RT RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
                     this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
                 } else {
                     line = this.image.topLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
+                    this.checkMaxMove('[RT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
                     this.reportCheck('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
                 }
             }
@@ -311,17 +350,25 @@ export class Cropper extends PIXI.Container {
                     line = this.image.rightLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
+                    this.checkMaxMove('[RB RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, parseInt(this.resizeUI.rb), parseInt(line.a), parseInt(line.b), parseInt(distancePoint));
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
                     this.reportCheck('[RB RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
                 } else {
                     line = this.image.bottomLine;
                     distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
                     returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
+                    this.checkMaxMove('[RB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
                     this.image.x = this.image.x + returnPoint.x;
                     this.image.y = this.image.y + returnPoint.y;
-                    Painter.drawDistToSegment(this.gLine, parseInt(this.resizeUI.rb), parseInt(line.a), parseInt(line.b), parseInt(distancePoint));
+
+                    this.prevx = this.image.x;
+                    this.prevy = this.image.y;
+                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
                     this.reportCheck('[RB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
                 }
             }
@@ -335,12 +382,38 @@ export class Cropper extends PIXI.Container {
         Painter.drawBounds(this.boundsGraphics, rotationRect, 0xFF00FF, 1);*/
     }
 
+
+    checkMaxMove(title, lineALabel, lineA, lineBLabel, lineB, point) {
+        return;
+
+        var max = 60;
+        var distancePoint = Calc.getShortestDistancePoint(point, lineA, lineB);
+        var returnPoint = Calc.getReturnPoint(point, distancePoint);
+        var x = this.image.x + returnPoint.x;
+        var y = this.image.y + returnPoint.y;
+
+        if(Math.abs(this.prevx - x) > max || Math.abs(this.prevy - y) > max) {
+            console.log('CHECK MAX MOVE ' + title + ' prev[' +
+                Calc.leadingZero(parseInt(this.prevx), 4) + ', ' + Calc.leadingZero(parseInt(this.prevy), 4) + '], next[' +
+                Calc.leadingZero(parseInt(x), 4) + ', ' + Calc.leadingZero(parseInt(y), 4) + ']');
+
+            console.log(
+                lineALabel + ' [' + Calc.leadingZero(parseInt(lineA.x), 4) + ', ' + Calc.leadingZero(parseInt(lineA.y), 4) + '], ' +
+                lineBLabel + ' [' + Calc.leadingZero(parseInt(lineB.x), 4) + ', ' + Calc.leadingZero(parseInt(lineB.y), 4) + ']');
+
+            console.log(this.image.toString());
+        }
+    }
+
     reportCheck(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
         var reportValue = 60;
 
         if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
-            console.log('CASE MAX RETURN');
+            console.log('\nCASE MAX RETURN');
             this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
+
+            Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
+            Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
         } else {
             if(
                 Math.abs(this.prevlt.x - this.image.lt.x) > reportValue ||
@@ -352,8 +425,11 @@ export class Cropper extends PIXI.Container {
                 Math.abs(this.prevlb.x - this.image.lb.x) > reportValue ||
                 Math.abs(this.prevlb.y - this.image.lb.y) > reportValue) {
 
-                console.log('CASE MAX MOVE');
+                console.log('\nCASE MAX MOVE');
                 this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
+
+                Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
+                Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
             }
         }
 
@@ -371,7 +447,7 @@ export class Cropper extends PIXI.Container {
             'Dt[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + '], ' +
             'P[' + parseInt(point.x) + ', ' + parseInt(point.y) + ']';
         console.log('------------------------------------------------------------------');
-        this.image.toString();
+        console.log(this.image.toString());
         console.log('------------------------------------------------------------------');
         console.log(report);
         console.log('------------------------------------------------------------------');
@@ -379,7 +455,7 @@ export class Cropper extends PIXI.Container {
 
 
     rotateEnd(e) {
-
+        this.isRotate = false;
     }
 
     cornerResizeStart(e) {
@@ -436,7 +512,8 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
-        Painter.drawBounds(this.gLens, this.lensBounds, 1, 0xFF00FF, 0.2);
+
+        Painter.drawBounds(this.gLens, this.lensBounds, true, 1, 0xFF00FF, 0.2);
     }
 
     cornerResizeEnd(e) {
@@ -572,7 +649,7 @@ export class Cropper extends PIXI.Container {
         var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
-        Painter.drawBounds(this.gDebug, rotationRect, 2, 0x00FCFF, 0.4);
+        Painter.drawBounds(this.gDebug, rotationRect, true, 2, 0x00FCFF, 0.4);
     }
 
     getCurrentImageRect() {

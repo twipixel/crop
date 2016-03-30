@@ -21,17 +21,36 @@ export class Painter {
         return cicle;
     }
 
-    static drawBounds(graphics, bounds, thickness = 1, color = 0xFF3300, alpha = 0.7) {
-        graphics.clear();
+    static drawBounds(graphics, bounds, initClear = true, thickness = 1, color = 0xFF3300, alpha = 0.7) {
+        if(initClear)
+            graphics.clear();
+
         graphics.lineStyle(thickness, color, alpha);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
         graphics.endFill();
     }
 
 
-    static drawGrid(graphics, width, height) {
-        graphics.clear();
+    static drawPoints(graphics, points, initClear = true, thickness = 1, color = 0xFF3300, alpha = 0.7) {
+        if(initClear)
+            graphics.clear();
 
+        var lt = points.lt;
+        var rt = points.rt;
+        var rb = points.rb;
+        var lb = points.lb;
+
+        graphics.lineStyle(thickness, color, alpha);
+        graphics.moveTo(lt.x, lt.y);
+        graphics.lineTo(rt.x, rt.y);
+        graphics.lineTo(rb.x, rb.y);
+        graphics.lineTo(lb.x, lb.y);
+        graphics.lineTo(lt.x, lt.y);
+        graphics.endFill();
+    }
+
+
+    static drawGrid(graphics, width, height) {
         var lightLineAlpha = 0.1;
         var heavyLineAlpha = 0.3;
 
@@ -68,8 +87,8 @@ export class Painter {
         var shapeAlpha = 0.2;
 
         // 1
-        graphics.beginFill(0xCCFFCC, shapeAlpha);
-        graphics.lineStyle(1, 0x66FF00, lineAlpha);
+        graphics.beginFill(0x00CC33, shapeAlpha);
+        graphics.lineStyle(1, 0x009933, lineAlpha);
         graphics.moveTo(lineA.x, lineA.y);
         graphics.lineTo(lineB.x, lineB.y);
         graphics.drawCircle(lineA.x, lineA.y, radius);
