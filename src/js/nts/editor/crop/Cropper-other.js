@@ -264,115 +264,131 @@ export class Cropper extends PIXI.Container {
             // 위로 회전
             if(rotation > 0) {
                 if (this.isLtOut) {
-                    line = this.image.leftLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
-                    this.checkMaxMove('[LT LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide) {
+                        line = this.image.leftLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
+                        this.checkMaxMove('[LT LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
-                    this.reportCheck('[LT LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
+                        this.reportCheck('[LT LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
+                    }
                 }
 
                 if (this.isLbOut) {
-                    line = this.image.bottomLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.checkMaxMove('[LB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide === false) {
+                        line = this.image.bottomLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
+                        this.checkMaxMove('[LB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
-                    this.reportCheck('[LB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
+                        this.reportCheck('[LB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
+                    }
                 }
 
                 if (this.isRtOut) {
-                    line = this.image.topLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
-                    this.checkMaxMove('[RT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide === false) {
+                        line = this.image.topLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
+                        this.checkMaxMove('[RT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
-                    this.reportCheck('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
+                        this.reportCheck('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
+                    }
                 }
 
                 if (this.isRbOut) {
-                    line = this.image.rightLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
-                    this.checkMaxMove('[RB RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide) {
+                        line = this.image.rightLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
+                        this.checkMaxMove('[RB RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
-                    this.reportCheck('[RB RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
+                        this.reportCheck('[RB RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
+                    }
                 }
             } else {
                 if (this.isLtOut) {
-                    line = this.image.topLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
-                    this.checkMaxMove('[LT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide === false) {
+                        line = this.image.topLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
+                        this.checkMaxMove('[LT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
-                    this.reportCheck('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
+                        this.reportCheck('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
+                    }
                 }
 
                 if (this.isLbOut) {
-                    line = this.image.leftLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.checkMaxMove('[LB LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide) {
+                        line = this.image.leftLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
+                        this.checkMaxMove('[LB LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
-                    this.reportCheck('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
+                        this.reportCheck('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
+                    }
                 }
 
                 if (this.isRtOut) {
-                    line = this.image.rightLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
-                    this.checkMaxMove('[RT RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide) {
+                        line = this.image.rightLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
+                        this.checkMaxMove('[RT RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
-                    this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
+                        this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
+                    }
                 }
 
                 if (this.isRbOut) {
-                    line = this.image.bottomLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
-                    this.checkMaxMove('[RB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                    if (this.isHitSide === false) {
+                        line = this.image.bottomLine;
+                        distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
+                        returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
+                        this.checkMaxMove('[RB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
+                        this.image.x = this.image.x + returnPoint.x;
+                        this.image.y = this.image.y + returnPoint.y;
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
-                    this.reportCheck('[RB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
+                        this.prevx = this.image.x;
+                        this.prevy = this.image.y;
+                        //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
+                        this.reportCheck('[RB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
+                    }
                 }
             }
         }
@@ -411,11 +427,7 @@ export class Cropper extends PIXI.Container {
     reportCheck(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
         var reportValue = 60;
 
-        this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
-        //Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
-        //Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
-
-        /*if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
+        if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
             console.log('\nCASE MAX RETURN');
             this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
 
@@ -438,7 +450,7 @@ export class Cropper extends PIXI.Container {
                 Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
                 Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
             }
-        }*/
+        }
 
         this.prevlt = this.image.lt;
         this.prevrt = this.image.rt;

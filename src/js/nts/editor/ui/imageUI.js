@@ -16,6 +16,7 @@ export class ImageUI extends PIXI.Container {
         this.image = new PIXI.Sprite(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         this.image.x = -this.image.width / 2;
         this.image.y = -this.image.height / 2;
+        this.image.alpha = 0.2;
         this.addChild(this.image);
 
         this.ltp = new PIXI.Sprite();
@@ -85,9 +86,10 @@ export class ImageUI extends PIXI.Container {
             'RB[' + Calc.leadingZero(parseInt(this.rb.x)) + ', ' + Calc.leadingZero(parseInt(this.rb.y)) + '] ' +
             'LB[' + Calc.leadingZero(parseInt(this.lb.x)) + ', ' + Calc.leadingZero(parseInt(this.lb.y)) + '] ' +
             'XY[' + Calc.leadingZero(parseInt(this.x)) + ', ' + Calc.leadingZero(parseInt(this.y)) + '] ' +
-            'WH[' + Calc.leadingZero(parseInt(this.width)) + ', ' + Calc.leadingZero(parseInt(this.height)) + ']'
+            'WH[' + Calc.leadingZero(parseInt(this.width)) + ', ' + Calc.leadingZero(parseInt(this.height)) + '] ' +
+            'RO[' + Calc.digit(Calc.toDegrees(this.rotation)) + ']'
 
-        console.log(str);
+        //console.log(str);
         return str;
     }
 
@@ -149,5 +151,14 @@ export class ImageUI extends PIXI.Container {
         };
     }
 
+
+    get bounds() {
+        return {
+            x: this.lt.x,
+            y: this.lt.y,
+            width: this.rt.x - this.lt.x,
+            height: this.rb.y - this.rt.y
+        };
+    }
 
 }
