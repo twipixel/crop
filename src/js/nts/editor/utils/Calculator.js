@@ -269,36 +269,86 @@ export class Calc {
     }
 
 
+    /**
+     * 제곱근
+     * @param x
+     * @returns {number}
+     */
     static sqr(x) {
         return x * x;
     }
 
+    /**
+     * 거리 구하기
+     * @param a
+     * @param b
+     * @returns {number}
+     */
     static dist2(a, b) {
         return Calc.sqr(a.x - b.x) + Calc.sqr(a.y - b.y);
     }
 
-    static getShortestDistancePoint(point, lineA, lineB) {
-        var l2 = Calc.dist2(lineA, lineB);
-        if (l2 == 0) return lineA;
-        var t = ((point.x - lineA.x) * (lineB.x - lineA.x) + (point.y - lineA.y) * (lineB.y - lineA.y)) / l2;
+    /**
+     * 점과 선에서 가장 가까운 거리가 되는 점을 반환합니다.
+     * @param point 점 좌표
+     * @param linePointA 라인 좌표
+     * @param linePointB 라인 좌표
+     * @returns {*} 점과 선에서 가장 가까운 거리가 되는 점의 좌표
+     */
+    static getShortestDistancePoint(point, linePointA, linePointB) {
+        var l2 = Calc.dist2(linePointA, linePointB);
+        if (l2 == 0) return linePointA;
+        var t = ((point.x - linePointA.x) * (linePointB.x - linePointA.x) + (point.y - linePointA.y) * (linePointB.y - linePointA.y)) / l2;
         t = Math.max(0, Math.min(1, t));
-        return {x:lineA.x + t * (lineB.x - lineA.x), y:lineA.y + t * (lineB.y - lineA.y)};
+        return {x:linePointA.x + t * (linePointB.x - linePointA.x), y:linePointA.y + t * (linePointB.y - linePointA.y)};
     }
 
-    static distToSegmentSquared(point, lineA, lineB) {
-        var distPoint = Calc.getShortestDistancePoint(point, lineA, lineB);
+    /**
+     * 점과 선에서 가장 가까운 점을 반환 받아 거리를 계산해서 반환합니다.
+     * @param point
+     * @param linePointA
+     * @param linePointB
+     * @returns {*}
+     */
+    static distToSegmentSquared(point, linePointA, linePointB) {
+        var distPoint = Calc.getShortestDistancePoint(point, linePointA, linePointB);
         return Calc.dist2(point, distPoint);
     }
 
-    static distToSegment(point, lineA, lineB) {
-        return Math.sqrt(Calc.distToSegmentSquared(point, lineA, lineB));
+    /**
+     * 한 점과 한 라인 사이에 가장 가까운 거리를 구합니다.
+     * @param point 점 좌표
+     * @param linePointA 라인 좌표
+     * @param linePointB 라인 좌표
+     * @returns {number} 점과 선의 가장 가까운 거리값
+     */
+    static distToSegment(point, linePointA, linePointB) {
+        return Math.sqrt(Calc.distToSegmentSquared(point, linePointA, linePointB));
     }
 
+    /**
+     * 두 점 사이의 차를 반환합니다.
+     * @param point
+     * @param distancePoint
+     * @returns {{x: number, y: number}}
+     */
     static getReturnPoint(point, distancePoint) {
         return {x:point.x - distancePoint.x, y:point.y - distancePoint.y};
     }
 
 
-
+    /**
+     * 이미지 회전 충돌 시 총돌한 점과 선의 거리를 구하고 거리만큼 이미지를 이동 시킵니다.
+     * @param image 회전 이미지
+     * @param point 충돌 체크할 점
+     * @param linePointA 충돌 체크할 선분의 좌표
+     * @param linePointB 충돌 체크할 선분의 좌표
+     */
+    static moveToCollision(image, point, line) {
+        var distancePoint = Calc.getShortestDistancePoint(point, line.a, line.b);
+        var returnPoint = Calc.getReturnPoint(point, distancePoint);
+        image.x = image.x + returnPoint.x;
+        image.y = image.y + returnPoint.y;
+    }
 
 }

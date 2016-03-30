@@ -21,12 +21,8 @@ export class Cropper extends PIXI.Container {
         this.canvas = canvas;
         this.isInitialize = false;
         this.imageElement = imageElement;
-
-        this.isImageMoveOut = false;
         this.maxRotation = Calc.toRadians(45);
         this.minRotation = -this.maxRotation;
-
-        //console.log('maxRotation:' + this.maxRotation + ', minRotation:' + this.minRotation);
 
         this.image = new ImageUI(this.imageElement);
         this.rotateUI = new RotateUI(this.canvas);
@@ -42,13 +38,11 @@ export class Cropper extends PIXI.Container {
         this.gLens = new PIXI.Graphics();
         this.gDebug = new PIXI.Graphics();
         this.gBounds = new PIXI.Graphics();
-        this.gRotate = new PIXI.Graphics();
         this.addChild(this.gLens);
         this.addChild(this.gLine);
         this.addChild(this.gGrid);
         this.addChild(this.gDebug);
         this.addChild(this.gBounds);
-        this.addChild(this.gRotate);
     }
 
     addEvent() {
@@ -84,8 +78,6 @@ export class Cropper extends PIXI.Container {
         this.cx = this.cw / 2;
         this.cy = this.ch / 2;
 
-        //Painter.drawGrid(this.gGrid, this.cw, this.ch);
-
         if(this.isInitialize == false) {
             this.isInitialize = true;
 
@@ -105,27 +97,10 @@ export class Cropper extends PIXI.Container {
     }
 
     test() {
-        return;
-
-        var lineA = 'RT';
-        var lineB = 'RB';
-
-        var line = {
-            a: {x:995, y:126},
-            b: {x:976, y:791}
-        };
-
-        var point = {x:767, y:118};
-
-        var distancePoint = Calc.getShortestDistancePoint(point, line.a, line.b);
-        var returnPoint = Calc.getReturnPoint(point, distancePoint);
-
-        Painter.drawDistToSegment(this.gLine, point, line.a, line.b, distancePoint);
-        this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, lineA, line.a, lineB, line.b, point);
+        // 테스트 코드
     }
 
     resizeImage() {
-        console.log('resizeImage');
         var size = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
         this.image.width = size.width;
         this.image.height = size.height;
@@ -144,7 +119,6 @@ export class Cropper extends PIXI.Container {
      * @param lens : 확대 / 축소 하기 위해 설정한 Rectangle
      */
     magnifyImage(lens) {
-        console.log('magnifiyImage()');
         var lensX = this.image.lt.x - lens.x;
         var lensY = this.image.lt.y - lens.y;
 
@@ -171,25 +145,15 @@ export class Cropper extends PIXI.Container {
     //////////////////////////////////////////////////////////////////////////
 
     moveStart(e) {
-        console.log('moveStart()');
         this.prevImageX = this.image.x;
         this.prevImageY = this.image.y;
     }
 
     moveChange(e) {
-
-        if(this.isRotate === true) {
-            console.log('!!!!!!!!!!!!!!! WHY MOVE!!');
-            return;
-        }
-
         this.image.x += e.change.x;
         this.image.y += e.change.y;
 
-        //console.log('isHitSide', this.isHitSide, 'isImageOutOfBounds', this.isImageOutOfBounds);
-
         if (this.isImageOutOfBounds) {
-
             if(this.isHitSide === false) {
                 var x = this.prevImageX + e.change.x * Math.cos(this.image.rotation);
                 var y = this.prevImageY + e.change.x * Math.sin(this.image.rotation);
@@ -210,22 +174,7 @@ export class Cropper extends PIXI.Container {
     }
 
     rotateStart(e) {
-        //this.setImageMaxScale();
-        //this.imagePoints = this.image.points;
-
-        this.isRotate = true;
-
-        this.prevx = this.image.x;
-        this.prevy = this.image.y;
-        this.prevlt = this.image.lt;
-        this.prevrt = this.image.rt;
-        this.prevrb = this.image.rb;
-        this.prevlb = this.image.lb;
-
-        this.gLine.clear();
-        this.gRotate.clear();
-
-        this.count = 0;
+        //
     }
 
     rotateChange(e) {
@@ -243,228 +192,50 @@ export class Cropper extends PIXI.Container {
             var rotationPoints = Calc.getRotationRectanglePoints({x:this.image.x, y:this.image.y}, this.imagePoints, Calc.toDegrees(this.image.rotation));
             var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
             var scale = Calc.getBoundsScale(rotationRect, this.image);
-            var max = scale.max > this.imageMaxScale ? this.imageMaxScale : scale.max;
-            var scaleWidth = this.image.width * max;
-            var scaleHeight = this.image.height * max;
+            var scaleWidth = this.image.width * scale.max;
+            var scaleHeight = this.image.height * scale.max;
 
             if(scaleWidth > this.image.width && scaleHeight > this.image.height) {
                 this.image.width = scaleWidth;
                 this.image.height = scaleHeight;
             }
 
-            //console.log('rotate', 'deg:', Calc.digit(Calc.toDegrees(this.image.rotation)), 'max:', Calc.digit(max, 2), 'w:', parseInt(this.image.width), 'h:', parseInt(this.image.height));
-
-
-            console.log(Calc.leadingZero(this.count++, 2) + '|' + this.image.toString());
-
-
             Painter.drawBounds(this.gBounds, rotationRect, true, 1, 0xFF00FF, 0.7);
 
             var rotation = Calc.toDegrees(this.image.rotation);
-            var line, distancePoint, returnPoint;
 
             // 위로 회전
             if(rotation > 0) {
-                if (this.isLtOut) {
-                    line = this.image.leftLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
-                    this.checkMaxMove('[LT LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                if (this.isLtOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.lt, this.image.leftLine);
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
-                    this.reportCheck('[LT LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lt);
-                }
+                if (this.isLbOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.lb, this.image.bottomLine);
 
-                if (this.isLbOut) {
-                    line = this.image.bottomLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.checkMaxMove('[LB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                if (this.isRtOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.rt, this.image.topLine);
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
-                    this.reportCheck('[LB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.lb);
-                }
+                if (this.isRbOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.rb, this.image.rightLine);
 
-                if (this.isRtOut) {
-                    line = this.image.topLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
-                    this.checkMaxMove('[RT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
-                    this.reportCheck('[RT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.rt);
-                }
-
-                if (this.isRbOut) {
-                    line = this.image.rightLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
-                    this.checkMaxMove('[RB RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
-                    this.reportCheck('[RB RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rb);
-                }
             } else {
-                if (this.isLtOut) {
-                    line = this.image.topLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lt, distancePoint);
-                    this.checkMaxMove('[LT TOP]', 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                if (this.isLtOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.lt, this.image.topLine);
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lt, line.a, line.b, distancePoint);
-                    this.reportCheck('[LT TOP]', returnPoint, distancePoint, 'LT', line.a, 'RT', line.b, this.resizeUI.lt);
-                }
+                if (this.isLbOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.lb, this.image.leftLine);
 
-                if (this.isLbOut) {
-                    line = this.image.leftLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.lb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.lb, distancePoint);
-                    this.checkMaxMove('[LB LEFT]', 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
+                if (this.isRtOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.rt, this.image.rightLine);
 
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.lb, line.a, line.b, distancePoint);
-                    this.reportCheck('[LB LEFT]', returnPoint, distancePoint, 'LT', line.a, 'LB', line.b, this.resizeUI.lb);
-                }
-
-                if (this.isRtOut) {
-                    line = this.image.rightLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rt, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rt, distancePoint);
-                    this.checkMaxMove('[RT RIGHT]', 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rt, line.a, line.b, distancePoint);
-                    this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, 'RT', line.a, 'RB', line.b, this.resizeUI.rt);
-                }
-
-                if (this.isRbOut) {
-                    line = this.image.bottomLine;
-                    distancePoint = Calc.getShortestDistancePoint(this.resizeUI.rb, line.a, line.b);
-                    returnPoint = Calc.getReturnPoint(this.resizeUI.rb, distancePoint);
-                    this.checkMaxMove('[RB BOTTOM]', 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
-                    this.image.x = this.image.x + returnPoint.x;
-                    this.image.y = this.image.y + returnPoint.y;
-
-                    this.prevx = this.image.x;
-                    this.prevy = this.image.y;
-                    //Painter.drawDistToSegment(this.gLine, this.resizeUI.rb, line.a, line.b, distancePoint);
-                    this.reportCheck('[RB BOTTOM]', returnPoint, distancePoint, 'LB', line.a, 'RB', line.b, this.resizeUI.rb);
-                }
+                if (this.isRbOut)
+                    Calc.moveToCollision(this.image, this.resizeUI.rb, this.image.bottomLine);
             }
         }
-
-        /*var rotationPoints = Calc.getRotationRectanglePoints({x:this.image.x, y:this.image.y}, this.imagePoints, Calc.toDegrees(this.image.rotation));
-        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
-        var scale = Calc.getBoundsScale(rotationRect, this.image);
-        this.image.width = this.image.width * scale.max;
-        this.image.height = this.image.height * scale.max;
-        Painter.drawBounds(this.boundsGraphics, rotationRect, 0xFF00FF, 1);*/
     }
-
-
-    checkMaxMove(title, lineALabel, lineA, lineBLabel, lineB, point) {
-        return;
-
-        var max = 60;
-        var distancePoint = Calc.getShortestDistancePoint(point, lineA, lineB);
-        var returnPoint = Calc.getReturnPoint(point, distancePoint);
-        var x = this.image.x + returnPoint.x;
-        var y = this.image.y + returnPoint.y;
-
-        if(Math.abs(this.prevx - x) > max || Math.abs(this.prevy - y) > max) {
-            console.log('CHECK MAX MOVE ' + title + ' prev[' +
-                Calc.leadingZero(parseInt(this.prevx), 4) + ', ' + Calc.leadingZero(parseInt(this.prevy), 4) + '], next[' +
-                Calc.leadingZero(parseInt(x), 4) + ', ' + Calc.leadingZero(parseInt(y), 4) + ']');
-
-            console.log(
-                lineALabel + ' [' + Calc.leadingZero(parseInt(lineA.x), 4) + ', ' + Calc.leadingZero(parseInt(lineA.y), 4) + '], ' +
-                lineBLabel + ' [' + Calc.leadingZero(parseInt(lineB.x), 4) + ', ' + Calc.leadingZero(parseInt(lineB.y), 4) + ']');
-
-            console.log(this.image.toString());
-        }
-    }
-
-    reportCheck(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
-        var reportValue = 60;
-
-        this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
-        Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
-        Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
-
-        /*if(Math.abs(returnPoint.x) > reportValue || Math.abs(returnPoint.y) > reportValue) {
-            console.log('\nCASE MAX RETURN');
-            this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
-
-            Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
-            Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
-        } else {
-            if(
-                Math.abs(this.prevlt.x - this.image.lt.x) > reportValue ||
-                Math.abs(this.prevlt.y - this.image.lt.y) > reportValue ||
-                Math.abs(this.prevrt.x - this.image.rt.x) > reportValue ||
-                Math.abs(this.prevrt.y - this.image.rt.y) > reportValue ||
-                Math.abs(this.prevrb.x - this.image.rb.x) > reportValue ||
-                Math.abs(this.prevrb.y - this.image.rb.y) > reportValue ||
-                Math.abs(this.prevlb.x - this.image.lb.x) > reportValue ||
-                Math.abs(this.prevlb.y - this.image.lb.y) > reportValue) {
-
-                console.log('\nCASE MAX MOVE');
-                this.reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point);
-
-                Painter.drawPoints(this.gRotate, this.image.points, false, 1, 0xCCCCCC, 0.2);
-                Painter.drawDistToSegment(this.gLine, point, lineA, lineB, distancePoint);
-            }
-        }*/
-
-        this.prevlt = this.image.lt;
-        this.prevrt = this.image.rt;
-        this.prevrb = this.image.rb;
-        this.prevlb = this.image.lb;
-    }
-
-    reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
-        var report = '  ' + title + ' ' +
-            'RETURN[' + parseInt(returnPoint.x) + ', ' + parseInt(returnPoint.y) + ']\n' +
-            lineALabel + '[' + parseInt(lineA.x) + ', ' + parseInt(lineA.y) + '], ' +
-            lineBLabel + '[' + parseInt(lineB.x) + ', ' + parseInt(lineB.y) + '], ' +
-            'Dt[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + '], ' +
-            'P[' + parseInt(point.x) + ', ' + parseInt(point.y) + ']';
-        console.log('------------------------------------------------------------------');
-        console.log(this.image.toString());
-        console.log('------------------------------------------------------------------');
-        console.log(report);
-        console.log('------------------------------------------------------------------');
-    }
-
 
     rotateEnd(e) {
-        this.isRotate = false;
+        //
     }
 
     cornerResizeStart(e) {
@@ -521,7 +292,6 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
-
         Painter.drawBounds(this.gLens, this.lensBounds, true, 1, 0xFF00FF, 0.2);
     }
 
@@ -625,6 +395,10 @@ export class Cropper extends PIXI.Container {
     // Debug Util Function
     //////////////////////////////////////////////////////////////////////////
 
+    /**
+     * 회전 시 이미지가 최대로 커질 사이즈를 구하고
+     * 그에 따른 최대 스케일 값을 구합니다.
+     */
     setImageMaxScale() {
         var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
         var w = imageRect.width;
@@ -644,6 +418,9 @@ export class Cropper extends PIXI.Container {
         console.log('-----------------------------------------');
     }
 
+    /**
+     * 현재 화면 사이즈에 맞는 이미지 바운드 영역을 화면에 출력합니다.
+     */
     displayCurrentImageRotationBounds() {
         var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
 
@@ -659,34 +436,5 @@ export class Cropper extends PIXI.Container {
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
         Painter.drawBounds(this.gDebug, rotationRect, true, 2, 0x00FCFF, 0.4);
-    }
-
-    getCurrentImageRect() {
-        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
-
-        var imagePoint = {
-            lt: {x:0, y:0},
-            rt: {x:imageRect.width, y:0},
-            rb: {x:imageRect.width, y:imageRect.height},
-            lb: {x:0, y:imageRect.height}
-        };
-
-        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
-        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
-        rotationRect.x = this.image.x;
-        rotationRect.y = this.image.y;
-
-        return rotationRect;
-    }
-
-    displayImageInfo() {
-        console.log('------------------------------------');
-        console.log(
-            ' Canvas[' + Calc.digit(this.canvas.width) + ',' + Calc.digit(this.canvas.height) + ']\n',
-            'ORIGINAL[' + Calc.digit(this.vo.originalWidth) + ',' + Calc.digit(this.vo.originalHeight) + ']\n',
-            'Bounds[' + Calc.digit(this.bounds.width) + ',' + Calc.digit(this.bounds.height) + ']\n',
-            'Image[' + Calc.digit(this.image.width) + ',' + Calc.digit(this.image.height) + ']\n'
-        );
-        console.log('------------------------------------');
     }
 }
