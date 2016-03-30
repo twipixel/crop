@@ -69,7 +69,8 @@ export class Cropper extends PIXI.Container {
         this.resizeUI.on('cornerResizeEnd', this.cornerResizeEnd.bind(this));
     }
 
-    update() {}
+    update() {
+    }
 
     resize() {
         var bounds = this.bounds;
@@ -78,7 +79,7 @@ export class Cropper extends PIXI.Container {
         this.cx = this.cw / 2;
         this.cy = this.ch / 2;
 
-        if(this.isInitialize == false) {
+        if (this.isInitialize == false) {
             this.isInitialize = true;
 
             var imageBounds = Calc.getImageSizeKeepAspectRatio(this.image, bounds);
@@ -154,7 +155,7 @@ export class Cropper extends PIXI.Container {
         this.image.y += e.change.y;
 
         if (this.isImageOutOfBounds) {
-            if(this.isHitSide === false) {
+            if (this.isHitSide === false) {
                 var x = this.prevImageX + e.change.x * Math.cos(this.image.rotation);
                 var y = this.prevImageY + e.change.x * Math.sin(this.image.rotation);
                 this.image.x = x;
@@ -188,14 +189,17 @@ export class Cropper extends PIXI.Container {
 
         this.displayCurrentImageRotationBounds();
 
-        if(this.isImageOutOfBounds) {
-            var rotationPoints = Calc.getRotationRectanglePoints({x:this.image.x, y:this.image.y}, this.imagePoints, Calc.toDegrees(this.image.rotation));
+        if (this.isImageOutOfBounds) {
+            var rotationPoints = Calc.getRotationRectanglePoints({
+                x: this.image.x,
+                y: this.image.y
+            }, this.imagePoints, Calc.toDegrees(this.image.rotation));
             var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
             var scale = Calc.getBoundsScale(rotationRect, this.image);
             var scaleWidth = this.image.width * scale.max;
             var scaleHeight = this.image.height * scale.max;
 
-            if(scaleWidth > this.image.width && scaleHeight > this.image.height) {
+            if (scaleWidth > this.image.width && scaleHeight > this.image.height) {
                 this.image.width = scaleWidth;
                 this.image.height = scaleHeight;
             }
@@ -205,7 +209,7 @@ export class Cropper extends PIXI.Container {
             var rotation = Calc.toDegrees(this.image.rotation);
 
             // 위로 회전
-            if(rotation > 0) {
+            if (rotation > 0) {
                 if (this.isLtOut)
                     Calc.moveToCollision(this.image, this.resizeUI.lt, this.image.leftLine);
 
@@ -258,7 +262,7 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
             this.resizeUI.cornerResize(target);
         } else {
-            if(tx < lens.x) {
+            if (tx < lens.x) {
                 isOutX = true;
                 lens.x = lens.x - dx;
                 lens.width = lens.width + dx;
@@ -271,12 +275,12 @@ export class Cropper extends PIXI.Container {
                 //
             }
 
-            if(ty < lens.y) {
+            if (ty < lens.y) {
                 isOutY = true;
                 lens.y = lens.y - dy;
                 lens.height = lens.height + dy;
                 this.magnifyImage(lens);
-            } else if(ty > lens.y + lens.height) {
+            } else if (ty > lens.y + lens.height) {
                 isOutY = true;
                 lens.height = lens.height + dy;
                 this.magnifyImage(lens);
@@ -285,10 +289,10 @@ export class Cropper extends PIXI.Container {
             }
         }
 
-        if(isOutX === false)
+        if (isOutX === false)
             target.x = tx;
 
-        if(isOutY === false)
+        if (isOutY === false)
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
@@ -317,11 +321,6 @@ export class Cropper extends PIXI.Container {
         var lb = image.lb;
         var boundsPoints = [this.resizeUI.lt, this.resizeUI.rt, this.resizeUI.rb, this.resizeUI.lb];
 
-        //console.log(boundsPoints[0].x, boundsPoints[0].y);
-        //console.log(boundsPoints[1].x, boundsPoints[1].y);
-        //console.log(boundsPoints[2].x, boundsPoints[2].y);
-        //console.log(boundsPoints[3].x, boundsPoints[3].y);
-
         for (let i = 0; i < boundsPoints.length; i++) {
             if (Calc.isInsideSquare(lt, rt, rb, lb, boundsPoints[i]) === false)
                 return true;
@@ -330,48 +329,43 @@ export class Cropper extends PIXI.Container {
     }
 
     get isLtOut() {
-        return (Calc.isInsideSquare(
-            this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lt) === false);
+        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lt) === false);
     }
 
     get isRtOut() {
-        return (Calc.isInsideSquare(
-            this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.rt) === false);
+        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.rt) === false);
     }
 
     get isRbOut() {
-        return (Calc.isInsideSquare(
-            this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.rb) === false);
+        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.rb) === false);
     }
 
     get isLbOut() {
-        return (Calc.isInsideSquare(
-            this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lb) === false);
+        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lb) === false);
     }
 
     get isHitSide() {
-        var isHit = false;
-
-        var lt = this.image.lt;
-        var rt = this.image.rt;
-        var rb = this.image.rb;
-        var lb = this.image.lb;
+        var image = this.image;
+        var lt = image.lt;
+        var rt = image.rt;
+        var rb = image.rb;
+        var lb = image.lb;
 
         // 왼쪽 도달
         if (Calc.triangleArea(lb, lt, this.resizeUI.lt) > 0)
-            isHit = true;
+            return true;
 
         if (Calc.triangleArea(lb, lt, this.resizeUI.lb) > 0)
-            isHit = true;
+            return true;
 
         // 오른쪽 도달
         if (Calc.triangleArea(rt, rb, this.resizeUI.rt) > 0)
-            isHit = true;
+            return true;
 
         if (Calc.triangleArea(rt, rb, this.resizeUI.rb) > 0)
-            isHit = true;
+            return true;
 
-        return isHit;
+        return false;
     }
 
     get bounds() {
@@ -425,13 +419,16 @@ export class Cropper extends PIXI.Container {
         var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
 
         var imagePoint = {
-            lt: {x:0, y:0},
-            rt: {x:imageRect.width, y:0},
-            rb: {x:imageRect.width, y:imageRect.height},
-            lb: {x:0, y:imageRect.height}
+            lt: {x: 0, y: 0},
+            rt: {x: imageRect.width, y: 0},
+            rb: {x: imageRect.width, y: imageRect.height},
+            lb: {x: 0, y: imageRect.height}
         };
 
-        var rotationPoints = Calc.getRotationRectanglePoints({x:imageRect.width / 2, y:imageRect.height / 2}, imagePoint, Calc.toDegrees(this.image.rotation));
+        var rotationPoints = Calc.getRotationRectanglePoints({
+            x: imageRect.width / 2,
+            y: imageRect.height / 2
+        }, imagePoint, Calc.toDegrees(this.image.rotation));
         var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
