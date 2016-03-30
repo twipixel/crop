@@ -64,7 +64,7 @@ export class Painter {
         // 3. distancePoint -> returnPoint 연결하기
 
         var radius = 3;
-        var lineAlpha = 0.2;
+        var lineAlpha = 0.1;
         var shapeAlpha = 0.2;
 
         // 1
@@ -76,22 +76,22 @@ export class Painter {
         graphics.drawCircle(lineB.x, lineB.y, radius);
 
         // 2
-        graphics.beginFill(0xCCCCFF, shapeAlpha);
-        graphics.lineStyle(1, 0x9999CC, lineAlpha);
+        /*graphics.beginFill(0xCCCCFF, shapeAlpha);
+        graphics.lineStyle(1, 0x660099, 0.1);
         graphics.moveTo(distancePoint.x, distancePoint.y);
         graphics.lineTo(point.x, point.y);
         graphics.drawCircle(point.x, point.y, radius);
-        graphics.beginFill(0xFF3300, 1);
-        graphics.drawCircle(distancePoint.x, distancePoint.y, radius);
+        graphics.beginFill(0xFF3300, 0.4);
+        graphics.drawCircle(distancePoint.x, distancePoint.y, radius);*/
 
         // 3
-        /*graphics.beginFill(0xFF0066, shapeAlpha);
-        graphics.lineStyle(1, 0xFF3399, lineAlpha);
+        graphics.beginFill(0xFFCCFF, shapeAlpha);
+        graphics.lineStyle(1, 0xCC99CC, lineAlpha);
         graphics.moveTo(point.x, point.y);
         graphics.lineTo(point.x, distancePoint.y);
         graphics.lineTo(distancePoint.x, distancePoint.y);
         graphics.drawCircle(point.x, point.y, radius);
-        graphics.drawCircle(distancePoint.x, distancePoint.y, radius);*/
+        graphics.drawCircle(distancePoint.x, distancePoint.y, radius);
 
         graphics.endFill();
     }

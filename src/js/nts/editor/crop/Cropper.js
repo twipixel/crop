@@ -94,9 +94,29 @@ export class Cropper extends PIXI.Container {
             this.rotateUI.resize(imageBounds);
             this.resizeUI.resize(imageBounds);
             this.moveUI.resize(imageBounds);
+
+            this.test();
         }
 
         Painter.drawBounds(this.gBounds, bounds);
+    }
+
+    test() {
+        var lineA = 'RT';
+        var lineB = 'RB';
+
+        var line = {
+            a: {x:995, y:126},
+            b: {x:976, y:791}
+        };
+
+        var point = {x:767, y:118};
+
+        var distancePoint = Calc.getShortestDistancePoint(point, line.a, line.b);
+        var returnPoint = Calc.getReturnPoint(point, distancePoint);
+
+        Painter.drawDistToSegment(this.gLine, point, line.a, line.b, distancePoint);
+        this.reportCheck('[RT RIGHT]', returnPoint, distancePoint, lineA, line.a, lineB, line.b, point);
     }
 
     resizeImage() {
