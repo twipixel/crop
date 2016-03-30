@@ -100,14 +100,13 @@ export class Cropper extends PIXI.Container {
     }
 
     resizeImage() {
+        console.log('resizeImage');
         var size = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
         this.image.width = size.width;
         this.image.height = size.height;
         this.image.x = this.cx;
         this.image.y = this.cy;
-
         this.imagePoints = this.image.points;
-        //this.setImageMaxScale();
     }
 
     /**
@@ -120,6 +119,7 @@ export class Cropper extends PIXI.Container {
      * @param lens : 확대 / 축소 하기 위해 설정한 Rectangle
      */
     magnifyImage(lens) {
+        console.log('magnifiyImage()');
         var lensX = this.image.lt.x - lens.x;
         var lensY = this.image.lt.y - lens.y;
 
@@ -146,6 +146,7 @@ export class Cropper extends PIXI.Container {
     //////////////////////////////////////////////////////////////////////////
 
     moveStart(e) {
+        console.log('moveStart()');
         this.prevImageX = this.image.x;
         this.prevImageY = this.image.y;
     }
@@ -213,7 +214,7 @@ export class Cropper extends PIXI.Container {
             this.image.toString();
 
 
-            Painter.drawBounds(this.gBounds, rotationRect, 1, 0xFF00FF, 1);
+            Painter.drawBounds(this.gBounds, rotationRect, 1, 0xFF00FF, 0.7);
 
             var line, distancePoint, returnPoint;
 
@@ -309,15 +310,21 @@ export class Cropper extends PIXI.Container {
     }
 
     reportHit(title, returnPoint, distancePoint, lineALabel, lineA, lineBLabel, lineB, point) {
+        if(Math.abs(returnPoint.x) > 60 || Math.abs(returnPoint.y) > 60) {
 
-        var report = '  ' + title + ' ' +
-            'RETURN[' + parseInt(returnPoint.x) + ', ' + parseInt(returnPoint.y) + ']\n' +
-            lineALabel + '[' + parseInt(lineA.x) + ', ' + parseInt(lineA.y) + '], ' +
-            lineBLabel + '[' + parseInt(lineB.x) + ', ' + parseInt(lineB.y) + '], ' +
-            'Dt[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + '], ' +
-            'P[' + parseInt(point.x) + ', ' + parseInt(point.y) + ']';
+            var report = '  ' + title + ' ' +
+                'RETURN[' + parseInt(returnPoint.x) + ', ' + parseInt(returnPoint.y) + ']\n' +
+                lineALabel + '[' + parseInt(lineA.x) + ', ' + parseInt(lineA.y) + '], ' +
+                lineBLabel + '[' + parseInt(lineB.x) + ', ' + parseInt(lineB.y) + '], ' +
+                'Dt[' + parseInt(distancePoint.x) + ', ' + parseInt(distancePoint.y) + '], ' +
+                'P[' + parseInt(point.x) + ', ' + parseInt(point.y) + ']';
 
-        console.log(report);
+            console.log('-------------------------------------------------------');
+            this.image.toString();
+            console.log('-------------------------------------------------------');
+            console.log(report);
+            console.log('-------------------------------------------------------');
+        }
     }
 
     rotateEnd(e) {
@@ -378,7 +385,7 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
-        Painter.drawBounds(this.gLens, this.lensBounds, 1, 0xFF00FF, 0.7);
+        Painter.drawBounds(this.gLens, this.lensBounds, 1, 0xFF00FF, 0.2);
     }
 
     cornerResizeEnd(e) {
@@ -514,7 +521,7 @@ export class Cropper extends PIXI.Container {
         var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
-        Painter.drawBounds(this.gDebug, rotationRect, 2, 0x00FCFF, 1);
+        Painter.drawBounds(this.gDebug, rotationRect, 2, 0x00FCFF, 0.4);
     }
 
     getCurrentImageRect() {

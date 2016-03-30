@@ -202,6 +202,18 @@ export class Calc {
     }
 
 
+    static leadingZero(number, digits = 4) {
+        var zero = '';
+        number = number.toString();
+
+        if (number.length < digits) {
+            for (var i = 0; i < digits - number.length; i++)
+                zero += '0';
+        }
+        return zero + number;
+    }
+
+
     static getOneToOne(x, a, b, c, d) {
         return (d - c) / (b - a) * (x - a) + c;
     }
@@ -285,6 +297,8 @@ export class Calc {
     static getReturnPoint(point, distancePoint) {
         return {x:point.x - distancePoint.x, y:point.y - distancePoint.y};
     }
+
+
 
 
 }
