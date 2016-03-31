@@ -235,4 +235,16 @@ export class ResizeUI extends PIXI.Container {
     }
 
 
+    get isMinWidth() {
+        var bounds = this.bounds;
+        var min = this.size * 2 + this.half;
+        return (bounds.width < min);
+    }
+
+    get isMinHeight() {
+        var bounds = this.bounds;
+        var min = this.size * 2 + this.half;
+        return (bounds.height < min);
+    }
+
 }

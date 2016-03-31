@@ -23,8 +23,11 @@ export class CornerShape extends PIXI.Sprite {
     }
 
 
-    initialize(type) {
+    initialize(type, thickness = 4, size = 32) {
         this.type = type;
+        this.size = size;
+        this.half = size / 2;
+        this.thickness = thickness;
         this.interactive = true;
         this.graphics = new PIXI.Graphics();
         this.buttonArea = new PIXI.Graphics();
@@ -53,41 +56,51 @@ export class CornerShape extends PIXI.Sprite {
     }
 
     drawButtonArea() {
+        var h = this.half;
+        var s = this.size;
         this.buttonArea.clear();
         this.buttonArea.beginFill(0x4285f4, 0.1);
-        this.buttonArea.drawRect(-16, -16, 32, 32);
+        this.buttonArea.drawRect(-h, -h, s, s);
         this.buttonArea.endFill();
     }
 
     drawLeftTop() {
+        var h = this.half;
+        var t = this.thickness;
         this.graphics.clear();
         this.graphics.beginFill(0x4285f4);
-        this.graphics.drawRect(-4, -4, 16, 4);
-        this.graphics.drawRect(-4, -4, 4, 16);
+        this.graphics.drawRect(-t, -t, h, t);
+        this.graphics.drawRect(-t, -t, t, h);
         this.graphics.endFill();
     }
 
     drawRightTop() {
+        var h = this.half;
+        var t = this.thickness;
         this.graphics.clear();
         this.graphics.beginFill(0x4285f4);
-        this.graphics.drawRect(-12, -4, 16, 4);
-        this.graphics.drawRect(0, -4, 4, 16);
+        this.graphics.drawRect(-(h - t), -t, h, t);
+        this.graphics.drawRect(0, -t, t, h);
         this.graphics.endFill();
     }
 
     drawRightBottom() {
+        var h = this.half;
+        var t = this.thickness;
         this.graphics.clear();
         this.graphics.beginFill(0x4285f4);
-        this.graphics.drawRect(-12, 0, 16, 4);
-        this.graphics.drawRect(0, 4, 4, -16);
+        this.graphics.drawRect(-(h - t), 0, h, t);
+        this.graphics.drawRect(0, t, t, -h);
         this.graphics.endFill();
     }
 
     drawLeftBottom() {
+        var h = this.half;
+        var t = this.thickness;
         this.graphics.clear();
         this.graphics.beginFill(0x4285f4);
-        this.graphics.drawRect(-4, 0, 16, 4);
-        this.graphics.drawRect(-4, 4, 4, -16);
+        this.graphics.drawRect(-t, 0, h, t);
+        this.graphics.drawRect(-t, t, t, -h);
         this.graphics.endFill();
     }
 }

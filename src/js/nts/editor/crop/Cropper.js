@@ -282,6 +282,7 @@ export class Cropper extends PIXI.Container {
         var isOutX = false;
         var isOutY = false;
 
+        // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때
         if (tx > this.lensBounds.x && tx < (this.lensBounds.x + this.lensBounds.width) && ty > this.lensBounds.y && ty < (this.lensBounds.y + this.lensBounds.height)) {
             target.x = tx;
             target.y = ty;
