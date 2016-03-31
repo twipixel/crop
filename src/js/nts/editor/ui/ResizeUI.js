@@ -71,6 +71,7 @@ export class ResizeUI extends PIXI.Container {
 
     drawImageRect() {
         this.imageRect.clear();
+        // 회색
         this.imageRect.lineStyle(2, 0x9e9e9e);
         this.imageRect.moveTo(this.lt.x, this.lt.y);
         this.imageRect.lineTo(this.rt.x, this.rt.y);

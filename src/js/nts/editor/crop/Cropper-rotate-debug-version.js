@@ -40,13 +40,13 @@ export class Cropper extends PIXI.Container {
         this.gGrid = new PIXI.Graphics();
         this.gLine = new PIXI.Graphics();
         this.gLens = new PIXI.Graphics();
-        this.gDebug = new PIXI.Graphics();
+        this.gRotate = new PIXI.Graphics();
         this.gBounds = new PIXI.Graphics();
         this.gRotate = new PIXI.Graphics();
         this.addChild(this.gLens);
         this.addChild(this.gLine);
         this.addChild(this.gGrid);
-        this.addChild(this.gDebug);
+        this.addChild(this.gRotate);
         this.addChild(this.gBounds);
         this.addChild(this.gRotate);
     }
@@ -658,7 +658,7 @@ export class Cropper extends PIXI.Container {
         var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
-        Painter.drawBounds(this.gDebug, rotationRect, true, 2, 0x00FCFF, 0.4);
+        Painter.drawBounds(this.gRotate, rotationRect, true, 2, 0x00FCFF, 0.4);
     }
 
     getCurrentImageRect() {

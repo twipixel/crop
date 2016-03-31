@@ -351,4 +351,5 @@ export class Calc {
         image.y = image.y + returnPoint.y;
     }
 
+
 }

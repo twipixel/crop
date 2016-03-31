@@ -36,13 +36,15 @@ export class Cropper extends PIXI.Container {
         this.gGrid = new PIXI.Graphics();
         this.gLine = new PIXI.Graphics();
         this.gLens = new PIXI.Graphics();
-        this.gDebug = new PIXI.Graphics();
+        this.gImage = new PIXI.Graphics();
         this.gBounds = new PIXI.Graphics();
+        this.gRotate = new PIXI.Graphics();
         this.addChild(this.gLens);
         this.addChild(this.gLine);
         this.addChild(this.gGrid);
-        this.addChild(this.gDebug);
+        this.addChild(this.gImage);
         this.addChild(this.gBounds);
+        this.addChild(this.gRotate);
     }
 
     addEvent() {
@@ -79,28 +81,35 @@ export class Cropper extends PIXI.Container {
         this.cx = this.cw / 2;
         this.cy = this.ch / 2;
 
+        // 최초 실행: 화면 초기화
         if (this.isInitialize == false) {
             this.isInitialize = true;
-
-            var imageBounds = Calc.getImageSizeKeepAspectRatio(this.image, bounds);
-            imageBounds.x = this.cw / 2 - imageBounds.width / 2;
-            imageBounds.y = this.ch / 2 - imageBounds.height / 2;
-
             this.resizeImage(bounds, this.image);
-            this.rotateUI.resize(imageBounds);
+            var imageBounds = this.image.bounds;
             this.resizeUI.resize(imageBounds);
             this.moveUI.resize(imageBounds);
 
             this.test();
         } else {
-            // 리사이즈 코드
+            var resizeUIBounds = this.resizeUI.bounds;
+            this.magnifyImage(resizeUIBounds);
+            this.moveUI.resize(resizeUIBounds);
         }
 
+        this.rotateUI.resize();
+        this.imagePoints = this.image.points;
         Painter.drawBounds(this.gBounds, bounds);
+
+        this.gImage.clear();
+        this.gRotate.clear();
     }
 
     test() {
-        // 테스트 코드
+        //this.image.visible = false;
+        //this.resizeUI.visible = false;
+        //this.moveUI.visible = false;
+        //this.gBounds.visible = false;
+        //Painter.drawGrid(this.gGrid, 800, 600);
     }
 
     resizeImage() {
@@ -109,7 +118,6 @@ export class Cropper extends PIXI.Container {
         this.image.height = size.height;
         this.image.x = this.cx;
         this.image.y = this.cy;
-        this.imagePoints = this.image.points;
     }
 
     /**
@@ -125,20 +133,20 @@ export class Cropper extends PIXI.Container {
         var lensX = this.image.lt.x - lens.x;
         var lensY = this.image.lt.y - lens.y;
 
-        this.zoom = Calc.getBoundsScale(this.bounds, lens).min;
-        var rubberbandBounds = Calc.getImageSizeKeepAspectRatio(lens, this.bounds);
-        rubberbandBounds.x = this.canvas.width / 2 - rubberbandBounds.width / 2;
-        rubberbandBounds.y = this.canvas.height / 2 - rubberbandBounds.height / 2;
-        this.resizeUI.setSize(rubberbandBounds);
-        this.image.width = this.image.width * this.zoom;
-        this.image.height = this.image.height * this.zoom;
+        var zoom = Calc.getBoundsScale(this.bounds, lens).min;
+        var rubberband = Calc.getImageSizeKeepAspectRatio(lens, this.bounds);
+        rubberband.x = this.canvas.width / 2 - rubberband.width / 2;
+        rubberband.y = this.canvas.height / 2 - rubberband.height / 2;
+        this.resizeUI.setSize(rubberband);
+        this.image.width = this.image.width * zoom;
+        this.image.height = this.image.height * zoom;
 
-        var posX = lensX * this.zoom;
-        var posY = lensY * this.zoom;
+        var posX = lensX * zoom;
+        var posY = lensY * zoom;
         var centerOffsetX = this.image.x - this.image.lt.x;
         var centerOffsetY = this.image.y - this.image.lt.y;
-        this.image.x = rubberbandBounds.x + posX + centerOffsetX;
-        this.image.y = rubberbandBounds.y + posY + centerOffsetY;
+        this.image.x = rubberband.x + posX + centerOffsetX;
+        this.image.y = rubberband.y + posY + centerOffsetY;
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -175,7 +183,7 @@ export class Cropper extends PIXI.Container {
     }
 
     rotateStart(e) {
-        //
+        //this.imagePoints = this.image.points;
     }
 
     rotateChange(e) {
@@ -189,22 +197,39 @@ export class Cropper extends PIXI.Container {
 
         this.displayCurrentImageRotationBounds();
 
+        //console.log('isImageOutOfBounds', this.isImageOutOfBounds, this.image.toString());
+
         if (this.isImageOutOfBounds) {
-            var rotationPoints = Calc.getRotationRectanglePoints({
-                x: this.image.x,
-                y: this.image.y
-            }, this.imagePoints, Calc.toDegrees(this.image.rotation));
+            var pivot = {x:this.image.x, y:this.image.y};
+            var rotationPoints = Calc.getRotationRectanglePoints(pivot, this.imagePoints, Calc.toDegrees(this.image.rotation));
             var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
             var scale = Calc.getBoundsScale(rotationRect, this.image);
-            var scaleWidth = this.image.width * scale.max;
-            var scaleHeight = this.image.height * scale.max;
+            var sw = this.image.width * scale.max;
+            var sh = this.image.height * scale.max;
+            var maxImageSize = this.getMaxImageSize();
+            var w = this.image.width;
+            var h = this.image.height;
 
-            if (scaleWidth > this.image.width && scaleHeight > this.image.height) {
-                this.image.width = scaleWidth;
-                this.image.height = scaleHeight;
+            /*console.log(
+                'IMAGE WH[' +
+                Calc.leadingZero(parseInt(this.image.width)) + ', ' +
+                Calc.leadingZero(parseInt(this.image.height)) + '] ' +
+                'SCALE WH[' +
+                Calc.leadingZero(parseInt(sw)) + ', ' +
+                Calc.leadingZero(parseInt(sh)) + ']' +
+                'MAX WH[' +
+                Calc.leadingZero(parseInt(maxImageSize.width)) + ', ' +
+                Calc.leadingZero(parseInt(maxImageSize.height)) + ']'
+            );*/
+
+            // 이미지가 최대 사이즈 보다 작은 경우에만 스케일을 하도록 조건 변경 필요
+            if (w < maxImageSize.width && h < maxImageSize.height && sw > w && sh > h) {
+                this.image.width = sw;
+                this.image.height = sh;
             }
 
-            Painter.drawBounds(this.gBounds, rotationRect, true, 1, 0xFF00FF, 0.7);
+            // 자주빛
+            Painter.drawBounds(this.gRotate, rotationRect, true, 1, 0xFF00FF, 0.7);
 
             var rotation = Calc.toDegrees(this.image.rotation);
 
@@ -296,6 +321,8 @@ export class Cropper extends PIXI.Container {
             target.y = ty;
 
         this.resizeUI.cornerResize(target);
+
+        // 자주빛
         Painter.drawBounds(this.gLens, this.lensBounds, true, 1, 0xFF00FF, 0.2);
     }
 
@@ -429,9 +456,34 @@ export class Cropper extends PIXI.Container {
             x: imageRect.width / 2,
             y: imageRect.height / 2
         }, imagePoint, Calc.toDegrees(this.image.rotation));
-        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
-        Painter.drawBounds(this.gDebug, rotationRect, true, 2, 0x00FCFF, 0.4);
+
+        // 하늘색
+        Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4);
+    }
+
+    getMaxImageSize() {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
+
+        var imagePoint = {
+            lt: {x: 0, y: 0},
+            rt: {x: imageRect.width, y: 0},
+            rb: {x: imageRect.width, y: imageRect.height},
+            lb: {x: 0, y: imageRect.height}
+        };
+
+        var rotationPoints = Calc.getRotationRectanglePoints({
+            x: imageRect.width / 2,
+            y: imageRect.height / 2
+        }, imagePoint, Calc.toDegrees(45));
+
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
+        var scale = Calc.getBoundsScale(rotationRect, imageRect);
+        var sw = imageRect.width * scale.max;
+        var sh = imageRect.height * scale.max;
+
+        return {width:sw, height:sh};
     }
 }
