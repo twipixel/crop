@@ -194,7 +194,7 @@ export class Cropper extends PIXI.Container {
                 x: this.image.x,
                 y: this.image.y
             }, this.imagePoints, Calc.toDegrees(this.image.rotation));
-            var rotationRect = Calc.getBoundsRectangle(rotationPoints, 8);
+            var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
             var scale = Calc.getBoundsScale(rotationRect, this.image);
             var scaleWidth = this.image.width * scale.max;
             var scaleHeight = this.image.height * scale.max;
