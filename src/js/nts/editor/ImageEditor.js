@@ -59,7 +59,7 @@ export class ImageEditor {
          * PIXI renderer 리사이즈
          * PIXI 에게 viewport 사이즈 변경 알림
          */
-        this.renderer.resize(this.canvas.width, this.canvas.height);
+        this.renderer.resize(width, height);
         this.cropper.resize();
     }
 
