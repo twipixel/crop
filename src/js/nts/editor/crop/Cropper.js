@@ -161,8 +161,8 @@ export class Cropper extends PIXI.Container {
         this.image.x += e.change.x;
         this.image.y += e.change.y;
 
-        if (this.isImageOutOfBounds) {
-            if (this.isHitSide === false) {
+        if (this.image.isContainsBounds(this.resizeUI) === false) {
+            if (this.image.isHitSide(this.resizeUI) === false) {
                 var x = this.prevImageX + e.change.x * Math.cos(this.image.rotation);
                 var y = this.prevImageY + e.change.x * Math.sin(this.image.rotation);
                 this.image.x = x;
@@ -194,11 +194,9 @@ export class Cropper extends PIXI.Container {
         if (this.image.rotation > this.maxRotation)
             this.image.rotation = this.maxRotation;
 
-        this.displayCurrentImageRotationBounds();
+        this.displayImageRotationBounds();
 
-        //console.log('isImageOutOfBounds', this.isImageOutOfBounds, this.image.toString());
-
-        if (this.isImageOutOfBounds) {
+        if (this.image.isContainsBounds(this.resizeUI) === false) {
             var pivot = {x:this.image.x, y:this.image.y};
             var rotationPoints = Calc.getRotationRectanglePoints(pivot, this.imagePoints, Calc.toDegrees(this.image.rotation));
             var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
@@ -234,29 +232,29 @@ export class Cropper extends PIXI.Container {
 
             // 위로 회전
             if (rotation > 0) {
-                if (this.isLtOut)
+                if (this.resizeUI.isLtInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.lt, this.image.leftLine);
 
-                if (this.isLbOut)
+                if (this.resizeUI.isLbInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.lb, this.image.bottomLine);
 
-                if (this.isRtOut)
+                if (this.resizeUI.isRtInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.rt, this.image.topLine);
 
-                if (this.isRbOut)
+                if (this.resizeUI.isRbInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.rb, this.image.rightLine);
 
             } else {
-                if (this.isLtOut)
+                if (this.resizeUI.isLtInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.lt, this.image.topLine);
 
-                if (this.isLbOut)
+                if (this.resizeUI.isLbInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.lb, this.image.leftLine);
 
-                if (this.isRtOut)
+                if (this.resizeUI.isRtInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.rt, this.image.rightLine);
 
-                if (this.isRbOut)
+                if (this.resizeUI.isRbInsideBounds(this.image) === false)
                     Calc.moveToCollision(this.image, this.resizeUI.rb, this.image.bottomLine);
             }
         }
@@ -267,63 +265,72 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeStart(e) {
-        this.lensBounds = this.resizeUI.bounds;
+        this.startLensBounds = this.prevLensBounds = this.resizeUI.bounds;
     }
 
     cornerResizeChange(e) {
+        var isOutX = false;
+        var isOutY = false;
         var target = e.target;
         var tx = target.x + e.dx;
         var ty = target.y + e.dy;
         var dx = Math.abs(e.dx) * 2;
         var dy = Math.abs(e.dy) * 2;
-
         var lens = this.resizeUI.bounds;
-        var isOutX = false;
-        var isOutY = false;
 
-        // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때
-        if (tx > this.lensBounds.x && tx < (this.lensBounds.x + this.lensBounds.width) && ty > this.lensBounds.y && ty < (this.lensBounds.y + this.lensBounds.height)) {
-            target.x = tx;
-            target.y = ty;
-            this.resizeUI.cornerResize(target);
+        if (this.image.isContainsBounds(this.resizeUI)) {
+            // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때
+            if (tx > this.startLensBounds.x && tx < (this.startLensBounds.x + this.startLensBounds.width) && ty > this.startLensBounds.y && ty < (this.startLensBounds.y + this.startLensBounds.height)) {
+                target.x = tx;
+                target.y = ty;
+                //this.resizeUI.cornerResize(target);
+            } else {
+                if (tx < lens.x) {
+                    isOutX = true;
+                    lens.x = lens.x - dx;
+                    lens.width = lens.width + dx;
+                    this.magnifyImage(lens);
+                } else if (tx > lens.x + lens.width) {
+                    isOutX = true;
+                    lens.width = lens.width + dx;
+                    this.magnifyImage(lens);
+                } else {
+                    //
+                }
+
+                if (ty < lens.y) {
+                    isOutY = true;
+                    lens.y = lens.y - dy;
+                    lens.height = lens.height + dy;
+                    this.magnifyImage(lens);
+                } else if (ty > lens.y + lens.height) {
+                    isOutY = true;
+                    lens.height = lens.height + dy;
+                    this.magnifyImage(lens);
+                } else {
+                    //
+                }
+            }
+
+            if (isOutX === false)
+                target.x = tx;
+
+            if (isOutY === false)
+                target.y = ty;
+
+            //this.resizeUI.cornerResize(target);
+            this.prevLensBounds = this.resizeUI.bounds;
         } else {
-            if (tx < lens.x) {
-                isOutX = true;
-                lens.x = lens.x - dx;
-                lens.width = lens.width + dx;
-                this.magnifyImage(lens);
-            } else if (tx > lens.x + lens.width) {
-                isOutX = true;
-                lens.width = lens.width + dx;
-                this.magnifyImage(lens);
-            } else {
-                //
-            }
-
-            if (ty < lens.y) {
-                isOutY = true;
-                lens.y = lens.y - dy;
-                lens.height = lens.height + dy;
-                this.magnifyImage(lens);
-            } else if (ty > lens.y + lens.height) {
-                isOutY = true;
-                lens.height = lens.height + dy;
-                this.magnifyImage(lens);
-            } else {
-                //
-            }
+            //target.x = e.prevX;
+            //target.y = e.prevY;
+            this.resizeUI.setSize(this.prevLensBounds);
         }
-
-        if (isOutX === false)
-            target.x = tx;
-
-        if (isOutY === false)
-            target.y = ty;
 
         this.resizeUI.cornerResize(target);
 
+
         // 자주빛
-        Painter.drawBounds(this.gLens, this.lensBounds, true, 1, 0xFF00FF, 0.2);
+        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF00FF, 0.2);
     }
 
     cornerResizeEnd(e) {
@@ -335,65 +342,6 @@ export class Cropper extends PIXI.Container {
     //////////////////////////////////////////////////////////////////////////
     // Getter & Setter
     //////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 이미지가 바운드를 벗어 났는지 체크
-     * @returns {boolean}
-     */
-    get isImageOutOfBounds() {
-        var image = this.image;
-        var lt = image.lt;
-        var rt = image.rt;
-        var rb = image.rb;
-        var lb = image.lb;
-        var boundsPoints = [this.resizeUI.lt, this.resizeUI.rt, this.resizeUI.rb, this.resizeUI.lb];
-
-        for (let i = 0; i < boundsPoints.length; i++) {
-            if (Calc.isInsideSquare(lt, rt, rb, lb, boundsPoints[i]) === false)
-                return true;
-        }
-        return false;
-    }
-
-    get isLtOut() {
-        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lt) === false);
-    }
-
-    get isRtOut() {
-        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.rt) === false);
-    }
-
-    get isRbOut() {
-        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.rb) === false);
-    }
-
-    get isLbOut() {
-        return (Calc.isInsideSquare(this.image.lt, this.image.rt, this.image.rb, this.image.lb, this.resizeUI.lb) === false);
-    }
-
-    get isHitSide() {
-        var image = this.image;
-        var lt = image.lt;
-        var rt = image.rt;
-        var rb = image.rb;
-        var lb = image.lb;
-
-        // 왼쪽 도달
-        if (Calc.triangleArea(lb, lt, this.resizeUI.lt) > 0)
-            return true;
-
-        if (Calc.triangleArea(lb, lt, this.resizeUI.lb) > 0)
-            return true;
-
-        // 오른쪽 도달
-        if (Calc.triangleArea(rt, rb, this.resizeUI.rt) > 0)
-            return true;
-
-        if (Calc.triangleArea(rt, rb, this.resizeUI.rb) > 0)
-            return true;
-
-        return false;
-    }
 
     get bounds() {
         var canvasWidth = this.canvas.width;
@@ -419,7 +367,7 @@ export class Cropper extends PIXI.Container {
     /**
      * 현재 화면 사이즈에 맞는 이미지 바운드 영역을 화면에 출력합니다.
      */
-    displayCurrentImageRotationBounds() {
+    displayImageRotationBounds() {
         var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
 
         var imagePoint = {

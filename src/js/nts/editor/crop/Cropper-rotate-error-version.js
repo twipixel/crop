@@ -478,7 +478,7 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeStart(e) {
-        this.lensBounds = this.resizeUI.bounds;
+        this.startLensBounds = this.resizeUI.bounds;
     }
 
     cornerResizeChange(e) {
@@ -492,7 +492,7 @@ export class Cropper extends PIXI.Container {
         var isOutX = false;
         var isOutY = false;
 
-        if (tx > this.lensBounds.x && tx < (this.lensBounds.x + this.lensBounds.width) && ty > this.lensBounds.y && ty < (this.lensBounds.y + this.lensBounds.height)) {
+        if (tx > this.startLensBounds.x && tx < (this.startLensBounds.x + this.startLensBounds.width) && ty > this.startLensBounds.y && ty < (this.startLensBounds.y + this.startLensBounds.height)) {
             target.x = tx;
             target.y = ty;
             this.resizeUI.cornerResize(target);
@@ -532,7 +532,7 @@ export class Cropper extends PIXI.Container {
 
         this.resizeUI.cornerResize(target);
 
-        Painter.drawBounds(this.gLens, this.lensBounds, true, 1, 0xFF00FF, 0.2);
+        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF00FF, 0.2);
     }
 
     cornerResizeEnd(e) {

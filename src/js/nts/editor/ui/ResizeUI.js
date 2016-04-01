@@ -71,8 +71,7 @@ export class ResizeUI extends PIXI.Container {
 
     drawImageRect() {
         this.imageRect.clear();
-        // 회색
-        this.imageRect.lineStyle(2, 0x9e9e9e);
+        this.imageRect.lineStyle(2, 0x9e9e9e); // 회색
         this.imageRect.moveTo(this.lt.x, this.lt.y);
         this.imageRect.lineTo(this.rt.x, this.rt.y);
         this.imageRect.lineTo(this.rb.x, this.rb.y);
@@ -104,7 +103,6 @@ export class ResizeUI extends PIXI.Container {
                 this.rb.y = this.lb.y;
                 break;
         }
-
         this.drawImageRect();
     }
 
@@ -128,13 +126,34 @@ export class ResizeUI extends PIXI.Container {
     }
 
 
+    /**
+     * 좌상단 점이 바운드안에 포함되었는지 여부
+     * @param bounds
+     * @returns {boolean}
+     */
+    isLtInsideBounds(bounds) {
+        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.lt));
+    }
+
+    isRtInsideBounds(bounds) {
+        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.rt));
+    }
+
+    isRbInsideBounds(bounds) {
+        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.rb));
+    }
+
+    isLbInsideBounds(bounds) {
+        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.lb));
+    }
+
+
     //////////////////////////////////////////////////////////////////////
     // Event Handler
     //////////////////////////////////////////////////////////////////////
 
 
     onCornerDown(e) {
-        console.log('1. onCornerDown');
         e.stopPropagation();
 
         this.selectedTarget = e.target;
@@ -159,20 +178,20 @@ export class ResizeUI extends PIXI.Container {
         this.dx = this.currentDragX - this.prevDragX;
         this.dy = this.currentDragY - this.prevDragY;
 
-        this.prevDragX = this.currentDragX;
-        this.prevDragY = this.currentDragY;
-
         this.emit('cornerResizeChange', {
             dx: this.dx,
             dy: this.dy,
+            prevX: this.prevDragX,
+            prevY: this.prevDragY,
             target: this.selectedTarget
         });
+
+        this.prevDragX = this.currentDragX;
+        this.prevDragY = this.currentDragY;
         //console.log('dx:' + Calc.digit(this.dx) + ',' + Calc.digit(this.dy));
     }
 
     onCornerUp(e) {
-
-        console.log('3. onCornerUp');
         this.addCornerDownEvent();
         this.removeCornerMoveEvent();
 
@@ -190,8 +209,6 @@ export class ResizeUI extends PIXI.Container {
 
 
     addCornerDownEvent() {
-        console.log('addCornerDownEvent()');
-
         this._cornerDownListener = this.onCornerDown.bind(this);
         this.lt.on('mousedown', this._cornerDownListener);
         this.rt.on('mousedown', this._cornerDownListener);
