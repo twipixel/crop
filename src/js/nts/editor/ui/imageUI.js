@@ -44,7 +44,6 @@ export class ImageUI extends PIXI.Container {
         this.addChild(this.lbp);
     }
 
-
     addDebugPoint() {
         var size = 4;
         var half = size / 2;
@@ -64,6 +63,83 @@ export class ImageUI extends PIXI.Container {
         this.rtp.addChild(rtd);
         this.rbp.addChild(rbd);
         this.lbp.addChild(lbd);
+    }
+
+    getImageMaxSize(bounds) {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this, bounds);
+        var imagePoint = {
+            lt: {x: 0, y: 0},
+            rt: {x: imageRect.width, y: 0},
+            rb: {x: imageRect.width, y: imageRect.height},
+            lb: {x: 0, y: imageRect.height}
+        };
+        var rotationPoints = Calc.getRotationRectanglePoints({
+            x: imageRect.width / 2,
+            y: imageRect.height / 2
+        }, imagePoint, Calc.toDegrees(45));
+        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
+        var scale = Calc.getBoundsScale(rotationRect, imageRect);
+        var sw = imageRect.width * scale.max;
+        var sh = imageRect.height * scale.max;
+        return {width:sw, height:sh};
+    }
+
+    /**
+     * 회전 시 이미지가 최대로 커질 사이즈를 구하고
+     * 그에 따른 최대 스케일 값을 구합니다.
+     */
+    getImageMaxScale(bounds) {
+        var imageRect = Calc.getImageSizeKeepAspectRatio(this, bounds);
+        var w = imageRect.width;
+        var h = imageRect.height;
+        var imageMaxScaleHeight = Calc.getDiagonal(w, h);
+        var imageMaxScaleWidth = (w * imageMaxScaleHeight) / h;
+        var imageMaxScaleX = imageMaxScaleWidth / w;
+        var imageMaxScaleY = imageMaxScaleHeight / h;
+        var imageMaxScale = imageMaxScaleY;
+        return imageMaxScale;
+    }
+
+    /**
+     * 이미지가 Bounds를 포함하는지 여부
+     * @param bounds
+     * @returns {boolean}
+     */
+    isContainsBounds(bounds) {
+        var points = [bounds.lt, bounds.rt, bounds.rb, bounds.lb];
+
+        for (let i = 0; i < points.length; i++) {
+            if (Calc.isInsideSquare(this.lt, this.rt, this.rb, this.lb, points[i]) === false)
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 좌우 충돌 감지
+     * @param bounds
+     */
+    isHitSide(bounds) {
+        var lt = this.lt;
+        var rt = this.rt;
+        var rb = this.rb;
+        var lb = this.lb;
+
+        // 왼쪽 도달
+        if (Calc.triangleArea(lb, lt, bounds.lt) > 0)
+            return true;
+
+        if (Calc.triangleArea(lb, lt, bounds.lb) > 0)
+            return true;
+
+        // 오른쪽 도달
+        if (Calc.triangleArea(rt, rb, bounds.rt) > 0)
+            return true;
+
+        if (Calc.triangleArea(rt, rb, bounds.rb) > 0)
+            return true;
+
+        return false;
     }
 
     /**
