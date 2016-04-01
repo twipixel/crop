@@ -81,8 +81,8 @@ export class ResizeUI extends PIXI.Container {
     }
 
 
-    cornerResize(target) {
-        switch(target) {
+    updateOtherCorner(changeCorner) {
+        switch(changeCorner) {
             case this.lt:
                 this.rt.y = this.lt.y;
                 this.lb.x = this.lt.x;
@@ -126,6 +126,61 @@ export class ResizeUI extends PIXI.Container {
     }
 
 
+    setPoint(points) {
+        this.lt.x = points.lt.x;
+        this.lt.y = points.lt.y;
+        this.rt.x = points.rt.x;
+        this.rt.y = points.rt.y;
+        this.rb.x = points.rb.x;
+        this.rb.y = points.rb.y;
+        this.lb.x = points.lb.x;
+        this.lb.y = points.lb.y;
+    }
+
+
+    /**
+     * 이동하는 코너와 변화값을 보내주면 변화된 points 들을 계산해서 건내줍니다.
+     * @param corner
+     * @param dx
+     * @param dy
+     * @returns {*}
+     */
+    getUpdatePoints(corner, dx, dy) {
+        var points = this.points;
+
+        switch (corner) {
+            case this.lt:
+                points.lt.x += dx;
+                points.lt.y += dy;
+                points.rt.y = points.lt.y;
+                points.lb.x = points.lt.x;
+                break;
+
+            case this.rt:
+                points.rt.x += dx;
+                points.rt.y += dy;
+                points.lt.y = points.rt.y;
+                points.rb.x = points.rt.x;
+                break;
+
+            case this.rb:
+                points.rb.x += dx;
+                points.rb.y += dy;
+                points.rt.x = points.rb.x;
+                points.lb.y = points.rb.y;
+                break;
+
+            case this.lb:
+                points.lb.x += dx;
+                points.lb.y += dy;
+                points.lt.x = points.lb.x;
+                points.rb.y = points.lb.y;
+                break;
+        }
+
+        return points;
+    }
+
     /**
      * 좌상단 점이 바운드안에 포함되었는지 여부
      * @param bounds
@@ -146,7 +201,6 @@ export class ResizeUI extends PIXI.Container {
     isLbInsideBounds(bounds) {
         return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.lb));
     }
-
 
     //////////////////////////////////////////////////////////////////////
     // Event Handler
@@ -251,6 +305,14 @@ export class ResizeUI extends PIXI.Container {
         }
     }
 
+    get points() {
+        return {
+            lt: {x:this.lt.x, y:this.lt.y},
+            rt: {x:this.rt.x, y:this.rt.y},
+            rb: {x:this.rb.x, y:this.rb.y},
+            lb: {x:this.lb.x, y:this.lb.y}
+        }
+    }
 
     get isMinWidth() {
         var bounds = this.bounds;

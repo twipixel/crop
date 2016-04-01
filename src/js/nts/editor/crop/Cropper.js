@@ -265,25 +265,27 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeStart(e) {
-        this.startLensBounds = this.prevLensBounds = this.resizeUI.bounds;
+        this.prevLensPoints = this.resizeUI.points;
+        this.startLensBounds = this.resizeUI.bounds;
     }
 
     cornerResizeChange(e) {
+        var speed = 2;
         var isOutX = false;
         var isOutY = false;
-        var target = e.target;
-        var tx = target.x + e.dx;
-        var ty = target.y + e.dy;
-        var dx = Math.abs(e.dx) * 2;
-        var dy = Math.abs(e.dy) * 2;
+        var corner = e.target;
+        var tx = corner.x + e.dx;
+        var ty = corner.y + e.dy;
+        var dx = Math.abs(e.dx) * speed;
+        var dy = Math.abs(e.dy) * speed;
         var lens = this.resizeUI.bounds;
+        var changePoint = this.resizeUI.getUpdatePoints(corner, e.dx * speed, e.dy * speed);
 
-        if (this.image.isContainsBounds(this.resizeUI)) {
+        if (this.image.isContainsBounds(changePoint)) {
             // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때
             if (tx > this.startLensBounds.x && tx < (this.startLensBounds.x + this.startLensBounds.width) && ty > this.startLensBounds.y && ty < (this.startLensBounds.y + this.startLensBounds.height)) {
-                target.x = tx;
-                target.y = ty;
-                //this.resizeUI.cornerResize(target);
+                corner.x = tx;
+                corner.y = ty;
             } else {
                 if (tx < lens.x) {
                     isOutX = true;
@@ -313,24 +315,18 @@ export class Cropper extends PIXI.Container {
             }
 
             if (isOutX === false)
-                target.x = tx;
+                corner.x = tx;
 
             if (isOutY === false)
-                target.y = ty;
+                corner.y = ty;
 
-            //this.resizeUI.cornerResize(target);
-            this.prevLensBounds = this.resizeUI.bounds;
+            this.prevLensPoints = changePoint;
+            this.resizeUI.updateOtherCorner(corner);
         } else {
-            //target.x = e.prevX;
-            //target.y = e.prevY;
-            this.resizeUI.setSize(this.prevLensBounds);
+            this.resizeUI.setPoint(this.prevLensPoints);
         }
 
-        this.resizeUI.cornerResize(target);
-
-
-        // 자주빛
-        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF00FF, 0.2);
+        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF00FF, 0.2); // 자주빛
     }
 
     cornerResizeEnd(e) {
