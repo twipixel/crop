@@ -3,7 +3,6 @@ import {ResizeUI} from './../ui/ResizeUI';
 import {RotateUI} from './../ui/RotateUI';
 import {MoveUI} from './../ui/MoveUI';
 import {ImageUI} from './../ui/ImageUI';
-import {ImageVO} from './../vo/ImageVO';
 import {KeyCode} from './../const/KeyCode';
 import {Painter} from './../utils/Painter';
 
@@ -206,7 +205,7 @@ export class Cropper extends PIXI.Container {
             var scale = Calc.getBoundsScale(rotationRect, this.image);
             var sw = this.image.width * scale.max;
             var sh = this.image.height * scale.max;
-            var maxImageSize = this.getMaxImageSize();
+            var maxImageSize = this.image.getImageMaxSize(this.bounds);
             var w = this.image.width;
             var h = this.image.height;
 
@@ -418,29 +417,6 @@ export class Cropper extends PIXI.Container {
     //////////////////////////////////////////////////////////////////////////
 
     /**
-     * 회전 시 이미지가 최대로 커질 사이즈를 구하고
-     * 그에 따른 최대 스케일 값을 구합니다.
-     */
-    setImageMaxScale() {
-        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
-        var w = imageRect.width;
-        var h = imageRect.height;
-
-        this.imageMaxScaleHeight = Calc.getDiagonal(w, h);
-        this.imageMaxScaleWidth = (w * this.imageMaxScaleHeight) / h;
-        this.imageMaxScaleX = this.imageMaxScaleWidth / w;
-        this.imageMaxScaleY = this.imageMaxScaleHeight / h;
-        this.imageMaxScale = this.imageMaxScaleY;
-
-        console.log('-----------------------------------------');
-        console.log('setImageMaxScale');
-        console.log('imageRect w:' + w + ', h:' + h);
-        console.log('image w:' + this.image.width + ', h:' + this.image.height);
-        console.log('scaleX:' + this.imageMaxScaleX + ', scaleY:' + this.imageMaxScaleY);
-        console.log('-----------------------------------------');
-    }
-
-    /**
      * 현재 화면 사이즈에 맞는 이미지 바운드 영역을 화면에 출력합니다.
      */
     displayCurrentImageRotationBounds() {
@@ -463,28 +439,5 @@ export class Cropper extends PIXI.Container {
 
         // 하늘색
         Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4);
-    }
-
-    getMaxImageSize() {
-        var imageRect = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
-
-        var imagePoint = {
-            lt: {x: 0, y: 0},
-            rt: {x: imageRect.width, y: 0},
-            rb: {x: imageRect.width, y: imageRect.height},
-            lb: {x: 0, y: imageRect.height}
-        };
-
-        var rotationPoints = Calc.getRotationRectanglePoints({
-            x: imageRect.width / 2,
-            y: imageRect.height / 2
-        }, imagePoint, Calc.toDegrees(45));
-
-        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
-        var scale = Calc.getBoundsScale(rotationRect, imageRect);
-        var sw = imageRect.width * scale.max;
-        var sh = imageRect.height * scale.max;
-
-        return {width:sw, height:sh};
     }
 }
