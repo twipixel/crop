@@ -271,8 +271,6 @@ export class Cropper extends PIXI.Container {
 
     cornerResizeChange(e) {
         var speed = 2;
-        var isOutX = false;
-        var isOutY = false;
         var corner = e.target;
         var tx = corner.x + e.dx;
         var ty = corner.y + e.dy;
@@ -282,46 +280,20 @@ export class Cropper extends PIXI.Container {
         var changePoint = this.resizeUI.getUpdatePoints(corner, e.dx * speed, e.dy * speed);
 
         if (this.image.isContainsBounds(changePoint)) {
+            corner.x = tx;
+            corner.y = ty;
+            this.resizeUI.updateOtherCorner(corner);
+
             // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때
             if (tx > this.startLensBounds.x && tx < (this.startLensBounds.x + this.startLensBounds.width) && ty > this.startLensBounds.y && ty < (this.startLensBounds.y + this.startLensBounds.height)) {
-                corner.x = tx;
-                corner.y = ty;
+                // 아무일도 일어나지 않습니다.
             } else {
-                if (tx < lens.x) {
-                    isOutX = true;
-                    lens.x = lens.x - dx;
-                    lens.width = lens.width + dx;
-                    this.magnifyImage(lens);
-                } else if (tx > lens.x + lens.width) {
-                    isOutX = true;
-                    lens.width = lens.width + dx;
-                    this.magnifyImage(lens);
-                } else {
-                    //
-                }
-
-                if (ty < lens.y) {
-                    isOutY = true;
-                    lens.y = lens.y - dy;
-                    lens.height = lens.height + dy;
-                    this.magnifyImage(lens);
-                } else if (ty > lens.y + lens.height) {
-                    isOutY = true;
-                    lens.height = lens.height + dy;
-                    this.magnifyImage(lens);
-                } else {
-                    //
-                }
+                var resizeUIBounds = this.resizeUI.bounds;
+                this.magnifyImage(resizeUIBounds);
+                this.moveUI.resize(resizeUIBounds);
             }
 
-            if (isOutX === false)
-                corner.x = tx;
-
-            if (isOutY === false)
-                corner.y = ty;
-
             this.prevLensPoints = changePoint;
-            this.resizeUI.updateOtherCorner(corner);
         } else {
             this.resizeUI.setPoint(this.prevLensPoints);
         }
