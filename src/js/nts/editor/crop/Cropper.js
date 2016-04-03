@@ -278,11 +278,23 @@ export class Cropper extends PIXI.Container {
 
         var zoom = Calc.getBoundsScale(this.bounds, zoomBounds).min;
         var rubberband = Calc.getImageSizeKeepAspectRatio(zoomBounds, this.bounds);
-        rubberband.x = this.canvas.width / 2 - rubberband.width / 2;
-        rubberband.y = this.canvas.height / 2 - rubberband.height / 2;
+
+        var diffW = rubberband.width - lens.width;
+        var diffH = rubberband.height - lens.height;
+
+
+
+        rubberband.width = rubberband.width - diffW;
+        rubberband.height = rubberband.height - diffH;
+        var rubberbandX = this.canvas.width / 2 - rubberband.width / 2;
+        var rubberbandY = this.canvas.height / 2 - rubberband.height / 2;
+        rubberband.x = rubberbandX + diffW;
+        rubberband.y = rubberbandY + diffH;
         this.resizeUI.setSize(rubberband);
 
-        console.log('zoom:' + zoom);
+
+
+        console.log(parseInt(lens.width), parseInt(rubberband.width), parseInt(diffW));
         this.image.width = this.image.width * zoom;
         this.image.height = this.image.height * zoom;
 
