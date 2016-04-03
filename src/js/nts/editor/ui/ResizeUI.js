@@ -135,6 +135,8 @@ export class ResizeUI extends PIXI.Container {
         this.rb.y = points.rb.y;
         this.lb.x = points.lb.x;
         this.lb.y = points.lb.y;
+
+        this.drawImageRect();
     }
 
 
@@ -145,34 +147,34 @@ export class ResizeUI extends PIXI.Container {
      * @param dy
      * @returns {*}
      */
-    getUpdatePoints(corner, dx, dy) {
+    getUpdatePoints(corner, tx, ty) {
         var points = this.points;
 
         switch (corner) {
             case this.lt:
-                points.lt.x += dx;
-                points.lt.y += dy;
+                points.lt.x = tx;
+                points.lt.y = ty;
                 points.rt.y = points.lt.y;
                 points.lb.x = points.lt.x;
                 break;
 
             case this.rt:
-                points.rt.x += dx;
-                points.rt.y += dy;
+                points.rt.x = tx;
+                points.rt.y = ty;
                 points.lt.y = points.rt.y;
                 points.rb.x = points.rt.x;
                 break;
 
             case this.rb:
-                points.rb.x += dx;
-                points.rb.y += dy;
+                points.rb.x = tx;
+                points.rb.y = ty;
                 points.rt.x = points.rb.x;
                 points.lb.y = points.rb.y;
                 break;
 
             case this.lb:
-                points.lb.x += dx;
-                points.lb.y += dy;
+                points.lb.x = tx;
+                points.lb.y = ty;
                 points.lt.x = points.lb.x;
                 points.rb.y = points.lb.y;
                 break;
