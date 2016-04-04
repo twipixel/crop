@@ -356,4 +356,11 @@ export class Calc {
         return Calc.leadingZero(parseInt(number))
     }
 
+
+    static copyObject(obj) {
+        var copy = {};
+        for(var prop in obj)
+            copy[prop] = obj[prop];
+        return copy;
+    }
 }

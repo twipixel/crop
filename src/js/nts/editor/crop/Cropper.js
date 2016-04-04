@@ -293,7 +293,7 @@ export class Cropper extends PIXI.Container {
     }*/
 
 
-    expandImage(corner, bounds, limit, lens, copyLens, dx, dy) {
+    expandImageCopy(corner, bounds, limit, lens, copyLens, dx, dy) {
 
         // offset 구하기
         // --------------------------------------------------------------------------
@@ -311,23 +311,23 @@ export class Cropper extends PIXI.Container {
         var hdh = dh / 2;
 
 
-        if(absdw > absdh) {
-            // 넓이가 작고 높이가 높은 경우 (높이가 넘어 갔을 때)
-            // 줌비율 구할 때 넓이를 꽉 채워 주자
-            //copyLens.width = limit.width;
-        } else {
-            // 높이가 낮고 넓이가 넓은 경우 (넓이가 넘어 갔을 때)
-            // 줌비율 구할 때 높이를 꽉 채워 주자
-            //copyLens.height = limit.height;
-        }
+        var isExpandX = true;
+        var isExpandY = false;
 
+        // x로 확대되는지 y로 확대 되는지 구분 부터
+        if(dh < dw) {
+            isExpandX = false;
+            isExpandY = true;
+        }
 
         // 비율 구하기
         // --------------------------------------------------------------------------
         var zoom = Calc.getBoundsScale(limit, copyLens).min;
         // --------------------------------------------------------------------------
 
+        var limitZoom = Calc.getBoundsScale(this.bounds, copyLens).min;
 
+        zoom = (zoom < limitZoom) ? zoom : limitZoom;
 
         // resizeUI 설정
         // --------------------------------------------------------------------------
@@ -369,8 +369,228 @@ export class Cropper extends PIXI.Container {
         // --------------------------------------------------------------------------
 
 
+        // image 설정
+        // --------------------------------------------------------------------------
+        this.image.width = this.image.width * zoom;
+        this.image.height = this.image.height * zoom;
+
+        var posX = offsetX * zoom;
+        var posY = offsetY * zoom;
+        var pivotOffsetX = this.image.x - this.image.lt.x;
+        var pivotOffsetY = this.image.y - this.image.lt.y;
+        this.image.x = rubberband.x + posX + pivotOffsetX;
+        this.image.y = rubberband.y + posY + pivotOffsetY;
+        // --------------------------------------------------------------------------
+    }
 
 
+    expandImageStep1(corner, bounds, limit, lens, copyLens, dx, dy) {
+
+        // offset 구하기
+        // --------------------------------------------------------------------------
+        var offsetX = this.image.lt.x - lens.x;
+        var offsetY = this.image.lt.y - lens.y;
+        // --------------------------------------------------------------------------
+
+        var dw = (limit.width - lens.width);
+        var dh = (limit.height - lens.height);
+
+        var hdw = dw / 2;
+        var hdh = dh / 2;
+
+        var zoom, rubberband;
+        var isExpandX = true;
+        var isExpandY = false;
+
+        var lessx = bounds.width - limit.width;
+        var lessy = bounds.height - limit.height;
+
+        var isLessX = true;
+        var isLessY = false;
+
+        if(Math.abs(lessx) < Math.abs(lessy)) {
+            isLessX = false;
+            isLessY = true;
+        }
+
+        console.log('isLessX[' + isLessX + '], isLessY[' + isLessY + ']', Calc.digit(lessx), Calc.digit(lessy));
+
+        // x로 확대되는지 y로 확대 되는지 구분 부터
+        if(dh < dw) {
+            isExpandX = false;
+            isExpandY = true;
+            // 높이를 채우고
+            //copyLens.height = bounds.height;
+        } else {
+            // 넓이를 채우고
+            //copyLens.width = bounds.width;
+        }
+
+        // 비율 구하기
+        // --------------------------------------------------------------------------
+        //var zoom = Calc.getBoundsScale(limit, copyLens).min;
+        var zoom = Calc.getBoundsScale(this.bounds, copyLens).min;
+
+
+        // resizeUI 설정
+        // --------------------------------------------------------------------------
+        //var rubberband = Calc.getImageSizeKeepAspectRatio(copyLens, limit);
+        var rubberband = Calc.getImageSizeKeepAspectRatio(copyLens, this.bounds);
+
+
+        var rubberbandX = this.canvas.width / 2 - rubberband.width / 2;
+        var rubberbandY = this.canvas.height / 2 - rubberband.height / 2;
+
+
+
+        if(isExpandX) {
+            //console.log('isExpandX', 'isLessX[' + isLessX + ']', 'isLessY[' + isLessY + ']');
+            rubberband.x = rubberbandX;
+
+            if(corner === this.resizeUI.rb || corner === this.resizeUI.lb) {
+                rubberband.y = rubberbandY - hdh;
+            } else {
+                rubberband.y = rubberbandY + hdh;
+            }
+
+            if(isLessX) {
+                if(corner == this.resizeUI.lt) {
+                    console.log('!!!!!!!!! here!', rubberband.width, limit.width);
+                }
+            }
+        } else {
+            //console.log('isExpandY', 'isLessX[' + isLessX + ']', 'isLessY[' + isLessY + ']');
+            rubberband.y = rubberbandY;
+
+            if(corner === this.resizeUI.rt || corner === this.resizeUI.rb) {
+                rubberband.x = rubberbandX - hdw;
+            } else {
+                rubberband.x = rubberbandX + hdw;
+            }
+        }
+
+
+        this.resizeUI.setSize(rubberband);
+
+
+        // --------------------------------------------------------------------------
+        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
+        // --------------------------------------------------------------------------
+
+
+
+        // image 설정
+        // --------------------------------------------------------------------------
+        this.image.width = this.image.width * zoom;
+        this.image.height = this.image.height * zoom;
+
+        var posX = offsetX * zoom;
+        var posY = offsetY * zoom;
+        var pivotOffsetX = this.image.x - this.image.lt.x;
+        var pivotOffsetY = this.image.y - this.image.lt.y;
+        this.image.x = rubberband.x + posX + pivotOffsetX;
+        this.image.y = rubberband.y + posY + pivotOffsetY;
+        // --------------------------------------------------------------------------
+    }
+
+
+    expandImage(corner, bounds, limit, lens, copyLens, dx, dy) {
+
+        // offset 구하기
+        // --------------------------------------------------------------------------
+        var offsetX = this.image.lt.x - lens.x;
+        var offsetY = this.image.lt.y - lens.y;
+        // --------------------------------------------------------------------------
+
+        var dw = (limit.width - lens.width);
+        var dh = (limit.height - lens.height);
+
+        var hdw = dw / 2;
+        var hdh = dh / 2;
+
+        var zoom, rubberband;
+        var isExpandX = true;
+        var isExpandY = false;
+
+        var lessx = bounds.width - limit.width;
+        var lessy = bounds.height - limit.height;
+
+        var isLessX = true;
+        var isLessY = false;
+
+        if(Math.abs(lessx) < Math.abs(lessy)) {
+            isLessX = false;
+            isLessY = true;
+        }
+
+        //console.log('isLessX[' + isLessX + '], isLessY[' + isLessY + ']', Calc.digit(lessx), Calc.digit(lessy));
+
+        // x로 확대되는지 y로 확대 되는지 구분 부터
+        if(dh < dw) {
+            isExpandX = false;
+            isExpandY = true;
+            // 높이를 채우고
+            //copyLens.height = bounds.height;
+        } else {
+            // 넓이를 채우고
+            //copyLens.width = bounds.width;
+        }
+
+        // 비율 구하기
+        // --------------------------------------------------------------------------
+        var zoom = Calc.getBoundsScale(limit, copyLens).min;
+        //var zoom = Calc.getBoundsScale(this.bounds, copyLens).min;
+
+
+        // resizeUI 설정
+        // --------------------------------------------------------------------------
+        var rubberband = Calc.getImageSizeKeepAspectRatio(copyLens, limit);
+        //var rubberband = Calc.getImageSizeKeepAspectRatio(copyLens, this.bounds);
+
+
+        var rubberbandX = this.canvas.width / 2 - rubberband.width / 2;
+        var rubberbandY = this.canvas.height / 2 - rubberband.height / 2;
+
+
+
+        if(isExpandX) {
+            console.log('isExpandX', 'isLessX[' + isLessX + ']', 'isLessY[' + isLessY + ']');
+            rubberband.x = rubberbandX;
+
+            if(corner === this.resizeUI.rb || corner === this.resizeUI.lb) {
+                rubberband.y = rubberbandY - hdh;
+            } else {
+                rubberband.y = rubberbandY + hdh;
+            }
+
+        } else {
+            console.log('isExpandY', 'isLessX[' + isLessX + ']', 'isLessY[' + isLessY + ']');
+            rubberband.y = rubberbandY;
+
+            if(corner === this.resizeUI.rt || corner === this.resizeUI.rb) {
+                rubberband.x = rubberbandX - hdw;
+            } else {
+                rubberband.x = rubberbandX + hdw;
+            }
+        }
+
+
+        if(isLessX && limit.width < bounds.width) {
+            this.startLensBounds.width += Math.abs(dx);
+            this.startLensBounds.x = this.canvas.width / 2 - this.startLensBounds.width / 2;
+        }
+
+        if(isLessY && limit.height < bounds.height) {
+            this.startLensBounds.height += Math.abs(dy);
+            this.startLensBounds.y = this.canvas.height / 2 - this.startLensBounds.height / 2;
+        }
+
+        this.resizeUI.setSize(rubberband);
+
+
+        // --------------------------------------------------------------------------
+        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
+        // --------------------------------------------------------------------------
 
 
 
