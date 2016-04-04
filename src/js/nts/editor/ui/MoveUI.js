@@ -17,7 +17,7 @@ export class MoveUI extends PIXI.Sprite {
 
     render() {
         this.graphics.clear();
-        this.graphics.beginFill(0x4285f4, 0.2);
+        this.graphics.beginFill(0x4285f4, 0.0);
         this.graphics.drawRect(0, 0, 1, 1);
         this.graphics.endFill();
     }

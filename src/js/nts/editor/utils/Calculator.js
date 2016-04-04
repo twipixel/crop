@@ -352,4 +352,8 @@ export class Calc {
     }
 
 
+    static trace(number) {
+        return Calc.leadingZero(parseInt(number))
+    }
+
 }

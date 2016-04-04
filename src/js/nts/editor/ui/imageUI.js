@@ -163,7 +163,7 @@ export class ImageUI extends PIXI.Container {
             'LB[' + Calc.leadingZero(parseInt(this.lb.x)) + ', ' + Calc.leadingZero(parseInt(this.lb.y)) + '] ' +
             'XY[' + Calc.leadingZero(parseInt(this.x)) + ', ' + Calc.leadingZero(parseInt(this.y)) + '] ' +
             'WH[' + Calc.leadingZero(parseInt(this.width)) + ', ' + Calc.leadingZero(parseInt(this.height)) + '] ' +
-            'RO[' + Calc.digit(Calc.toDegrees(this.rotation)) + ']'
+            'RO[' + Calc.digit(Calc.toDegrees(this.rotation)) + ']';
 
         //console.log(str);
         return str;
