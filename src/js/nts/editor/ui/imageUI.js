@@ -19,6 +19,12 @@ export class ImageUI extends PIXI.Container {
         //this.image.alpha = 0.2;
         this.addChild(this.image);
 
+        this.pivotGraphics = new PIXI.Graphics();
+        this.pivotGraphics.beginFill(0xFF3300);
+        this.pivotGraphics.drawRect(-5, -5, 10, 10);
+        this.pivotGraphics.endFill();
+        this.addChild(this.pivotGraphics);
+
         this.ltp = new PIXI.Sprite();
         this.rtp = new PIXI.Sprite();
         this.rbp = new PIXI.Sprite();
@@ -99,6 +105,26 @@ export class ImageUI extends PIXI.Container {
         var imageMaxScale = imageMaxScaleY;
         return imageMaxScale;
     }
+
+
+    updatePivotLtPoint() {
+        this.prevLtX = this.lt.x;
+        this.prevLtY = this.lt.y;
+    }
+
+
+    setPivot(globalPivot) {
+        var localPivot = this.toLocal(globalPivot);
+        this.pivot = localPivot;
+        this.pivotGraphics.x = this.pivot.x;
+        this.pivotGraphics.y = this.pivot.y;
+        var offsetX = this.lt.x - this.prevLtX;
+        var offsetY = this.lt.y - this.prevLtY;
+        this.x = this.x - offsetX;
+        this.y = this.y - offsetY;
+        this.updatePivotLtPoint();
+    }
+
 
     /**
      * 이미지가 Bounds를 포함하는지 여부
@@ -236,5 +262,6 @@ export class ImageUI extends PIXI.Container {
             height: this.rb.y - this.rt.y
         };
     }
+
 
 }
