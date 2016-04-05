@@ -55,6 +55,22 @@ export class Cropper extends PIXI.Container {
                 case KeyCode.SPACE:
                     console.log(this.image.toString());
                     break;
+
+                case KeyCode.NUM_1:
+                    this.testPivot(e.keyCode);
+                    break;
+
+                case KeyCode.NUM_2:
+                    this.testPivot(e.keyCode);
+                    break;
+
+                case KeyCode.NUM_3:
+                    this.testPivot(e.keyCode);
+                    break;
+
+                case KeyCode.NUM_4:
+                    this.testPivot(e.keyCode);
+                    break;
             }
         });
 
@@ -108,7 +124,7 @@ export class Cropper extends PIXI.Container {
         //this.resizeUI.visible = false;
         //this.moveUI.visible = false;
         //this.gBounds.visible = false;
-        //Painter.drawGrid(this.gGrid, this.canvas.width, this.canvas.height);
+        Painter.drawGrid(this.gGrid, this.canvas.width, this.canvas.height);
     }
 
     resizeImage() {
@@ -117,6 +133,9 @@ export class Cropper extends PIXI.Container {
         this.image.height = size.height;
         this.image.x = this.cx;
         this.image.y = this.cy;
+
+        // TODO 테스트 코드
+        this.image.updatePivotLtPoint();
     }
 
     /**
@@ -147,6 +166,8 @@ export class Cropper extends PIXI.Container {
         var pivotOffsetY = this.image.y - this.image.lt.y;
         this.image.x = rubberband.x + posX + pivotOffsetX;
         this.image.y = rubberband.y + posY + pivotOffsetY;
+
+        this.image.updatePivotLtPoint();
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -154,6 +175,7 @@ export class Cropper extends PIXI.Container {
     //////////////////////////////////////////////////////////////////////////
 
     moveStart(e) {
+        this.image.updatePivotLtPoint();
         this.prevImageX = this.image.x;
         this.prevImageY = this.image.y;
     }
@@ -176,14 +198,47 @@ export class Cropper extends PIXI.Container {
 
         this.prevImageX = this.image.x;
         this.prevImageY = this.image.y;
+        this.image.updatePivotLtPoint();
     }
 
     moveEnd(e) {
-        //
+        this.image.updatePivotLtPoint();
     }
 
     rotateStart(e) {
-        //this.imagePoints = this.image.points;
+        var cx = this.canvas.width / 2;
+        var cy = this.canvas.height / 2;
+        this.image.setPivot({x:cx, y:cy});
+
+        this.image.updatePivotLtPoint();
+    }
+
+    testPivot(keycode) {
+        var offset;
+        var prevX = this.image.x;
+        var prevY = this.image.y;
+
+        switch (keycode) {
+            case KeyCode.NUM_1:
+                offset = 0;
+                this.image.setPivot({x:offset, y:offset});
+                break;
+
+            case KeyCode.NUM_2:
+                offset = -10;
+                this.image.setPivot({x:offset, y:offset});
+                break;
+
+            case KeyCode.NUM_3:
+                offset = -20;
+                this.image.setPivot({x:offset, y:offset});
+                break;
+
+            case KeyCode.NUM_4:
+                offset = -30;
+                this.image.setPivot({x:offset, y:offset});
+                break;
+        }
     }
 
     rotateChange(e) {
@@ -259,10 +314,12 @@ export class Cropper extends PIXI.Container {
                     Calc.moveToCollision(this.image, this.resizeUI.rb, this.image.bottomLine);
             }
         }
+
+        this.image.updatePivotLtPoint();
     }
 
     rotateEnd(e) {
-        //
+        this.image.updatePivotLtPoint();
     }
 
     cornerResizeStart(e) {
@@ -366,6 +423,8 @@ export class Cropper extends PIXI.Container {
         var pivotOffsetY = this.image.y - this.image.lt.y;
         this.image.x = rubberband.x + posX + pivotOffsetX;
         this.image.y = rubberband.y + posY + pivotOffsetY;
+
+        this.image.updatePivotLtPoint();
         // --------------------------------------------------------------------------
     }
 
