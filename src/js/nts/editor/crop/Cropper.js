@@ -262,7 +262,6 @@ export class Cropper extends PIXI.Container {
         }
 
         this.image.updatePrevLtPointForPivot();
-        Painter.drawLine(this.gMove, {x:this.prevImageX, y:this.prevImageY}, {x:x, y:y});
     }
 
 
