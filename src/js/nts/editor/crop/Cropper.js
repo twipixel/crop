@@ -298,15 +298,11 @@ export class Cropper extends PIXI.Container {
 
     rotateChange(e) {
         this.image.rotation += e.change;
-
         if (this.image.rotation < this.minRotation)
             this.image.rotation = this.minRotation;
-
         if (this.image.rotation > this.maxRotation)
             this.image.rotation = this.maxRotation;
-
-        console.log(parseInt(Calc.toDegrees(this.image.rotation)));
-        this.displayImageRotationBounds();
+        //this.displayImageRotationBounds();
 
         if (this.image.isContainsBounds(this.resizeUI) === false) {
             var pivot = {x:this.image.x, y:this.image.y};
@@ -607,6 +603,6 @@ export class Cropper extends PIXI.Container {
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
 
-        // Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4); // 하늘색
+         Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4); // 하늘색
     }
 }
