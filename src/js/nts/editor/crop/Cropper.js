@@ -124,7 +124,6 @@ export class Cropper extends PIXI.Container {
         }
 
         this.rotateUI.resize();
-        this.imagePoints = this.image.points;
         Painter.drawBounds(this.gBounds, bounds);
 
         this.gImage.clear();
@@ -265,6 +264,7 @@ export class Cropper extends PIXI.Container {
         var cy = this.canvas.height / 2;
         this.image.setPivot({x:cx, y:cy});
 
+        this.resizeUIPoints = this.resizeUI.points;
         this.image.updatePrevLtPointForPivot();
     }
 
@@ -306,29 +306,26 @@ export class Cropper extends PIXI.Container {
 
         if (this.image.isContainsBounds(this.resizeUI) === false) {
             var pivot = {x:this.image.x, y:this.image.y};
-            var rotationPoints = Calc.getRotationRectanglePoints(pivot, this.imagePoints, Calc.toDegrees(this.image.rotation));
-            var rotationRect = Calc.getBoundsRectangle(rotationPoints);
-            var scale = Calc.getBoundsScale(rotationRect, this.image);
-            var sw = this.image.width * scale.max;
-            var sh = this.image.height * scale.max;
-            var maxImageSize = this.image.getImageMaxSize(this.bounds);
+            var rPoints = Calc.getRotationRectanglePoints(pivot, this.resizeUIPoints, Calc.toDegrees(this.image.rotation));
+            var rRect = Calc.getBoundsRectangle(rPoints);
+            var scale = Calc.getBoundsScale(rRect, this.image);
             var w = this.image.width;
             var h = this.image.height;
+            var sw = w * scale.max;
+            var sh = h * scale.max;
 
             /*console.log(
                 'IMAGE WH[' +
                 Calc.leadingZero(parseInt(this.image.width)) + ', ' +
-                Calc.leadingZero(parseInt(this.image.height)) + '] ' +
-                'SCALE WH[' +
+                Calc.leadingZero(parseInt(this.image.height)) + ']' +
+                ' SCALE WH[' +
                 Calc.leadingZero(parseInt(sw)) + ', ' +
                 Calc.leadingZero(parseInt(sh)) + ']' +
-                'MAX WH[' +
-                Calc.leadingZero(parseInt(maxImageSize.width)) + ', ' +
-                Calc.leadingZero(parseInt(maxImageSize.height)) + ']'
+                ' Diagonal[' + Calc.leadingZero((parseInt(Calc.getDiagonal(w, h)))) + ']'
             );*/
 
             // 이미지가 최대 사이즈 보다 작은 경우에만 스케일을 하도록 조건 변경 필요
-            if (w < maxImageSize.width && h < maxImageSize.height && sw > w && sh > h) {
+            if (w <= sw && h <= sh) {
                 this.image.width = sw;
                 this.image.height = sh;
             }

@@ -126,7 +126,7 @@ export class Cropper extends PIXI.Container {
         }
 
         this.rotateUI.resize();
-        this.imagePoints = this.image.points;
+        this.resizeUIPoints = this.image.points;
         Painter.drawBounds(this.gBounds, bounds);
 
         this.gImage.clear();
@@ -555,7 +555,7 @@ export class Cropper extends PIXI.Container {
 
         if (this.image.isContainsBounds(this.resizeUI) === false) {
             var pivot = {x:this.image.x, y:this.image.y};
-            var rotationPoints = Calc.getRotationRectanglePoints(pivot, this.imagePoints, Calc.toDegrees(this.image.rotation));
+            var rotationPoints = Calc.getRotationRectanglePoints(pivot, this.resizeUIPoints, Calc.toDegrees(this.image.rotation));
             var rotationRect = Calc.getBoundsRectangle(rotationPoints);
             var scale = Calc.getBoundsScale(rotationRect, this.image);
             var sw = this.image.width * scale.max;

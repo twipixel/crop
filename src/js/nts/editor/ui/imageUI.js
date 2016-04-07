@@ -20,8 +20,8 @@ export class ImageUI extends PIXI.Container {
         this.addChild(this.image);
 
         this.pivotGraphics = new PIXI.Graphics();
-        this.pivotGraphics.beginFill(0xFF3300, 0.3);
-        this.pivotGraphics.drawRect(-1, -1, 2, 2);
+        this.pivotGraphics.beginFill(0xFF3300, 0.7);
+        this.pivotGraphics.drawRect(-2, -2, 4, 4);
         this.pivotGraphics.endFill();
         this.addChild(this.pivotGraphics);
 
@@ -71,6 +71,7 @@ export class ImageUI extends PIXI.Container {
         this.lbp.addChild(lbd);
     }
 
+    /* 사이즈 오류 있슴
     getImageMaxSize(bounds) {
         var imageRect = Calc.getImageSizeKeepAspectRatio(this, bounds);
         var imagePoint = {
@@ -89,6 +90,7 @@ export class ImageUI extends PIXI.Container {
         var sh = imageRect.height * scale.max;
         return {width:sw, height:sh};
     }
+    */
 
     /**
      * 회전 시 이미지가 최대로 커질 사이즈를 구하고
