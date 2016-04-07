@@ -352,9 +352,9 @@ export class Calc {
     }
 
 
-    static getNextRotatePosition(centerX, centerY, rotation) {
-        var x = centerX * Math.cos(rotation);
-        var y = centerY * Math.sin(rotation);
+    static getNextRotatePosition(centerX, centerY, distance, rotation) {
+        var x = centerX + distance * Math.cos(rotation);
+        var y = centerY + distance * Math.sin(rotation);
         return {x:x, y:y};
     }
 

@@ -23,8 +23,6 @@ export class Cropper extends PIXI.Container {
         this.maxRotation = Calc.toRadians(45);
         this.minRotation = -this.maxRotation;
         this.rotation90 = Calc.toRadians(90);
-        this.rotation180 = Calc.toRadians(180);
-        this.rotation270 = Calc.toRadians(270);
 
         this.image = new ImageUI(this.imageElement);
         this.moveUI = new MoveUI(this.canvas);
@@ -192,7 +190,9 @@ export class Cropper extends PIXI.Container {
         //this.moveUI.visible = false;
         //this.gBounds.visible = false;
         //Painter.drawGrid(this.gGrid, this.canvas.width, this.canvas.height);
+    }
 
+    testNextPoint() {
         var d = 2;
         this.prevX = this.canvas.width / 2;
         this.prevY = this.canvas.height / 2;
@@ -209,12 +209,14 @@ export class Cropper extends PIXI.Container {
         }
     }
 
-
     moveChange(e) {
+        var nextPoint;
         var dx = e.change.x;
         var dy = e.change.y;
         var ax = Math.abs(dx);
         var ay = Math.abs(dy);
+        var cx = this.prevImageX;
+        var cy = this.prevImageY;
         var rotation = this.image.rotation;
         this.image.x += dx;
         this.image.y += dy;
@@ -222,35 +224,25 @@ export class Cropper extends PIXI.Container {
         if (this.image.isContainsBounds(this.resizeUI) === false) {
             if(ax > ay) {
                 if (this.image.isHitSide(this.resizeUI) === false) {
-                    var x = this.prevImageX + dx * Math.cos(this.image.rotation);
-                    var y = this.prevImageY + dx * Math.sin(this.image.rotation);
+                    nextPoint = Calc.getNextRotatePosition(cx, cy, dx, rotation);
                 } else {
-                    if(rotation < 0) {
-                        var x = this.prevImageX - dx * Math.cos(this.image.rotation - this.rotation90);
-                        var y = this.prevImageY - dx * Math.sin(this.image.rotation - this.rotation90);
-                    } else {
-                        var x = this.prevImageX - dx * Math.cos(this.image.rotation + this.rotation90);
-                        var y = this.prevImageY - dx * Math.sin(this.image.rotation + this.rotation90);
-                    }
+                    if(rotation < 0)
+                        nextPoint = Calc.getNextRotatePosition(cx, cy, -dx, rotation - this.rotation90);
+                    else
+                        nextPoint = Calc.getNextRotatePosition(cx, cy, -dx, rotation + this.rotation90);
                 }
-                this.image.x = x;
-                this.image.y = y;
             } else {
                 if (this.image.isHitSide(this.resizeUI)) {
-                    var x = this.prevImageX + dy * Math.cos(this.image.rotation + this.rotation90);
-                    var y = this.prevImageY + dy * Math.sin(this.image.rotation + this.rotation90);
+                    nextPoint = Calc.getNextRotatePosition(cx, cy, dy, rotation + this.rotation90);
                 } else {
-                    if(rotation < 0) {
-                        var x = this.prevImageX - dy * Math.cos(this.image.rotation);
-                        var y = this.prevImageY - dy * Math.sin(this.image.rotation);
-                    } else {
-                        var x = this.prevImageX + dy * Math.cos(this.image.rotation);
-                        var y = this.prevImageY + dy * Math.sin(this.image.rotation);
-                    }
+                    if(rotation < 0)
+                        nextPoint = Calc.getNextRotatePosition(cx, cy, -dy, rotation);
+                    else
+                        nextPoint = Calc.getNextRotatePosition(cx, cy, dy, rotation);
                 }
-                this.image.x = x;
-                this.image.y = y;
             }
+            this.image.x = nextPoint.x;
+            this.image.y = nextPoint.y;
         }
 
         if (this.image.isContainsBounds(this.resizeUI)) {
@@ -263,213 +255,6 @@ export class Cropper extends PIXI.Container {
 
         this.image.updatePrevLtPointForPivot();
     }
-
-
-    /*moveChange(e) {
-        var dx = e.change.x;
-        var dy = e.change.y;
-        var ax = Math.abs(dx);
-        var ay = Math.abs(dy);
-        var rotation = this.image.rotation;
-
-        this.image.x += dx;
-        this.image.y += dy;
-
-        if (this.image.isContainsBounds(this.resizeUI) === false) {
-
-            if(ax > ay) {
-                console.log('dx', dx, dx * Math.cos(this.image.rotation), dx * Math.sin(this.image.rotation));
-                var x = this.prevImageX + dx * Math.cos(this.image.rotation);
-                var y = this.prevImageY + dx * Math.sin(this.image.rotation);
-                this.image.x = x;
-                this.image.y = y;
-            } else {
-                console.log('dy', dy, dy * Math.cos(this.image.rotation + this.rotation90), dy * Math.sin(this.image.rotation + this.rotation90));
-
-                var x = this.prevImageX + dy * Math.cos(this.image.rotation - this.rotation90);
-                var y = this.prevImageY + dy * Math.sin(this.image.rotation - this.rotation90);
-                this.image.x = x;
-                this.image.y = y;
-
-            }
-
-            Painter.drawLine(this.gMove, {x:this.prevImageX, y:this.prevImageY}, {x:x, y:y});
-        }
-
-        if (this.image.isContainsBounds(this.resizeUI)) {
-            this.prevImageX = this.image.x;
-            this.prevImageY = this.image.y;
-        } else {
-            this.image.x = this.prevImageX;
-            this.image.y = this.prevImageY;
-        }
-
-
-        //if (this.image.isContainsBounds(this.resizeUI)) {
-        //    this.prevImageX = this.image.x;
-        //    this.prevImageY = this.image.y;
-        //} else {
-        //    //this.image.x = this.prevImageX;
-        //    //this.image.y = this.prevImageY;
-        //}
-
-        this.image.updatePrevLtPointForPivot();
-    }*/
-
-
-    /*moveChange(e) {
-        var dx = e.change.x;
-        var dy = e.change.y;
-        var ax = Math.abs(dx);
-        var ay = Math.abs(dy);
-        var rotation = this.image.rotation;
-
-        var p = this.image.getUpdatePoints(dx, dy);
-        //console.log(Calc.trace(p.lt.x), Calc.trace(p.lt.y), Calc.trace(p.rt.x), Calc.trace(p.rt.y), Calc.trace(p.rb.x), Calc.trace(p.rb.y), Calc.trace(p.lb.x), Calc.trace(p.lb.y));
-        //console.log('hasBox:', Calc.hasBox(p, this.resizeUI));
-
-
-        if (Calc.hasBox(p, this.resizeUI) === false) {
-            if (this.image.isHitSide(this.resizeUI) === false) {
-                var x = this.prevImageX + dx * Math.cos(this.image.rotation);
-                var y = this.prevImageY + dx * Math.sin(this.image.rotation);
-                this.image.x = x;
-                this.image.y = y;
-            } else {
-                this.image.x = this.prevImageX;
-                this.image.y = this.prevImageY;
-            }
-        } else {
-            this.image.x += dx;
-            this.image.y += dy;
-        }
-
-        this.prevImageX = this.image.x;
-        this.prevImageY = this.image.y;
-        this.image.updatePivotLtPoint();
-    }*/
-
-    /*moveChange(e) {
-        var dx = e.change.x;
-        var dy = e.change.y;
-        var ax = Math.abs(dx);
-        var ay = Math.abs(dy);
-        var rotation = this.image.rotation;
-
-        //var p = this.image.getUpdatePoints(dx, dy);
-        //console.log(Calc.trace(p.lt.x), Calc.trace(p.lt.y), Calc.trace(p.rt.x), Calc.trace(p.rt.y), Calc.trace(p.rb.x), Calc.trace(p.rb.y), Calc.trace(p.lb.x), Calc.trace(p.lb.y));
-        //console.log('hasBox:', Calc.hasBox(p, this.resizeUI));
-
-        this.image.x += dx;
-        this.image.y += dy;
-
-        if (this.image.isContainsBounds(this.resizeUI) === false) {
-
-            if (this.image.isHitSide(this.resizeUI) === false) {
-                console.log('0');
-                var x = this.prevImageX + dx * Math.cos(this.image.rotation);
-                var y = this.prevImageY + dx * Math.sin(this.image.rotation);
-                this.image.x = x;
-                this.image.y = y;
-            } else {
-                // 위로 회전
-                if (rotation > 0) {
-
-                    // 왼쪽 충돌 시
-                    if (Calc.triangleArea(this.image.lb, this.image.lt, this.resizeUI.lt) > 0 || Calc.triangleArea(this.image.lb, this.image.lt, this.resizeUI.lb) > 0) {
-                        if(ax > ay) {
-                            console.log('1');
-                            var x = this.prevImageX + dx * Math.cos(this.image.rotation - this.rotation90);
-                            var y = this.prevImageY + dx * Math.sin(this.image.rotation - this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        } else {
-                            console.log('2');
-                            var x = this.prevImageX + dy * Math.cos(this.image.rotation + this.rotation90);
-                            var y = this.prevImageY + dy * Math.sin(this.image.rotation + this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        }
-                    }
-
-                    // 오른쪽 충돌 시
-                    if (Calc.triangleArea(this.image.rt, this.image.rb, this.resizeUI.rt) > 0 || Calc.triangleArea(this.image.rt, this.image.rb, this.resizeUI.rb) > 0) {
-
-
-                        if(ax > ay) {
-                            console.log('3');
-                            var x = this.prevImageX + dx * Math.cos(this.image.rotation - this.rotation90);
-                            var y = this.prevImageY + dx * Math.sin(this.image.rotation - this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        } else {
-                            console.log('4');
-                            var x = this.prevImageX + dy * Math.cos(this.image.rotation + this.rotation90);
-                            var y = this.prevImageY + dy * Math.sin(this.image.rotation + this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        }
-
-                    }
-
-                } else {
-                    // 왼쪽 충돌 시
-                    if (Calc.triangleArea(this.image.lb, this.image.lt, this.resizeUI.lt) > 0 || Calc.triangleArea(this.image.lb, this.image.lt, this.resizeUI.lb) > 0) {
-                        if(ax > ay) {
-                            console.log('5');
-                            var x = this.prevImageX + dx * Math.cos(this.image.rotation + this.rotation90);
-                            var y = this.prevImageY + dx * Math.sin(this.image.rotation + this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        } else {
-                            console.log('6');
-                            var x = this.prevImageX + dy * Math.cos(this.image.rotation + this.rotation90);
-                            var y = this.prevImageY + dy * Math.sin(this.image.rotation + this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        }
-                    }
-
-                    // 오른쪽 충돌 시
-                    if (Calc.triangleArea(this.image.rt, this.image.rb, this.resizeUI.rt) > 0 || Calc.triangleArea(this.image.rt, this.image.rb, this.resizeUI.rb) > 0) {
-
-
-                        if(ax > ay) {
-                            console.log('7');
-                            var x = this.prevImageX + dx * Math.cos(this.image.rotation + this.rotation90);
-                            var y = this.prevImageY + dx * Math.sin(this.image.rotation + this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        } else {
-                            console.log('8');
-                            var x = this.prevImageX + dy * Math.cos(this.image.rotation + this.rotation90);
-                            var y = this.prevImageY + dy * Math.sin(this.image.rotation + this.rotation90);
-                            this.image.x = x;
-                            this.image.y = y;
-                        }
-
-                    }
-                }
-            }
-
-
-
-            Painter.drawLine(this.gMove, {x:this.prevImageX, y:this.prevImageY}, {x:x, y:y});
-        } else {
-            this.prevImageX = this.image.x;
-            this.prevImageY = this.image.y;
-        }
-
-        //if (this.image.isContainsBounds(this.resizeUI)) {
-        //    this.prevImageX = this.image.x;
-        //    this.prevImageY = this.image.y;
-        //} else {
-        //    //this.image.x = this.prevImageX;
-        //    //this.image.y = this.prevImageY;
-        //}
-
-        this.image.updatePrevLtPointForPivot();
-    }*/
 
     moveEnd(e) {
         this.image.updatePrevLtPointForPivot();
