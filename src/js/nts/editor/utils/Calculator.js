@@ -259,7 +259,7 @@ export class Calc {
      * @param rectanglePoints 사각형 좌표 (leftTop, rightTop, rightBottom, leftBottom)
      * @returns {{x: number, y: number, width: number, height: number}}
      */
-    static getBoundsRectangle(rectanglePoints, space = 0) {
+    static getBoundsRectangle(rectanglePoints, space = 2) {
         var half = space / 2;
         var x1 = Math.min(rectanglePoints.lt.x, rectanglePoints.rt.x, rectanglePoints.rb.x, rectanglePoints.lb.x);
         var y1 = Math.min(rectanglePoints.lt.y, rectanglePoints.rt.y, rectanglePoints.rb.y, rectanglePoints.lb.y);
@@ -349,6 +349,30 @@ export class Calc {
         var returnPoint = Calc.getReturnPoint(point, distancePoint);
         image.x = image.x + returnPoint.x;
         image.y = image.y + returnPoint.y;
+    }
+
+
+    static getNextRotatePosition(centerX, centerY, rotation) {
+        var x = centerX * Math.cos(rotation);
+        var y = centerY * Math.sin(rotation);
+        return {x:x, y:y};
+    }
+
+
+    /**
+     * 부모 박스가 자식 박스를 포함하고 있는지 여부
+     * @param parent
+     * @param child
+     * @returns {boolean}
+     */
+    static hasBox(parent, child) {
+        var points = [child.lt, child.rt, child.rb, child.lb];
+
+        for (let i = 0; i < points.length; i++) {
+            if (Calc.isInsideSquare(parent.lt, parent.rt, parent.rb, parent.lb, points[i]) === false)
+                return false;
+        }
+        return true;
     }
 
 

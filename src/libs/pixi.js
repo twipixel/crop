@@ -13506,7 +13506,7 @@ CanvasRenderer.prototype.renderDisplayObject = function (displayObject, context)
 };
 
 /**
- * @extends PIXI.SystemRenderer#resize
+ * @extends PIXI.SystemRenderer#setSize
  *
  * @param {number} w
  * @param {number} h

@@ -116,9 +116,10 @@ export class Painter {
     }
 
     static drawLine(graphics, p1, p2, thickness = 1, color = 0xFF3300, alpha = 1) {
+        //graphics.beginFill(color, alpha);
         graphics.lineStyle(thickness, color, alpha);
         graphics.moveTo(p1.x, p1.y);
         graphics.lineTo(p2.x, p2.y);
-        graphics.endFill();
+        //graphics.endFill();
     }
 }

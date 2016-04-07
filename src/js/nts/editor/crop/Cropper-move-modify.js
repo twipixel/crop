@@ -216,15 +216,32 @@ export class Cropper extends PIXI.Container {
         var ax = Math.abs(dx);
         var ay = Math.abs(dy);
         var rotation = this.image.rotation;
+
         this.image.x += dx;
         this.image.y += dy;
 
         if (this.image.isContainsBounds(this.resizeUI) === false) {
+
             if(ax > ay) {
+                console.log('dx', dx, dx * Math.cos(this.image.rotation), dx * Math.sin(this.image.rotation));
                 if (this.image.isHitSide(this.resizeUI) === false) {
                     var x = this.prevImageX + dx * Math.cos(this.image.rotation);
                     var y = this.prevImageY + dx * Math.sin(this.image.rotation);
                 } else {
+                    console.log('11111111111', dx, dy, dx * Math.cos(this.image.rotation + this.rotation90), dx * Math.sin(this.image.rotation + this.rotation90));
+
+                    // 좌로 이동
+                    /*if(dx < 0) {
+                        console.log('좌좌좌좌좌좌');
+                        var x = this.prevImageX - dx * Math.cos(this.image.rotation - this.rotation90);
+                        var y = this.prevImageY - dx * Math.sin(this.image.rotation - this.rotation90);
+                    } else {
+                        console.log('우우우우우우웅');
+                        var x = this.prevImageX - dx * Math.cos(this.image.rotation - this.rotation90);
+                        var y = this.prevImageY - dx * Math.sin(this.image.rotation - this.rotation90);
+                    }*/
+
+
                     if(rotation < 0) {
                         var x = this.prevImageX - dx * Math.cos(this.image.rotation - this.rotation90);
                         var y = this.prevImageY - dx * Math.sin(this.image.rotation - this.rotation90);
@@ -232,22 +249,34 @@ export class Cropper extends PIXI.Container {
                         var x = this.prevImageX - dx * Math.cos(this.image.rotation + this.rotation90);
                         var y = this.prevImageY - dx * Math.sin(this.image.rotation + this.rotation90);
                     }
+
+
                 }
+
                 this.image.x = x;
                 this.image.y = y;
             } else {
+                console.log('dy', dy, dy * Math.cos(this.image.rotation + this.rotation90), dy * Math.sin(this.image.rotation + this.rotation90));
+
                 if (this.image.isHitSide(this.resizeUI)) {
                     var x = this.prevImageX + dy * Math.cos(this.image.rotation + this.rotation90);
                     var y = this.prevImageY + dy * Math.sin(this.image.rotation + this.rotation90);
                 } else {
+                    console.log('222222222222', dx, dy, dy * Math.cos(this.image.rotation), dy * Math.sin(this.image.rotation));
+
                     if(rotation < 0) {
+                        console.log('위로 위위위이ㅜ이ㅜ위위위');
                         var x = this.prevImageX - dy * Math.cos(this.image.rotation);
                         var y = this.prevImageY - dy * Math.sin(this.image.rotation);
                     } else {
+                        console.log('아래아래아래아래아래');
                         var x = this.prevImageX + dy * Math.cos(this.image.rotation);
                         var y = this.prevImageY + dy * Math.sin(this.image.rotation);
                     }
+
+
                 }
+
                 this.image.x = x;
                 this.image.y = y;
             }

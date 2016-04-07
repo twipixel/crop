@@ -96,7 +96,7 @@ export class Cropper extends PIXI.Container {
             this.resizeImage(bounds, this.image);
             this.rotateUI.resize(imageBounds);
             this.resizeUI.resize(imageBounds);
-            this.moveUI.resize(imageBounds);
+            this.moveUI.setSize(imageBounds);
 
             this.test();
         }
@@ -536,7 +536,7 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeEnd(e) {
-        this.moveUI.resize(this.resizeUI.bounds);
+        this.moveUI.setSize(this.resizeUI.bounds);
         this.magnifyImage(this.resizeUI.bounds);
         this.gLens.clear();
     }

@@ -20,8 +20,8 @@ export class ImageUI extends PIXI.Container {
         this.addChild(this.image);
 
         this.pivotGraphics = new PIXI.Graphics();
-        this.pivotGraphics.beginFill(0xFF3300);
-        this.pivotGraphics.drawRect(-5, -5, 10, 10);
+        this.pivotGraphics.beginFill(0xFF3300, 0.3);
+        this.pivotGraphics.drawRect(-1, -1, 2, 2);
         this.pivotGraphics.endFill();
         this.addChild(this.pivotGraphics);
 
@@ -107,7 +107,10 @@ export class ImageUI extends PIXI.Container {
     }
 
 
-    updatePivotLtPoint() {
+    /**
+     * 중심점 이동시 위치 보정을 위해 좌상단 좌표를 저장합니다.
+     */
+    updatePrevLtPointForPivot() {
         this.prevLtX = this.lt.x;
         this.prevLtY = this.lt.y;
     }
@@ -122,7 +125,7 @@ export class ImageUI extends PIXI.Container {
         var offsetY = this.lt.y - this.prevLtY;
         this.x = this.x - offsetX;
         this.y = this.y - offsetY;
-        this.updatePivotLtPoint();
+        this.updatePrevLtPointForPivot();
     }
 
 
@@ -179,6 +182,19 @@ export class ImageUI extends PIXI.Container {
             rb: this.rb,
             lb: this.lb
         }
+    }
+
+    getUpdatePoints(dx, dy) {
+        var p = this.image.points;
+        p.lt.x += dx;
+        p.lt.y += dy;
+        p.rt.x += dx;
+        p.rt.y += dy;
+        p.rb.x += dx;
+        p.rb.y += dy;
+        p.lb.x += dx;
+        p.lb.y += dy;
+        return p;
     }
 
     toString() {
@@ -262,6 +278,7 @@ export class ImageUI extends PIXI.Container {
             height: this.rb.y - this.rt.y
         };
     }
+
 
 
 }

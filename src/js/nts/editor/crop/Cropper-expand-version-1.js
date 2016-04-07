@@ -86,13 +86,13 @@ export class Cropper extends PIXI.Container {
             this.resizeImage(bounds, this.image);
             var imageBounds = this.image.bounds;
             this.resizeUI.resize(imageBounds);
-            this.moveUI.resize(imageBounds);
+            this.moveUI.setSize(imageBounds);
 
             this.test();
         } else {
             var resizeUIBounds = this.resizeUI.bounds;
             this.magnifyImage(resizeUIBounds);
-            this.moveUI.resize(resizeUIBounds);
+            this.moveUI.setSize(resizeUIBounds);
         }
 
         this.rotateUI.resize();
@@ -630,7 +630,7 @@ export class Cropper extends PIXI.Container {
                 //console.log('Do Nothing');
             } else {
                 this.expandImage(corner, this.bounds, this.startLensBounds, this.resizeUI.bounds, this.resizeUI.bounds, dx, dy);
-                this.moveUI.resize(this.resizeUI.bounds);
+                this.moveUI.setSize(this.resizeUI.bounds);
             }
 
             this.prevLensPoints = changePoint;
@@ -642,7 +642,7 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeEnd(e) {
-        this.moveUI.resize(this.resizeUI.bounds);
+        this.moveUI.setSize(this.resizeUI.bounds);
         this.magnifyImage(this.resizeUI.bounds);
         this.gLens.clear();
 
