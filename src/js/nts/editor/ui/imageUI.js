@@ -3,17 +3,17 @@ import {Painter} from './../utils/Painter';
 
 //export class ImageUI extends PIXI.Sprite {
 export class ImageUI extends PIXI.Container {
-    constructor(imageElement) {
+    constructor(textureCanvas) {
         //super(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         super();
-        this.initialize(imageElement);
+        this.initialize(textureCanvas);
         this.addDebugPoint();
     }
 
-    initialize(imageElement) {
-        this.imageElement = imageElement;
+    initialize(textureCanvas) {
+        this.textureCanvas = textureCanvas;
 
-        this.image = new PIXI.Sprite(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
+        this.image = new PIXI.Sprite(new PIXI.Texture(new PIXI.BaseTexture(textureCanvas)));
         this.image.x = -this.image.width / 2;
         this.image.y = -this.image.height / 2;
         //this.image.alpha = 0.2;

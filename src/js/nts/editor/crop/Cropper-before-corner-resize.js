@@ -478,6 +478,41 @@ export class Cropper extends PIXI.Container {
         // --------------------------------------------------------------------------
     }
 
+
+    /*cornerResizeChange(e) {
+        var corner = e.target;
+        var dx = e.dx;
+        var dy = e.dy;
+        var tx = corner.x + dx;
+        var ty = corner.y + dy;
+        var speedX = dx * 2;
+        var speedY = dy * 2;
+
+        var changePoint = this.resizeUI.getUpdatePoints(corner, tx, ty);
+
+        if (this.image.isContainsBounds(changePoint)) {
+
+            this.resizeUI.setPoint(changePoint);
+
+            // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때
+            if (tx >= this.startLensBounds.x && tx <= (this.startLensBounds.x + this.startLensBounds.width) && ty >= this.startLensBounds.y && ty <= (this.startLensBounds.y + this.startLensBounds.height)) {
+                // 아무일도 일어나지 않습니다.
+                //console.log('Do Nothing');
+            } else {
+                this.expandImage(corner, this.bounds, this.startLensBounds, this.resizeUI.bounds, dx, dy);
+                this.moveUI.resize(this.resizeUI.bounds);
+            }
+
+            this.prevLensPoints = changePoint;
+        } else {
+            this.resizeUI.setPoint(this.prevLensPoints);
+        }
+
+        this.image.updatePrevLtPointForPivot();
+        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
+    }*/
+
+
     cornerResizeChange(e) {
         var changePoint;
         var dx = e.dx;
@@ -488,7 +523,8 @@ export class Cropper extends PIXI.Container {
         var speedX = dx * 2;
         var speedY = dy * 2;
 
-        // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때 (startLensBounds 넓이와 높이가 작을 때)
+        // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때
+        // 이전 사이즈보다 작아지면?
         if (tx >= this.startLensBounds.x && tx <= (this.startLensBounds.x + this.startLensBounds.width) && ty >= this.startLensBounds.y && ty <= (this.startLensBounds.y + this.startLensBounds.height)) {
             changePoint = this.resizeUI.getUpdatePoints(corner, tx, ty);
             this.resizeUI.setPoint(changePoint);
@@ -497,13 +533,6 @@ export class Cropper extends PIXI.Container {
             changePoint = this.resizeUI.getUpdatePoints(corner, tx + speedX, ty + speedY);
 
             console.log('isHit: ' + this.image.isContainsBounds(changePoint));
-            console.log(
-                'LT[' + Calc.trace(changePoint.lt.x) + ', ' + Calc.trace(changePoint.lt.y) + '], ' +
-                'RT[' + Calc.trace(changePoint.rt.x) + ', ' + Calc.trace(changePoint.rt.y) + '], ' +
-                'RB[' + Calc.trace(changePoint.rb.x) + ', ' + Calc.trace(changePoint.rb.y) + '], ' +
-                'LB[' + Calc.trace(changePoint.lb.x) + ', ' + Calc.trace(changePoint.lb.y) + '], '
-            );
-
             if (this.image.isContainsBounds(changePoint)) {
                 this.resizeUI.setPoint(changePoint);
                 this.expandImage(corner, this.bounds, this.startLensBounds, this.resizeUI.bounds, dx, dy);
