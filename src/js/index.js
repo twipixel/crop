@@ -4,7 +4,8 @@ import {ImageEditor} from './nts/editor/ImageEditor';
 
 var editor;
 
-var image = document.getElementById("image");
+var image = document.getElementById('image');
+var texture = document.getElementById('texture');
 
 //window.onload = initailize.bind(this);
 window.onload = fastInitailize.bind(this);
@@ -58,22 +59,38 @@ function createImageByFile(file) {
 
 
 function fastInitailize() {
-    if(image) {
+    if(image && texture) {
+        var context = texture.getContext('2d');
+        texture.width = image.width;
+        texture.height = image.height;
+        context.drawImage(image, 0, 0, image.width, image.height);
         document.body.removeChild(image);
-        beginWithImageElement(image);
+        document.body.removeChild(texture);
+
+        //beginWithImageElement(image);
+        beginWithCanvas(texture);
     }
+
+
 }
 
 
 function beginWithImageElement(image) {
     var dropzone = document.getElementById('upload');
-
     if(dropzone)
         document.body.removeChild(dropzone);
 
-    console.log('beginWithImageElement(' + image + ')');
-
     editor = new ImageEditor(image);
+    resizeWindow();
+}
+
+
+function beginWithCanvas(canvas) {
+    var dropzone = document.getElementById('upload');
+    if(dropzone)
+        document.body.removeChild(dropzone);
+
+    editor = new ImageEditor(canvas);
     resizeWindow();
 }
 

@@ -8,23 +8,23 @@ import {Painter} from './../utils/Painter';
 
 
 export class Cropper extends PIXI.Container {
-    constructor(canvas, textureCanvas) {
+    constructor(canvas, imageElement) {
         super();
-        this.initialize(canvas, textureCanvas);
+        this.initialize(canvas, imageElement);
         this.addEvent();
     }
 
-    initialize(canvas, textureCanvas) {
+    initialize(canvas, imageElement) {
         this.paddingX = 216;
         this.paddingY = 158;
         this.canvas = canvas;
-        this.textureCanvas = textureCanvas;
         this.isInitialize = false;
+        this.imageElement = imageElement;
         this.maxRotation = Calc.toRadians(45);
         this.minRotation = -this.maxRotation;
         this.rotation90 = Calc.toRadians(90);
 
-        this.image = new ImageUI(this.textureCanvas);
+        this.image = new ImageUI(this.imageElement);
         this.moveUI = new MoveUI(this.canvas);
         this.rotateUI = new RotateUI(this.canvas);
         this.resizeUI = new ResizeUI(this.canvas);

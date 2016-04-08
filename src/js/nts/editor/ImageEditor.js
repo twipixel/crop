@@ -4,15 +4,15 @@ import {requestAnimFrame} from './../../../libs/animation';
 
 export class ImageEditor {
 
-    constructor(imageElement) {
-        this.initialize(imageElement);
+    constructor(textureCanvas) {
+        this.initialize(textureCanvas);
         this.resize();
         this.updateLoop();
     }
 
 
-    initialize(imageElement) {
-        this.imageElement = imageElement;
+    initialize(textureCanvas) {
+        this.textureCanvas = textureCanvas;
         this.canvas = document.getElementById('canvas');
         this.context = this.canvas.getContext('2d');
         this.renderer = new PIXI.CanvasRenderer(this.canvas.width, this.canvas.height, {
@@ -25,7 +25,7 @@ export class ImageEditor {
          this.stage = new PIXI.Stage(0xE6E9EC, interactive);*/
         this.stage = new PIXI.Container(0xE6E9EC);
 
-        this.cropper = new Cropper(this.canvas, this.imageElement);
+        this.cropper = new Cropper(this.canvas, this.textureCanvas);
         this.stage.addChild(this.cropper);
     }
 
