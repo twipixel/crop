@@ -158,7 +158,7 @@ export class Calc {
         //    parseInt(point.x), parseInt(point.y)
         //);
 
-        if (Calc.triangleArea(lt, rt, point) > 0 || Calc.triangleArea(rt, rb, point) > 0 || Calc.triangleArea(rb, lb, point) > 0 || Calc.triangleArea(lb, lt, point) > 0)
+        if (Calc.triangleArea(point, lt, rt) > 0 || Calc.triangleArea(point, rt, rb) > 0 || Calc.triangleArea(point, rb, lb) > 0 || Calc.triangleArea(point, lb, lt) > 0)
             return false;
         return true;
     }
@@ -170,16 +170,16 @@ export class Calc {
     static sampleCodeHitTest(point, lt, rt, rb, lb) {
         var result = {isHitLeft: false, isHitRight: false, isHitTop: false, isHitBottom: false};
 
-        if (Calc.triangleArea(lt, rt, point) > 0)
+        if (Calc.triangleArea(point, lt, rt) > 0)
             result.isHitTop = true;
 
-        if (Calc.triangleArea(rt, rb, point) > 0)
+        if (Calc.triangleArea(point, rt, rb) > 0)
             result.isHitRight = true;
 
-        if (Calc.triangleArea(rb, lb, point) > 0)
+        if (Calc.triangleArea(point, rb, lb) > 0)
             result.isHitBottom = true;
 
-        if (Calc.triangleArea(lb, lt, point) > 0)
+        if (Calc.triangleArea(point, lb, lt) > 0)
             result.isHitLeft = true;
 
         return result;

@@ -321,7 +321,7 @@ export class ResizeUI extends PIXI.Container {
             // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
             case this.lt:
                 console.log('lt');
-                if (Calc.triangleArea(image.lt, image.rt, points.lt) > 0) {
+                if (Calc.triangleArea(points.lt, image.lt, image.rt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.lt, image.lt, image.rt);
                     console.log('1');
                     points.lt.x = fix.x;
@@ -329,7 +329,7 @@ export class ResizeUI extends PIXI.Container {
 
                     Painter.drawLine(this.gDebug, points.lt, fix);
                 }
-                if (Calc.triangleArea(image.lt, image.rt, points.rt) > 0) {
+                if (Calc.triangleArea(points.rt, image.lt, image.rt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.rt, image.lt, image.rt);
                     console.log('2');
                     points.rt.x = fix.x;
@@ -337,7 +337,7 @@ export class ResizeUI extends PIXI.Container {
 
                     Painter.drawLine(this.gDebug, points.rt, fix);
                 }
-                if (Calc.triangleArea(image.lb, image.lt, points.lt) > 0) {
+                if (Calc.triangleArea(points.lt, image.lb, image.lt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.lt, image.lb, image.lt);
                     console.log('3');
                     points.lt.x = fix.x;
@@ -350,7 +350,7 @@ export class ResizeUI extends PIXI.Container {
             // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
             case this.rt:
                 console.log('rt');
-                if (Calc.triangleArea(image.lt, image.rt, points.rt) > 0) {
+                if (Calc.triangleArea(points.rt, image.lt, image.rt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.rt, image.lt, image.rt);
                     console.log('4');
                     points.rt.x = fix.x;
@@ -358,7 +358,7 @@ export class ResizeUI extends PIXI.Container {
 
                     Painter.drawLine(this.gDebug, points.rt, fix);
                 }
-                if (Calc.triangleArea(image.lt, image.rt, points.lt) > 0) {
+                if (Calc.triangleArea(points.lt, image.lt, image.rt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.lt, image.lt, image.rt);
                     console.log('5');
                     points.lt.x = fix.x;
@@ -366,7 +366,7 @@ export class ResizeUI extends PIXI.Container {
 
                     Painter.drawLine(this.gDebug, points.lt, fix);
                 }
-                if (Calc.triangleArea(image.rt, image.rb, points.rt) > 0) {
+                if (Calc.triangleArea(points.rt, image.rt, image.rb) > 0) {
                     fix = Calc.getShortestDistancePoint(points.rt, image.rt, image.rb);
                     console.log('6');
                     points.rt.x = fix.x;
@@ -378,21 +378,21 @@ export class ResizeUI extends PIXI.Container {
             // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
             case this.rb:
                 console.log('rb');
-                if (Calc.triangleArea(image.rt, image.rb, points.rb) > 0) {
+                if (Calc.triangleArea(points.rb, image.rt, image.rb) > 0) {
                     fix = Calc.getShortestDistancePoint(points.rb, image.rt, image.rb);
                     console.log('7');
                     points.rb.x = fix.x;
                     points.rb.y = fix.y;
                     Painter.drawLine(this.gDebug, points.rb, fix);
                 }
-                if (Calc.triangleArea(image.rt, image.rb, points.rt) > 0) {
+                if (Calc.triangleArea(points.rt, image.rt, image.rb) > 0) {
                     fix = Calc.getShortestDistancePoint(points.rt, image.rt, image.rb);
                     console.log('8');
                     points.rt.x = fix.x;
                     points.rt.y = fix.y;
                     Painter.drawLine(this.gDebug, points.rt, fix);
                 }
-                if (Calc.triangleArea(image.rb, image.lb, points.rb) > 0) {
+                if (Calc.triangleArea(points.rb, image.rb, image.lb) > 0) {
                     fix = Calc.getShortestDistancePoint(points.rb, image.rb, image.lb);
                     console.log('9');
                     points.rb.x = fix.x;
@@ -404,21 +404,21 @@ export class ResizeUI extends PIXI.Container {
             // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
             case this.lb:
                 console.log('lb');
-                if (Calc.triangleArea(image.lb, image.lt, points.lb) > 0) {
+                if (Calc.triangleArea(points.lb, image.lb, image.lt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.lb, image.lb, image.lt);
                     console.log('11');
                     points.lb.x = fix.x;
                     points.lb.y = fix.y;
                     Painter.drawLine(this.gDebug, points.lb, fix);
                 }
-                if (Calc.triangleArea(image.lb, image.lt, points.lt) > 0) {
+                if (Calc.triangleArea(points.lt, image.lb, image.lt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.lt, image.lb, image.lt);
                     console.log('12');
                     points.lt.x = fix.x;
                     points.lt.y = fix.y;
                     Painter.drawLine(this.gDebug, points.lt, fix);
                 }
-                if (Calc.triangleArea(image.rb, image.lb, points.lb) > 0) {
+                if (Calc.triangleArea(points.lb, image.rb, image.lb) > 0) {
                     fix = Calc.getShortestDistancePoint(points.lb, image.rb, image.lb);
                     console.log('13');
                     points.lb.x = fix.x;
