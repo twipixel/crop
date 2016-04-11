@@ -1,7 +1,6 @@
 import {CornerShape} from './CornerShape';
 import {ControlArea} from './ControlArea';
 import {Calc} from './../utils/Calculator';
-import {Vector} from './../utils/Vector';
 import {Painter} from './../utils/Painter';
 
 export class ResizeUI extends PIXI.Container {
@@ -439,19 +438,19 @@ export class ResizeUI extends PIXI.Container {
      * @returns {boolean}
      */
     isLtInsideBounds(bounds) {
-        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.lt));
+        return (Calc.isInsideSquare(this.lt, bounds.lt, bounds.rt, bounds.rb, bounds.lb));
     }
 
     isRtInsideBounds(bounds) {
-        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.rt));
+        return (Calc.isInsideSquare(this.rt, bounds.lt, bounds.rt, bounds.rb, bounds.lb));
     }
 
     isRbInsideBounds(bounds) {
-        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.rb));
+        return (Calc.isInsideSquare(this.rb, bounds.lt, bounds.rt, bounds.rb, bounds.lb));
     }
 
     isLbInsideBounds(bounds) {
-        return (Calc.isInsideSquare(bounds.lt, bounds.rt, bounds.rb, bounds.lb, this.lb));
+        return (Calc.isInsideSquare(this.lb, bounds.lt, bounds.rt, bounds.rb, bounds.lb));
     }
 
     //////////////////////////////////////////////////////////////////////

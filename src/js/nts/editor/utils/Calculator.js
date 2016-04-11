@@ -142,14 +142,14 @@ export class Calc {
      * 모두 0이거나 0보다 작으면 우측, 즉 사각형 안에 점이 있는 것이고
      * 하나라도 양수가 나오면 사각형 안에 점이 없는 것이 된다.
      *
+     * @param point 체크하고 싶은 포인트
      * @param lt 사각형 좌상단 포인트
      * @param rt 사각형 우상단 포인트
      * @param rb 사각형 우한단 포인트
      * @param lb 사각형 좌하단 포인트
-     * @param point 체크하고 싶은 포인트
      * @returns {boolean} 사각형안에 포인트가 있는지 여부
      */
-    static isInsideSquare(lt, rt, rb, lb, point) {
+    static isInsideSquare(point, lt, rt, rb, lb) {
         //console.log(
         //    parseInt(lt.x), parseInt(lt.y),
         //    parseInt(rt.x), parseInt(rt.y),
@@ -164,7 +164,10 @@ export class Calc {
     }
 
 
-    static getHitPoint(lt, rt, rb, lb, point) {
+    /**
+     * 이미지 좌우상하 어디에 히트 되었는지 체크 하는 샘플 코드입니다.
+     */
+    static sampleCodeHitTest(point, lt, rt, rb, lb) {
         var result = {isHitLeft: false, isHitRight: false, isHitTop: false, isHitBottom: false};
 
         if (Calc.triangleArea(lt, rt, point) > 0)
@@ -369,7 +372,7 @@ export class Calc {
         var points = [child.lt, child.rt, child.rb, child.lb];
 
         for (let i = 0; i < points.length; i++) {
-            if (Calc.isInsideSquare(parent.lt, parent.rt, parent.rb, parent.lb, points[i]) === false)
+            if (Calc.isInsideSquare(points[i], parent.lt, parent.rt, parent.rb, parent.lb) === false)
                 return false;
         }
         return true;
