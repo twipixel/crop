@@ -199,6 +199,35 @@ export class ImageUI extends PIXI.Container {
         return p;
     }
 
+    /*getFixPoints(points) {
+
+        if(points.lt.x < this.lt.x)
+            points.lt.x = this.lt.x;
+
+        if(points.lt.y < this.lt.y)
+            points.lt.y = this.lt.y;
+
+        if(points.rt.x > this.rt.x)
+            points.rt.x = this.rt.x;
+
+        if(points.rt.y < this.rt.y)
+            points.rt.y = this.rt.y;
+
+        if(points.rb.x > this.rb.x)
+            points.rb.x = this.rb.x;
+
+        if(points.rb.y > this.rb.y)
+            points.rb.y = this.rb.y;
+
+        if(points.lb.x < this.lb.x)
+            points.lb.x = this.lb.x;
+
+        if(points.lb.y > this.lb.y)
+            points.lb.y = this.lb.y;
+
+        return points;
+    }*/
+
     toString() {
         var str = '' +
             'LT[' + Calc.leadingZero(parseInt(this.lt.x)) + ', ' + Calc.leadingZero(parseInt(this.lt.y)) + '] ' +

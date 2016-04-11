@@ -1,6 +1,8 @@
 import {CornerShape} from './CornerShape';
 import {ControlArea} from './ControlArea';
 import {Calc} from './../utils/Calculator';
+import {Vector} from './../utils/Vector';
+import {Painter} from './../utils/Painter';
 
 export class ResizeUI extends PIXI.Container {
     constructor(canvas) {
@@ -31,6 +33,9 @@ export class ResizeUI extends PIXI.Container {
         this.addChild(this.rt);
         this.addChild(this.rb);
         this.addChild(this.lb);
+
+        this.gDebug = new PIXI.Graphics();
+        this.addChild(this.gDebug);
     }
 
 
@@ -182,6 +187,174 @@ export class ResizeUI extends PIXI.Container {
 
         return points;
     }
+
+
+    fixCorner(corner, points, image) {
+        var fix;
+        var left = image.leftLine;
+        var top = image.topLine;
+        var right = image.rightLine;
+        var bottom = image.bottomLine;
+
+        switch (corner) {
+            // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
+            case this.lt:
+                console.log('lt');
+                if (Calc.triangleArea(image.lt, image.rt, points.lt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.lt, image.lt, image.rt);
+                    console.log('1');
+                    points.lt.x = fix.x;
+                    points.lt.y = fix.y;
+
+                    Painter.drawLine(this.gDebug, points.lt, fix);
+                }
+                if (Calc.triangleArea(image.lt, image.rt, points.rt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.rt, image.lt, image.rt);
+                    console.log('2');
+                    points.rt.x = fix.x;
+                    points.rt.y = fix.y;
+
+                    Painter.drawLine(this.gDebug, points.rt, fix);
+                }
+                if (Calc.triangleArea(image.lb, image.lt, points.lt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.lt, image.lb, image.lt);
+                    console.log('3');
+                    points.lt.x = fix.x;
+                    points.lt.y = fix.y;
+
+                    Painter.drawLine(this.gDebug, points.lt, fix);
+                }
+                break;
+
+            // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
+            case this.rt:
+                console.log('rt');
+                if (Calc.triangleArea(image.lt, image.rt, points.rt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.rt, image.lt, image.rt);
+                    console.log('4');
+                    points.rt.x = fix.x;
+                    points.rt.y = fix.y;
+
+                    Painter.drawLine(this.gDebug, points.rt, fix);
+                }
+                if (Calc.triangleArea(image.lt, image.rt, points.lt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.lt, image.lt, image.rt);
+                    console.log('5');
+                    points.lt.x = fix.x;
+                    points.lt.y = fix.y;
+
+                    Painter.drawLine(this.gDebug, points.lt, fix);
+                }
+                if (Calc.triangleArea(image.rt, image.rb, points.rt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.rt, image.rt, image.rb);
+                    console.log('6');
+                    points.rt.x = fix.x;
+                    points.rt.y = fix.y;
+                    Painter.drawLine(this.gDebug, points.rt, fix);
+                }
+                break;
+
+            // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
+            case this.rb:
+                console.log('rb');
+                if (Calc.triangleArea(image.rt, image.rb, points.rb) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.rb, image.rt, image.rb);
+                    console.log('7');
+                    points.rb.x = fix.x;
+                    points.rb.y = fix.y;
+                    Painter.drawLine(this.gDebug, points.rb, fix);
+                }
+                if (Calc.triangleArea(image.rt, image.rb, points.rt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.rt, image.rt, image.rb);
+                    console.log('8');
+                    points.rt.x = fix.x;
+                    points.rt.y = fix.y;
+                    Painter.drawLine(this.gDebug, points.rt, fix);
+                }
+                if (Calc.triangleArea(image.rb, image.lb, points.rb) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.rb, image.rb, image.lb);
+                    console.log('9');
+                    points.rb.x = fix.x;
+                    points.rb.y = fix.y;
+                    Painter.drawLine(this.gDebug, points.rb, fix);
+                }
+                break;
+
+            // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
+            case this.lb:
+                console.log('lb');
+                if (Calc.triangleArea(image.lb, image.lt, points.lb) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.lb, image.lb, image.lt);
+                    console.log('11');
+                    points.lb.x = fix.x;
+                    points.lb.y = fix.y;
+                    Painter.drawLine(this.gDebug, points.lb, fix);
+                }
+                if (Calc.triangleArea(image.lb, image.lt, points.lt) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.lt, image.lb, image.lt);
+                    console.log('12');
+                    points.lt.x = fix.x;
+                    points.lt.y = fix.y;
+                    Painter.drawLine(this.gDebug, points.lt, fix);
+                }
+                if (Calc.triangleArea(image.rb, image.lb, points.lb) > 0) {
+                    fix = Calc.getShortestDistancePoint(points.lb, image.rb, image.lb);
+                    console.log('13');
+                    points.lb.x = fix.x;
+                    points.lb.y = fix.y;
+                    Painter.drawLine(this.gDebug, points.lb, fix);
+                }
+                break;
+        }
+
+        return points;
+    }
+
+
+    /*getFixPoints(points) {
+
+        console.log(
+            'Fix! ---------------------------------\n' +
+            'LT[' + Calc.trace(points.lt.x) + ', ' + Calc.trace(points.lt.y) + '], ' +
+            'RT[' + Calc.trace(points.rt.x) + ', ' + Calc.trace(points.rt.y) + '], ' +
+            'RB[' + Calc.trace(points.rb.x) + ', ' + Calc.trace(points.rb.y) + '], ' +
+            'LB[' + Calc.trace(points.lb.x) + ', ' + Calc.trace(points.lb.y) + '], '
+        );
+
+        console.log(
+            'LT[' + Calc.trace(this.lt.x) + ', ' + Calc.trace(this.lt.y) + '], ' +
+            'RT[' + Calc.trace(this.rt.x) + ', ' + Calc.trace(this.rt.y) + '], ' +
+            'RB[' + Calc.trace(this.rb.x) + ', ' + Calc.trace(this.rb.y) + '], ' +
+            'LB[' + Calc.trace(this.lb.x) + ', ' + Calc.trace(this.lb.y) + '], '
+        );
+
+        if(points.lt.x < this.lt.x)
+            points.lt.x = this.lt.x;
+
+        if(points.lt.y < this.lt.y)
+            points.lt.y = this.lt.y;
+
+        if(points.rt.x > this.rt.x)
+            points.rt.x = this.rt.x;
+
+        if(points.rt.y < this.rt.y)
+            points.rt.y = this.rt.y;
+
+        if(points.rb.x > this.rb.x)
+            points.rb.x = this.rb.x;
+
+        if(points.rb.y > this.rb.y)
+            points.rb.y = this.rb.y;
+
+        if(points.lb.x < this.lb.x)
+            points.lb.x = this.lb.x;
+
+        if(points.lb.y > this.lb.y)
+            points.lb.y = this.lb.y;
+
+        return points;
+    }*/
+
 
     /**
      * 좌상단 점이 바운드안에 포함되었는지 여부
