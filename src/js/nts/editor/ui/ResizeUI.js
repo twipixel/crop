@@ -33,6 +33,7 @@ export class ResizeUI extends PIXI.Container {
         this.addChild(this.rb);
         this.addChild(this.lb);
 
+        // TODO 디버그용 삭제 필요
         this.gDebug = new PIXI.Graphics();
         this.addChild(this.gDebug);
     }
@@ -199,128 +200,6 @@ export class ResizeUI extends PIXI.Container {
             // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
             case this.lt:
                 console.log('lt');
-                if (Calc.triangleArea(image.lt, image.rt, points.lt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.lt, image.lt, image.rt);
-                    console.log('1');
-                    points.lt.x = fix.x;
-                    points.lt.y = fix.y;
-
-                    Painter.drawLine(this.gDebug, points.lt, fix);
-                }
-                if (Calc.triangleArea(image.lt, image.rt, points.rt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.rt, image.lt, image.rt);
-                    console.log('2');
-                    points.rt.x = fix.x;
-                    points.rt.y = fix.y;
-
-                    Painter.drawLine(this.gDebug, points.rt, fix);
-                }
-                if (Calc.triangleArea(image.lb, image.lt, points.lt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.lt, image.lb, image.lt);
-                    console.log('3');
-                    points.lt.x = fix.x;
-                    points.lt.y = fix.y;
-
-                    Painter.drawLine(this.gDebug, points.lt, fix);
-                }
-                break;
-
-            // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
-            case this.rt:
-                console.log('rt');
-                if (Calc.triangleArea(image.lt, image.rt, points.rt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.rt, image.lt, image.rt);
-                    console.log('4');
-                    points.rt.x = fix.x;
-                    points.rt.y = fix.y;
-
-                    Painter.drawLine(this.gDebug, points.rt, fix);
-                }
-                if (Calc.triangleArea(image.lt, image.rt, points.lt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.lt, image.lt, image.rt);
-                    console.log('5');
-                    points.lt.x = fix.x;
-                    points.lt.y = fix.y;
-
-                    Painter.drawLine(this.gDebug, points.lt, fix);
-                }
-                if (Calc.triangleArea(image.rt, image.rb, points.rt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.rt, image.rt, image.rb);
-                    console.log('6');
-                    points.rt.x = fix.x;
-                    points.rt.y = fix.y;
-                    Painter.drawLine(this.gDebug, points.rt, fix);
-                }
-                break;
-
-            // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
-            case this.rb:
-                console.log('rb');
-                if (Calc.triangleArea(image.rt, image.rb, points.rb) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.rb, image.rt, image.rb);
-                    console.log('7');
-                    points.rb.x = fix.x;
-                    points.rb.y = fix.y;
-                    Painter.drawLine(this.gDebug, points.rb, fix);
-                }
-                if (Calc.triangleArea(image.rt, image.rb, points.rt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.rt, image.rt, image.rb);
-                    console.log('8');
-                    points.rt.x = fix.x;
-                    points.rt.y = fix.y;
-                    Painter.drawLine(this.gDebug, points.rt, fix);
-                }
-                if (Calc.triangleArea(image.rb, image.lb, points.rb) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.rb, image.rb, image.lb);
-                    console.log('9');
-                    points.rb.x = fix.x;
-                    points.rb.y = fix.y;
-                    Painter.drawLine(this.gDebug, points.rb, fix);
-                }
-                break;
-
-            // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
-            case this.lb:
-                console.log('lb');
-                if (Calc.triangleArea(image.lb, image.lt, points.lb) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.lb, image.lb, image.lt);
-                    console.log('11');
-                    points.lb.x = fix.x;
-                    points.lb.y = fix.y;
-                    Painter.drawLine(this.gDebug, points.lb, fix);
-                }
-                if (Calc.triangleArea(image.lb, image.lt, points.lt) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.lt, image.lb, image.lt);
-                    console.log('12');
-                    points.lt.x = fix.x;
-                    points.lt.y = fix.y;
-                    Painter.drawLine(this.gDebug, points.lt, fix);
-                }
-                if (Calc.triangleArea(image.rb, image.lb, points.lb) > 0) {
-                    fix = Calc.getShortestDistancePoint(points.lb, image.rb, image.lb);
-                    console.log('13');
-                    points.lb.x = fix.x;
-                    points.lb.y = fix.y;
-                    Painter.drawLine(this.gDebug, points.lb, fix);
-                }
-                break;
-        }
-
-        return points;
-    }*/
-
-
-    fixCorner(corner, points, image) {
-        var fix;
-        var left = image.leftLine;
-        var top = image.topLine;
-        var right = image.rightLine;
-        var bottom = image.bottomLine;
-
-        switch (corner) {
-            // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
-            case this.lt:
-                console.log('lt');
                 if (Calc.triangleArea(points.lt, image.lt, image.rt) > 0) {
                     fix = Calc.getShortestDistancePoint(points.lt, image.lt, image.rt);
                     console.log('1');
@@ -429,7 +308,114 @@ export class ResizeUI extends PIXI.Container {
         }
 
         return points;
+    }*/
+
+
+    fixCorner(corner, points, image) {
+        var fix;
+        var left = image.leftLine;
+        var top = image.topLine;
+        var right = image.rightLine;
+        var bottom = image.bottomLine;
+
+        switch (corner) {
+            // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
+            case this.lt:
+                console.log('lt');
+                points.lt.x = this.getLeft(points, image);
+                points.lt.y = this.getTop(points, image);
+                break;
+
+            // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
+            case this.rt:
+                console.log('rt');
+                points.rt.x = this.getRight(points, image);
+                points.rt.y = this.getTop(points, image);
+                break;
+
+            // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
+            case this.rb:
+                console.log('rb');
+                points.rb.x = this.getRight(points, image);
+                points.rb.y = this.getBottom(points, image);
+                break;
+
+            // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
+            case this.lb:
+                console.log('lb');
+                points.lb.x = this.getLeft(points, image);
+                points.lb.y = this.getBottom(points, image);
+                break;
+        }
+
+        return points;
     }
+
+
+    getLeft(points, image) {
+        var ltx, lbx;
+
+        if(image.isOutLeftLine(points.lt))
+            ltx = image.getLeftIntersectionPoint(points.lt).x;
+        else
+            ltx = points.lt.x;
+
+        if(image.isOutLeftLine(points.lb))
+            lbx = image.getLeftIntersectionPoint(points.lb).x;
+        else
+            lbx = points.lb.x;
+
+        return Math.max(ltx, lbx);
+    }
+
+    getTop(points, image) {
+        var lty, rty;
+
+        if(image.isOutTopLine(points.lt))
+            lty = image.getTopIntersectionPoint(points.lt).y;
+        else
+            lty = points.lt.y;
+
+        if(image.isOutTopLine(points.rt))
+            rty = image.getTopIntersectionPoint(points.rt).y;
+        else
+            rty = points.rt.y;
+
+        return Math.max(lty, rty);
+    }
+
+    getRight(points, image) {
+        var rtx, rbx;
+
+        if(image.isOutRightLine(points.rt))
+            rtx = image.getRightIntersectionPoint(points.rt).x;
+        else
+            rtx = points.rt.x;
+
+        if(image.isOutRightLine(points.rb))
+            rbx = image.getRightIntersectionPoint(points.rb).x;
+        else
+            rbx = points.rb.x;
+
+        return Math.min(rtx, rbx);
+    }
+
+    getBottom(points, image) {
+        var rby, lby;
+
+        if(image.isOutBottomLine(points.rb))
+            rby = image.getBottomIntersectionPoint(points.rb).y;
+        else
+            rby = points.rb.y;
+
+        if(image.isOutBottomLine(points.lb))
+            lby = image.getBottomIntersectionPoint(points.lb).y;
+        else
+            lby = points.lb.y;
+
+        return Math.min(rby, lby);
+    }
+
 
 
     /**
