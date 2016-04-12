@@ -130,6 +130,46 @@ export class ImageUI extends PIXI.Container {
         this.updatePrevLtPointForPivot();
     }
 
+    isOutLeftLine(point) {
+        if (Calc.triangleArea(point, this.lb, this.lt) > 0)
+            return true;
+        return false;
+    }
+
+    isOutTopLine(point) {
+        if (Calc.triangleArea(point, this.lt, this.rt) > 0)
+            return true;
+        return false;
+    }
+
+    isOutRightLine(point) {
+        if (Calc.triangleArea(point, this.rt, this.rb) > 0)
+            return true;
+        return false;
+    }
+
+    isOutBottomLine(point) {
+        if (Calc.triangleArea(point, this.rb, this.lb) > 0)
+            return true;
+        return false;
+    }
+
+    getLeftIntersectionPoint(point) {
+        return Calc.getShortestDistancePoint(point, this.lb, this.lt);
+    }
+
+    getTopIntersectionPoint(point) {
+        return Calc.getShortestDistancePoint(point, this.lt, this.rt);
+    }
+
+    getRightIntersectionPoint(point) {
+        return Calc.getShortestDistancePoint(point, this.rt, this.rb);
+    }
+
+    getBottomIntersectionPoint(point) {
+        return Calc.getShortestDistancePoint(point, this.rb, this.lb);
+    }
+
 
     /**
      * 이미지가 Bounds를 포함하는지 여부
@@ -140,7 +180,7 @@ export class ImageUI extends PIXI.Container {
         var points = [bounds.lt, bounds.rt, bounds.rb, bounds.lb];
 
         for (let i = 0; i < points.length; i++) {
-            if (Calc.isInsideSquare(this.lt, this.rt, this.rb, this.lb, points[i]) === false)
+            if (Calc.isInsideSquare(points[i], this.lt, this.rt, this.rb, this.lb) === false)
                 return false;
         }
         return true;
@@ -157,17 +197,17 @@ export class ImageUI extends PIXI.Container {
         var lb = this.lb;
 
         // 왼쪽 도달
-        if (Calc.triangleArea(lb, lt, bounds.lt) > 0)
+        if (Calc.triangleArea(bounds.lt, lb, lt) > 0)
             return true;
 
-        if (Calc.triangleArea(lb, lt, bounds.lb) > 0)
+        if (Calc.triangleArea(bounds.lb, lb, lt) > 0)
             return true;
 
         // 오른쪽 도달
-        if (Calc.triangleArea(rt, rb, bounds.rt) > 0)
+        if (Calc.triangleArea(bounds.rt, rt, rb) > 0)
             return true;
 
-        if (Calc.triangleArea(rt, rb, bounds.rb) > 0)
+        if (Calc.triangleArea(bounds.rb, rt, rb) > 0)
             return true;
 
         return false;
@@ -231,7 +271,7 @@ export class ImageUI extends PIXI.Container {
 
 
     get leftLine() {
-        return {a: this.lt, b: this.lb};
+        return {a: this.lb, b: this.lt};
     }
 
     get topLine() {
