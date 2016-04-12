@@ -124,7 +124,7 @@ export class Cropper extends PIXI.Container {
         }
 
         this.rotateUI.resize();
-        Painter.drawBounds(this.gBounds, bounds);
+        //Painter.drawBounds(this.gBounds, bounds);
 
         this.gImage.clear();
         this.gRotate.clear();
@@ -202,7 +202,7 @@ export class Cropper extends PIXI.Container {
         for(var i=0; i<90; i++) {
             var x = this.prevX + d * Math.cos(rotation);
             var y = this.prevY + d * Math.sin(rotation);
-            Painter.drawLine(this.gMove, {x:this.prevX, y:this.prevY}, {x:x, y:y}, 2);
+            //Painter.drawLine(this.gMove, {x:this.prevX, y:this.prevY}, {x:x, y:y}, 2);
             this.prevX = x;
             this.prevY = y;
         }
@@ -599,7 +599,7 @@ export class Cropper extends PIXI.Container {
 
 
         // --------------------------------------------------------------------------
-        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
+        //Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
         // --------------------------------------------------------------------------
 
 
@@ -674,7 +674,7 @@ export class Cropper extends PIXI.Container {
 
         this.moveUI.setSize(this.resizeUI.bounds);
         this.image.updatePrevLtPointForPivot();
-        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
+        //Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
     }
 
     cornerResizeEnd(e) {
@@ -732,6 +732,6 @@ export class Cropper extends PIXI.Container {
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
 
-         Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4); // 하늘색
+         //Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4); // 하늘색
     }
 }
