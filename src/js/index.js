@@ -68,7 +68,7 @@ function fastInitailize() {
         document.body.removeChild(texture);
 
         //beginWithImageElement(image);
-        beginWithCanvas(texture);
+        beginWithCanvas(texture, image);
     }
 
 
@@ -85,12 +85,12 @@ function beginWithImageElement(image) {
 }
 
 
-function beginWithCanvas(canvas) {
+function beginWithCanvas(texture, imageElement) {
     var dropzone = document.getElementById('upload');
     if(dropzone)
         document.body.removeChild(dropzone);
 
-    editor = new ImageEditor(canvas);
+    editor = new ImageEditor(texture, imageElement);
     resizeWindow();
 }
 

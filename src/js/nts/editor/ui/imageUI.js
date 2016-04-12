@@ -7,7 +7,7 @@ export class ImageUI extends PIXI.Container {
         //super(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         super();
         this.initialize(textureCanvas);
-        this.addDebugPoint();
+        //this.addDebugPoint();
     }
 
     initialize(textureCanvas) {
@@ -18,12 +18,6 @@ export class ImageUI extends PIXI.Container {
         this.image.y = -this.image.height / 2;
         //this.image.alpha = 0.2;
         this.addChild(this.image);
-
-        this.pivotGraphics = new PIXI.Graphics();
-        this.pivotGraphics.beginFill(0xFF3300, 0.7);
-        this.pivotGraphics.drawRect(-2, -2, 4, 4);
-        this.pivotGraphics.endFill();
-        this.addChild(this.pivotGraphics);
 
         this.ltp = new PIXI.Sprite();
         this.rtp = new PIXI.Sprite();
@@ -50,7 +44,16 @@ export class ImageUI extends PIXI.Container {
         this.addChild(this.lbp);
     }
 
+    /**
+     * TODO 디버그 테스트 용
+     */
     addDebugPoint() {
+        this.pivotGraphics = new PIXI.Graphics();
+        this.pivotGraphics.beginFill(0xFF3300, 0.3);
+        this.pivotGraphics.drawRect(-2, -2, 4, 4);
+        this.pivotGraphics.endFill();
+        this.addChild(this.pivotGraphics);
+
         var size = 4;
         var half = size / 2;
         var ltd = Painter.getRect(size, 0x009999);
@@ -121,8 +124,13 @@ export class ImageUI extends PIXI.Container {
     setPivot(globalPivot) {
         var localPivot = this.toLocal(globalPivot);
         this.pivot = localPivot;
-        this.pivotGraphics.x = this.pivot.x;
-        this.pivotGraphics.y = this.pivot.y;
+
+        // TODO 디버그 테스트 용
+        if(this.pivotGraphics) {
+            this.pivotGraphics.x = this.pivot.x;
+            this.pivotGraphics.y = this.pivot.y;
+        }
+
         var offsetX = this.lt.x - this.prevLtX;
         var offsetY = this.lt.y - this.prevLtY;
         this.x = this.x - offsetX;

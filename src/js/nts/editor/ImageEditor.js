@@ -1,17 +1,19 @@
 import {Cropper} from './crop/Cropper';
+import {Resizer} from './resize/Resizer';
 import {requestAnimFrame} from './../../../libs/animation';
 
 
 export class ImageEditor {
 
-    constructor(textureCanvas) {
-        this.initialize(textureCanvas);
+    constructor(imageElement, textureCanvas) {
+        this.initialize(imageElement, textureCanvas);
         this.resize();
         this.updateLoop();
     }
 
 
-    initialize(textureCanvas) {
+    initialize(imageElement, textureCanvas) {
+        this.imageElement = imageElement;
         this.textureCanvas = textureCanvas;
         this.canvas = document.getElementById('canvas');
         this.context = this.canvas.getContext('2d');
@@ -25,8 +27,11 @@ export class ImageEditor {
          this.stage = new PIXI.Stage(0xE6E9EC, interactive);*/
         this.stage = new PIXI.Container(0xE6E9EC);
 
-        this.cropper = new Cropper(this.canvas, this.textureCanvas);
-        this.stage.addChild(this.cropper);
+        //this.cropper = new Cropper(this.canvas, this.imageElement, this.textureCanvas);
+        //this.stage.addChild(this.cropper);
+
+        this.resizer = new Resizer(this.canvas, this.imageElement, this.textureCanvas);
+        this.stage.addChild(this.resizer);
     }
 
 
@@ -37,7 +42,9 @@ export class ImageEditor {
 
 
     update(ms) {
-        this.cropper.update();
+        if(this.cropper)
+            this.cropper.update();
+
         this.renderer.render(this.stage);
     }
 
@@ -60,7 +67,12 @@ export class ImageEditor {
          * PIXI 에게 viewport 사이즈 변경 알림
          */
         this.renderer.resize(width, height);
-        this.cropper.resize();
+
+        if(this.cropper)
+            this.cropper.resize();
+
+        if(this.resizer)
+            this.resizer.resize();
     }
 
 }

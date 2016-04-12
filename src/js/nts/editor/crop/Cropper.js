@@ -8,16 +8,17 @@ import {Painter} from './../utils/Painter';
 
 
 export class Cropper extends PIXI.Container {
-    constructor(canvas, textureCanvas) {
+    constructor(canvas, imageElement, textureCanvas) {
         super();
-        this.initialize(canvas, textureCanvas);
+        this.initialize(canvas, imageElement, textureCanvas);
         this.addEvent();
     }
 
-    initialize(canvas, textureCanvas) {
+    initialize(canvas, imageElement, textureCanvas) {
         this.paddingX = 216;
         this.paddingY = 158;
         this.canvas = canvas;
+        this.imageElement = imageElement;
         this.textureCanvas = textureCanvas;
         this.isInitialize = false;
         this.maxRotation = Calc.toRadians(45);
@@ -106,12 +107,10 @@ export class Cropper extends PIXI.Container {
     }
 
     resize() {
-        var bounds = this.bounds;
-
         // 최초 실행: 화면 초기화
         if (this.isInitialize == false) {
             this.isInitialize = true;
-            this.initializeImage(bounds, this.image);
+            this.initializeImage();
             var imageBounds = this.image.bounds;
             this.resizeUI.resize(imageBounds);
             this.moveUI.setSize(this.resizeUI.bounds);
@@ -134,9 +133,8 @@ export class Cropper extends PIXI.Container {
         var size = Calc.getImageSizeKeepAspectRatio(this.image, this.bounds);
         this.image.width = size.width;
         this.image.height = size.height;
-        this.image.x = this.canvas.width / 2 - this.image.width / 2;
-        this.image.y = this.canvas.height / 2 - this.image.height / 2;
-
+        this.image.x = this.canvas.width / 2;
+        this.image.y = this.canvas.height / 2;
         this.image.updatePrevLtPointForPivot();
     }
 
@@ -619,7 +617,6 @@ export class Cropper extends PIXI.Container {
         // --------------------------------------------------------------------------
     }
 
-
     cornerResizeChange(e) {
         var changePoint;
         var dx = e.dx;
@@ -647,7 +644,6 @@ export class Cropper extends PIXI.Container {
             } else {
                 changePoint = this.resizeUI.getUpdatePoints(corner, tx + speedX, ty + speedY);
 
-                console.log('isContainsBounds: ' + this.image.isContainsBounds(changePoint));
                 /*console.log(
                  'LT[' + Calc.trace(changePoint.lt.x) + ', ' + Calc.trace(changePoint.lt.y) + '], ' +
                  'RT[' + Calc.trace(changePoint.rt.x) + ', ' + Calc.trace(changePoint.rt.y) + '], ' +

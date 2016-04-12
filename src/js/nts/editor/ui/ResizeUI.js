@@ -311,6 +311,10 @@ export class ResizeUI extends PIXI.Container {
     }*/
 
 
+    /**
+     * TODO 오류
+     * 상황에 따라 바운드가 찌그러질 때가 있습니다.
+     */
     fixCorner(corner, points, image) {
         var fix;
         var left = image.leftLine;
@@ -324,6 +328,9 @@ export class ResizeUI extends PIXI.Container {
                 console.log('lt');
                 points.lt.x = this.getLeft(points, image);
                 points.lt.y = this.getTop(points, image);
+                points.lb.x = points.lt.x;
+                points.lb.y = this.getBottom(points, image);
+                points.rt.y = this.getTop(points, image);
                 break;
 
             // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
@@ -331,6 +338,9 @@ export class ResizeUI extends PIXI.Container {
                 console.log('rt');
                 points.rt.x = this.getRight(points, image);
                 points.rt.y = this.getTop(points, image);
+                points.rb.x = points.rt.x;
+                points.rb.y = this.getBottom(points, image);
+                points.lt.y = this.getTop(points, image);
                 break;
 
             // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
@@ -338,6 +348,9 @@ export class ResizeUI extends PIXI.Container {
                 console.log('rb');
                 points.rb.x = this.getRight(points, image);
                 points.rb.y = this.getBottom(points, image);
+                points.rt.x = points.rb.x;
+                points.rt.y = this.getTop(points, image);
+                points.lb.y = this.getBottom(points, image);
                 break;
 
             // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
@@ -345,6 +358,9 @@ export class ResizeUI extends PIXI.Container {
                 console.log('lb');
                 points.lb.x = this.getLeft(points, image);
                 points.lb.y = this.getBottom(points, image);
+                points.lt.x = points.lb.x;
+                points.lt.y = this.getTop(points, image);
+                points.rb.y = this.getBottom(points, image);
                 break;
         }
 
