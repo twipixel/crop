@@ -43,7 +43,10 @@ export class Resizer extends PIXI.Container {
     }
 
     test() {
-
+        //console.log(Math.log2(16));
+        //console.log(Math.log1p(16));
+        //console.log(Math.log(10));
+        //console.log(Math.pow(10, 2.302585092994046));
     }
 
     //////////////////////////////////////////////////////////////////////////

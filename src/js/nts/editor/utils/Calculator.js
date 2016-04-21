@@ -355,15 +355,27 @@ export class Calc {
     }
 
 
-    static getNextRotatePosition(centerX, centerY, distance, rotation) {
+    /**
+     * 객체 회전 각도에 따라 다음 이동할 좌표를 구합니다.
+     * @param centerX
+     * @param centerY
+     * @param distance
+     * @param rotation
+     * @returns {{x: *, y: *}}
+     */
+    static getNextMovePosition(centerX, centerY, distance, rotation) {
+        //distance *= 0.4;
         var x = centerX + distance * Math.cos(rotation);
         var y = centerY + distance * Math.sin(rotation);
+
+        console.log(Calc.trace(x), Calc.trace(y), Calc.trace(distance * Math.cos(rotation)), Calc.trace(distance * Math.sin(rotation)));
         return {x:x, y:y};
     }
 
 
     /**
      * 부모 박스가 자식 박스를 포함하고 있는지 여부
+     * imageUI에 isContainsBounds 와 같은 함수
      * @param parent
      * @param child
      * @returns {boolean}

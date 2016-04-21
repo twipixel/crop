@@ -4,6 +4,7 @@ import {RotateUI} from './../ui/RotateUI';
 import {MoveUI} from './../ui/MoveUI';
 import {ImageUI} from './../ui/ImageUI';
 import {KeyCode} from './../const/KeyCode';
+import {HitSide} from './../const/HitSide';
 import {Painter} from './../utils/Painter';
 
 
@@ -123,7 +124,7 @@ export class Cropper extends PIXI.Container {
         }
 
         this.rotateUI.resize();
-        //Painter.drawBounds(this.gBounds, bounds);
+        Painter.drawBounds(this.gBounds, this.bounds);
 
         this.gImage.clear();
         this.gRotate.clear();
@@ -174,13 +175,6 @@ export class Cropper extends PIXI.Container {
     // Event Handler
     //////////////////////////////////////////////////////////////////////////
 
-    moveStart(e) {
-        this.prevImageX = this.image.x;
-        this.prevImageY = this.image.y;
-
-        this.image.updatePrevLtPointForPivot();
-    }
-
     test() {
         //this.image.visible = false;
         //this.resizeUI.visible = false;
@@ -206,41 +200,21 @@ export class Cropper extends PIXI.Container {
         }
     }
 
-    moveChange(e) {
-        var nextPoint;
-        var dx = e.change.x;
-        var dy = e.change.y;
-        var ax = Math.abs(dx);
-        var ay = Math.abs(dy);
-        var cx = this.prevImageX;
-        var cy = this.prevImageY;
-        var rotation = this.image.rotation;
-        this.image.x += dx;
-        this.image.y += dy;
+    moveStart(e) {
+        this.isHit = false;
 
-        if (this.image.isContainsBounds(this.resizeUI) === false) {
-            if(ax > ay) {
-                if (this.image.isHitSide(this.resizeUI) === false) {
-                    nextPoint = Calc.getNextRotatePosition(cx, cy, dx, rotation);
-                } else {
-                    if(rotation < 0)
-                        nextPoint = Calc.getNextRotatePosition(cx, cy, -dx, rotation - this.rotation90);
-                    else
-                        nextPoint = Calc.getNextRotatePosition(cx, cy, -dx, rotation + this.rotation90);
-                }
-            } else {
-                if (this.image.isHitSide(this.resizeUI)) {
-                    nextPoint = Calc.getNextRotatePosition(cx, cy, dy, rotation + this.rotation90);
-                } else {
-                    if(rotation < 0)
-                        nextPoint = Calc.getNextRotatePosition(cx, cy, -dy, rotation);
-                    else
-                        nextPoint = Calc.getNextRotatePosition(cx, cy, dy, rotation);
-                }
-            }
-            this.image.x = nextPoint.x;
-            this.image.y = nextPoint.y;
-        }
+        this.prevImageX = this.image.x;
+        this.prevImageY = this.image.y;
+
+        this.image.updatePrevLtPointForPivot();
+    }
+
+    moveChange(e) {
+        this.image.x += e.change.x;
+        this.image.y += e.change.y;
+
+        if (this.image.isContainsBounds(this.resizeUI) === false)
+            this.image.fixMove(this.resizeUI);
 
         if (this.image.isContainsBounds(this.resizeUI)) {
             this.prevImageX = this.image.x;
@@ -328,38 +302,9 @@ export class Cropper extends PIXI.Container {
                 this.image.height = sh;
             }
 
-            // 자주빛
-            // Painter.drawBounds(this.gRotate, rotationRect, true, 1, 0xFF00FF, 0.7);
+            // Painter.drawBounds(this.gRotate, rotationRect, true, 1, 0xFF00FF, 0.7); // 자주빛
 
-            var rotation = Calc.toDegrees(this.image.rotation);
-
-            // 위로 회전
-            if (rotation > 0) {
-                if (this.resizeUI.isLtInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.lt, this.image.leftLine);
-
-                if (this.resizeUI.isLbInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.lb, this.image.bottomLine);
-
-                if (this.resizeUI.isRtInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.rt, this.image.topLine);
-
-                if (this.resizeUI.isRbInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.rb, this.image.rightLine);
-
-            } else {
-                if (this.resizeUI.isLtInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.lt, this.image.topLine);
-
-                if (this.resizeUI.isLbInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.lb, this.image.leftLine);
-
-                if (this.resizeUI.isRtInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.rt, this.image.rightLine);
-
-                if (this.resizeUI.isRbInsideBounds(this.image) === false)
-                    Calc.moveToCollision(this.image, this.resizeUI.rb, this.image.bottomLine);
-            }
+            this.image.fixMove(this.resizeUI);
         }
 
         this.image.updatePrevLtPointForPivot();
@@ -627,8 +572,7 @@ export class Cropper extends PIXI.Container {
         var speedX = dx * 2;
         var speedY = dy * 2;
 
-
-        changePoint = this.resizeUI.getUpdatePoints(corner, tx, ty);
+        changePoint = this.resizeUI.getCornerUpdatePoints(corner, tx, ty);
 
         if (this.image.isContainsBounds(changePoint)) {
             //tx, ty 가 넘어가면 멈추게 하자
@@ -637,12 +581,11 @@ export class Cropper extends PIXI.Container {
             // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
             // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
 
-
             // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때 (startLensBounds 넓이와 높이가 작을 때)
             if (tx > this.startLensBounds.x && tx < (this.startLensBounds.x + this.startLensBounds.width) && ty > this.startLensBounds.y && ty < (this.startLensBounds.y + this.startLensBounds.height)) {
                 this.resizeUI.setPoint(changePoint);
             } else {
-                changePoint = this.resizeUI.getUpdatePoints(corner, tx + speedX, ty + speedY);
+                changePoint = this.resizeUI.getCornerUpdatePoints(corner, tx + speedX, ty + speedY);
 
                 /*console.log(
                  'LT[' + Calc.trace(changePoint.lt.x) + ', ' + Calc.trace(changePoint.lt.y) + '], ' +

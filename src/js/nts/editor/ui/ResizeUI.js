@@ -152,7 +152,7 @@ export class ResizeUI extends PIXI.Container {
      * @param dy
      * @returns {*}
      */
-    getUpdatePoints(corner, tx, ty) {
+    getCornerUpdatePoints(corner, tx, ty) {
         var points = this.points;
 
         switch (corner) {
@@ -187,7 +187,6 @@ export class ResizeUI extends PIXI.Container {
 
         return points;
     }
-
 
     /*fixCorner(corner, points, image) {
         var fix;
