@@ -1,5 +1,6 @@
 import {Calc} from './../utils/Calculator';
 import {Painter} from './../utils/Painter';
+import {HitSide} from './../const/HitSide';
 
 //export class ImageUI extends PIXI.Sprite {
 export class ImageUI extends PIXI.Container {
@@ -72,6 +73,77 @@ export class ImageUI extends PIXI.Container {
         this.rtp.addChild(rtd);
         this.rbp.addChild(rbd);
         this.lbp.addChild(lbd);
+    }
+
+    getMoveUpdatePoints(dx, dy) {
+        var points = this.points;
+        points.lt.x += dx;
+        points.lt.y += dy;
+        points.rt.x += dx;
+        points.rt.y += dy;
+        points.rb.x += dx;
+        points.rb.y += dy;
+        points.lb.x += dx;
+        points.lb.y += dy;
+        return points;
+    }
+
+    fixMove(resizeUI) {
+        var rotation = this.rotation;
+
+        // 위로 회전
+        if (rotation > 0) {
+            if (this.isOutLeftLine(resizeUI.lt) &&
+                resizeUI.isLtInsideBounds(this) === false) {
+                //console.log('case1-1');
+                Calc.moveToCollision(this, resizeUI.lt, this.leftLine);
+            }
+
+            if (this.isOutBottomLine(resizeUI.lb) &&
+                resizeUI.isLbInsideBounds(this) === false) {
+                //console.log('case1-2');
+                Calc.moveToCollision(this, resizeUI.lb, this.bottomLine);
+            }
+
+            if (this.isOutTopLine(resizeUI.rt) &&
+                resizeUI.isRtInsideBounds(this) === false) {
+                //console.log('case1-3');
+                Calc.moveToCollision(this, resizeUI.rt, this.topLine);
+            }
+
+            if (this.isOutRightLine(resizeUI.rb) &&
+                resizeUI.isRbInsideBounds(this) === false) {
+                //console.log('case1-4');
+                Calc.moveToCollision(this, resizeUI.rb, this.rightLine);
+            }
+
+
+        } else {
+            if (this.isOutTopLine(resizeUI.lt) &&
+                resizeUI.isLtInsideBounds(this) === false) {
+                //console.log('case2-1');
+                Calc.moveToCollision(this, resizeUI.lt, this.topLine);
+            }
+
+            if (this.isOutLeftLine(resizeUI.lb) &&
+                resizeUI.isLbInsideBounds(this) === false) {
+                //console.log('case2-2');
+                Calc.moveToCollision(this, resizeUI.lb, this.leftLine);
+            }
+
+            if (this.isOutRightLine(resizeUI.rt) &&
+                resizeUI.isRtInsideBounds(this) === false) {
+                //console.log('case2-3');
+                Calc.moveToCollision(this, resizeUI.rt, this.rightLine);
+            }
+
+            if (this.isOutBottomLine(resizeUI.rb) &&
+                resizeUI.isRbInsideBounds(this) === false) {
+                //console.log('case2-4');
+                Calc.moveToCollision(this, resizeUI.rb, this.bottomLine);
+            }
+
+        }
     }
 
     /* 사이즈 오류 있슴
@@ -205,20 +277,41 @@ export class ImageUI extends PIXI.Container {
         var lb = this.lb;
 
         // 왼쪽 도달
-        if (Calc.triangleArea(bounds.lt, lb, lt) > 0)
-            return true;
-
-        if (Calc.triangleArea(bounds.lb, lb, lt) > 0)
+        if (Calc.triangleArea(bounds.lt, lb, lt) > 0 || Calc.triangleArea(bounds.lb, lb, lt) > 0)
             return true;
 
         // 오른쪽 도달
-        if (Calc.triangleArea(bounds.rt, rt, rb) > 0)
-            return true;
-
-        if (Calc.triangleArea(bounds.rb, rt, rb) > 0)
+        if (Calc.triangleArea(bounds.rt, rt, rb) > 0 || Calc.triangleArea(bounds.rb, rt, rb) > 0)
             return true;
 
         return false;
+    }
+
+    getHitSide(bounds) {
+        var lt = this.lt;
+        var rt = this.rt;
+        var rb = this.rb;
+        var lb = this.lb;
+
+        var hitSide = HitSide.NONE;
+
+        // 왼쪽 도달
+        if (Calc.triangleArea(bounds.lt, lb, lt) > 0 || Calc.triangleArea(bounds.lb, lb, lt) > 0)
+            hitSide = HitSide.LEFT;
+
+        // 오른쪽 도달
+        if (Calc.triangleArea(bounds.rt, rt, rb) > 0 || Calc.triangleArea(bounds.rb, rt, rb) > 0)
+            hitSide = HitSide.RIGHT;
+
+        // 상단
+        if (Calc.triangleArea(bounds.lt, lt, rt) > 0 || Calc.triangleArea(bounds.rt, lt, rt) > 0)
+            hitSide = (hitSide === HitSide.NONE) ? HitSide.TOP : hitSide += '-' + HitSide.TOP;
+
+        // 하단
+        if (Calc.triangleArea(bounds.rb, rb, lb) > 0 || Calc.triangleArea(bounds.lb, rb, lb) > 0)
+            hitSide = (hitSide === HitSide.NONE) ? HitSide.BOTTOM : hitSide += '-' + HitSide.BOTTOM;
+
+        return hitSide;
     }
 
     /**

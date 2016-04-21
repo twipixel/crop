@@ -324,7 +324,7 @@ export class ResizeUI extends PIXI.Container {
         switch (corner) {
             // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
             case this.lt:
-                console.log('lt');
+                //console.log('lt');
                 points.lt.x = this.getLeft(points, image);
                 points.lt.y = this.getTop(points, image);
                 points.lb.x = points.lt.x;
@@ -334,7 +334,7 @@ export class ResizeUI extends PIXI.Container {
 
             // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
             case this.rt:
-                console.log('rt');
+                //console.log('rt');
                 points.rt.x = this.getRight(points, image);
                 points.rt.y = this.getTop(points, image);
                 points.rb.x = points.rt.x;
@@ -344,7 +344,7 @@ export class ResizeUI extends PIXI.Container {
 
             // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
             case this.rb:
-                console.log('rb');
+                //console.log('rb');
                 points.rb.x = this.getRight(points, image);
                 points.rb.y = this.getBottom(points, image);
                 points.rt.x = points.rb.x;
@@ -354,7 +354,7 @@ export class ResizeUI extends PIXI.Container {
 
             // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
             case this.lb:
-                console.log('lb');
+                //console.log('lb');
                 points.lb.x = this.getLeft(points, image);
                 points.lb.y = this.getBottom(points, image);
                 points.lt.x = points.lb.x;
