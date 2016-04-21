@@ -2,6 +2,7 @@ import {CornerShape} from './CornerShape';
 import {ControlArea} from './ControlArea';
 import {Calc} from './../utils/Calculator';
 import {Painter} from './../utils/Painter';
+import {HitSide} from './../const/HitSide';
 
 export class ResizeUI extends PIXI.Container {
     constructor(canvas) {
@@ -314,17 +315,9 @@ export class ResizeUI extends PIXI.Container {
      * TODO 오류
      * 상황에 따라 바운드가 찌그러질 때가 있습니다.
      */
-    fixCorner(corner, points, image) {
-        var fix;
-        var left = image.leftLine;
-        var top = image.topLine;
-        var right = image.rightLine;
-        var bottom = image.bottomLine;
-
+    /*fixCorner(corner, points, image) {
         switch (corner) {
-            // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
             case this.lt:
-                //console.log('lt');
                 points.lt.x = this.getLeft(points, image);
                 points.lt.y = this.getTop(points, image);
                 points.lb.x = points.lt.x;
@@ -332,9 +325,7 @@ export class ResizeUI extends PIXI.Container {
                 points.rt.y = this.getTop(points, image);
                 break;
 
-            // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
             case this.rt:
-                //console.log('rt');
                 points.rt.x = this.getRight(points, image);
                 points.rt.y = this.getTop(points, image);
                 points.rb.x = points.rt.x;
@@ -342,9 +333,7 @@ export class ResizeUI extends PIXI.Container {
                 points.lt.y = this.getTop(points, image);
                 break;
 
-            // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
             case this.rb:
-                //console.log('rb');
                 points.rb.x = this.getRight(points, image);
                 points.rb.y = this.getBottom(points, image);
                 points.rt.x = points.rb.x;
@@ -352,9 +341,7 @@ export class ResizeUI extends PIXI.Container {
                 points.lb.y = this.getBottom(points, image);
                 break;
 
-            // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
             case this.lb:
-                //console.log('lb');
                 points.lb.x = this.getLeft(points, image);
                 points.lb.y = this.getBottom(points, image);
                 points.lt.x = points.lb.x;
@@ -364,21 +351,38 @@ export class ResizeUI extends PIXI.Container {
         }
 
         return points;
-    }
+    }*/
 
+
+    fixCorner(corner, points, image) {
+
+
+
+        return points;
+    }
 
     getLeft(points, image) {
         var ltx, lbx;
 
-        if(image.isOutLeftLine(points.lt))
+        if(image.isOutLeftLine(points.lt)) {
             ltx = image.getLeftIntersectionPoint(points.lt).x;
-        else
+        } else if(image.isOutTopLine(points.lt)) {
+            ltx = image.getTopIntersectionPoint(points.lt).x;
+        } else if(image.isOutBottomLine(points.lt)) {
+            ltx = image.getBottomIntersectionPoint(points.lt).x;
+        } else {
             ltx = points.lt.x;
+        }
 
-        if(image.isOutLeftLine(points.lb))
+        if(image.isOutLeftLine(points.lb)) {
             lbx = image.getLeftIntersectionPoint(points.lb).x;
-        else
+        } else if(image.isOutTopLine(points.lb)) {
+            lbx = image.getTopIntersectionPoint(points.lb).x;
+        } else if(image.isOutBottomLine(points.lb)) {
+            lbx = image.getBottomIntersectionPoint(points.lb).x;
+        } else {
             lbx = points.lb.x;
+        }
 
         return Math.max(ltx, lbx);
     }
@@ -386,15 +390,25 @@ export class ResizeUI extends PIXI.Container {
     getTop(points, image) {
         var lty, rty;
 
-        if(image.isOutTopLine(points.lt))
+        if(image.isOutTopLine(points.lt)) {
             lty = image.getTopIntersectionPoint(points.lt).y;
-        else
+        } else if(image.isOutLeftLine(points.lt)) {
+            lty = image.getLeftIntersectionPoint(points.lt).y;
+        } else if(image.isOutRightLine(points.lt)) {
+            lty = image.getRightIntersectionPoint(points.lt).y;
+        } else {
             lty = points.lt.y;
+        }
 
-        if(image.isOutTopLine(points.rt))
+        if(image.isOutTopLine(points.rt)) {
             rty = image.getTopIntersectionPoint(points.rt).y;
-        else
+        } else if(image.isOutLeftLine(points.rt)) {
+            rty = image.getLeftIntersectionPoint(points.rt).y;
+        } else if(image.isOutRightLine(points.rt)) {
+            rty = image.getRightIntersectionPoint(points.rt).y;
+        } else {
             rty = points.rt.y;
+        }
 
         return Math.max(lty, rty);
     }
@@ -402,15 +416,25 @@ export class ResizeUI extends PIXI.Container {
     getRight(points, image) {
         var rtx, rbx;
 
-        if(image.isOutRightLine(points.rt))
+        if(image.isOutRightLine(points.rt)) {
             rtx = image.getRightIntersectionPoint(points.rt).x;
-        else
+        } else if(image.isOutTopLine(points.rt)) {
+            rtx = image.getTopIntersectionPoint(points.rt).x;
+        } else if(image.isOutBottomLine(points.rt)) {
+            rtx = image.getBottomIntersectionPoint(points.rt).x;
+        } else {
             rtx = points.rt.x;
+        }
 
-        if(image.isOutRightLine(points.rb))
+        if(image.isOutRightLine(points.rb)) {
             rbx = image.getRightIntersectionPoint(points.rb).x;
-        else
+        } else if(image.isOutTopLine(points.rb)) {
+            rbx = image.getTopIntersectionPoint(points.rb).x;
+        } else if(image.isOutBottomLine(points.rb)) {
+            rbx = image.getBottomIntersectionPoint(points.rb).x;
+        } else {
             rbx = points.rb.x;
+        }
 
         return Math.min(rtx, rbx);
     }
@@ -418,15 +442,25 @@ export class ResizeUI extends PIXI.Container {
     getBottom(points, image) {
         var rby, lby;
 
-        if(image.isOutBottomLine(points.rb))
+        if(image.isOutBottomLine(points.rb)) {
             rby = image.getBottomIntersectionPoint(points.rb).y;
-        else
+        } else if(image.isOutLeftLine(points.rb)) {
+            rby = image.getLeftIntersectionPoint(points.rb).y;
+        } else if(image.isOutRightLine(points.rb)) {
+            rby = image.getRightIntersectionPoint(points.rb).y;
+        } else {
             rby = points.rb.y;
+        }
 
-        if(image.isOutBottomLine(points.lb))
+        if(image.isOutBottomLine(points.lb)) {
             lby = image.getBottomIntersectionPoint(points.lb).y;
-        else
+        } else if(image.isOutLeftLine(points.lb)) {
+            lby = image.getLeftIntersectionPoint(points.lb).y;
+        } else if(image.isOutRightLine(points.lb)) {
+            lby = image.getRightIntersectionPoint(points.lb).y;
+        } else {
             lby = points.lb.y;
+        }
 
         return Math.min(rby, lby);
     }

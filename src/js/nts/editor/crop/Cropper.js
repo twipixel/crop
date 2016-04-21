@@ -633,16 +633,27 @@ export class Cropper extends PIXI.Container {
 
         if (tx > this.startLensBounds.x && tx < (this.startLensBounds.x + this.startLensBounds.width) &&
             ty > this.startLensBounds.y && ty < (this.startLensBounds.y + this.startLensBounds.height)) {
+
             changePoint = this.resizeUI.getCornerUpdatePoints(corner, tx, ty);
-            this.resizeUI.setPoint(changePoint);
+
+            if (this.image.isContainsBounds(changePoint)) {
+                console.log('A');
+                this.resizeUI.setPoint(changePoint);
+            } else {
+                console.log('B');
+                changePoint = this.resizeUI.fixCorner(corner, changePoint, this.image);
+                this.resizeUI.setPoint(changePoint);
+            }
         } else {
 
             changePoint = this.resizeUI.getCornerUpdatePoints(corner, tx + speedX, ty + speedY);
 
             if (this.image.isContainsBounds(changePoint)) {
+                console.log('C');
                 this.resizeUI.setPoint(changePoint);
             } else {
-                changePoint = this.resizeUI.fixCorner(corner, changePoint, this.image, dx, dy);
+                console.log('D');
+                changePoint = this.resizeUI.fixCorner(corner, changePoint, this.image);
                 this.resizeUI.setPoint(changePoint);
             }
 
