@@ -472,48 +472,6 @@ export class Cropper extends PIXI.Container {
         // --------------------------------------------------------------------------
     }*/
 
-
-    /*cornerResizeChange(e) {
-        var changePoint;
-        var dx = e.dx;
-        var dy = e.dy;
-        var corner = e.target;
-        var tx = corner.x + dx;
-        var ty = corner.y + dy;
-        var speedX = dx * 2;
-        var speedY = dy * 2;
-
-        // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때 (startLensBounds 넓이와 높이가 작을 때)
-        if (tx >= this.startLensBounds.x && tx <= (this.startLensBounds.x + this.startLensBounds.width) && ty >= this.startLensBounds.y && ty <= (this.startLensBounds.y + this.startLensBounds.height)) {
-            changePoint = this.resizeUI.getUpdatePoints(corner, tx, ty);
-            this.resizeUI.setPoint(changePoint);
-            this.prevLensPoints = changePoint;
-        } else {
-            changePoint = this.resizeUI.getUpdatePoints(corner, tx + speedX, ty + speedY);
-
-            console.log('isHit: ' + this.image.isContainsBounds(changePoint));
-            console.log(
-                'LT[' + Calc.trace(changePoint.lt.x) + ', ' + Calc.trace(changePoint.lt.y) + '], ' +
-                'RT[' + Calc.trace(changePoint.rt.x) + ', ' + Calc.trace(changePoint.rt.y) + '], ' +
-                'RB[' + Calc.trace(changePoint.rb.x) + ', ' + Calc.trace(changePoint.rb.y) + '], ' +
-                'LB[' + Calc.trace(changePoint.lb.x) + ', ' + Calc.trace(changePoint.lb.y) + '], '
-            );
-
-            if (this.image.isContainsBounds(changePoint)) {
-                this.resizeUI.setPoint(changePoint);
-                this.expandImage(corner, this.bounds, this.startLensBounds, this.resizeUI.bounds, dx, dy);
-                this.moveUI.setSize(this.resizeUI.bounds);
-
-                this.prevLensPoints = changePoint;
-            } else {
-                this.resizeUI.setPoint(this.prevLensPoints);
-            }
-        }
-
-        this.image.updatePrevLtPointForPivot();
-        Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
-    }*/
-
     expandImage(corner, bounds, limit, lens, dx, dy) {
 
         // offset 구하기
@@ -612,65 +570,6 @@ export class Cropper extends PIXI.Container {
         this.image.updatePrevLtPointForPivot();
         // --------------------------------------------------------------------------
     }
-
-    /*cornerResizeChange(e) {
-        var changePoint;
-        var dx = e.dx;
-        var dy = e.dy;
-        var corner = e.target;
-        var tx = corner.x + dx;
-        var ty = corner.y + dy;
-        var speedX = dx * 2;
-        var speedY = dy * 2;
-
-        changePoint = this.resizeUI.getCornerUpdatePoints(corner, tx, ty);
-
-        if (this.image.isContainsBounds(changePoint)) {
-            //tx, ty 가 넘어가면 멈추게 하자
-            // lt 라면 lt와 rt가 탑라인 안넘었는지, lt가 왼쪽 라인 안넘었는지
-            // rt 라면 rt와 lt가 탑라인 안넘었는지, rt가 오른쪽 라인 안넘었는지
-            // rb 라면 rt와 rb가 오른쪽 라인을 안넘었는지, rb가 바닥라인을 안넘었는지
-            // lb 라면 lb와 lt가 왼쪽 라인을 안넘었는지, lb가 바닥라인을 안넘었는지
-
-            // 코너가 이미지 안쪽으로 움직일 때 : 축소할 때 (startLensBounds 넓이와 높이가 작을 때)
-            if (tx > this.startLensBounds.x && tx < (this.startLensBounds.x + this.startLensBounds.width) &&
-                ty > this.startLensBounds.y && ty < (this.startLensBounds.y + this.startLensBounds.height)) {
-
-                console.log('A');
-                this.resizeUI.setPoint(changePoint);
-            } else {
-                console.log('B');
-                changePoint = this.resizeUI.getCornerUpdatePoints(corner, tx + speedX, ty + speedY);
-
-                /!*console.log(
-                 'LT[' + Calc.trace(changePoint.lt.x) + ', ' + Calc.trace(changePoint.lt.y) + '], ' +
-                 'RT[' + Calc.trace(changePoint.rt.x) + ', ' + Calc.trace(changePoint.rt.y) + '], ' +
-                 'RB[' + Calc.trace(changePoint.rb.x) + ', ' + Calc.trace(changePoint.rb.y) + '], ' +
-                 'LB[' + Calc.trace(changePoint.lb.x) + ', ' + Calc.trace(changePoint.lb.y) + '], '
-                 );*!/
-
-                this.resizeUI.setPoint(changePoint);
-                this.expandImage(corner, this.bounds, this.startLensBounds, this.resizeUI.bounds, dx, dy);
-            }
-
-
-            //this.prevLensPoints = this.resizeUI.points;
-        } else {
-            //changePoint = this.resizeUI.getFixPoints(changePoint);
-            //changePoint = this.image.getFixPoints(changePoint);
-            //this.resizeUI.setPoint(this.prevLensPoints);
-
-            console.log('----------------------- C');
-            //충돌이 수정된 포인트로 해야겠따.
-            changePoint = this.resizeUI.fixCorner(corner, changePoint, this.image, dx, dy);
-            this.resizeUI.setPoint(changePoint);
-        }
-
-
-        this.moveUI.setSize(this.resizeUI.bounds);
-        this.image.updatePrevLtPointForPivot();
-        //Painter.drawBounds(this.gLens, this.startLensBounds, true, 1, 0xFF0099, 0.6); // 핑크
-    }*/
 
     cornerResizeChange(e) {
         var changePoint;
