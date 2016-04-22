@@ -146,27 +146,6 @@ export class ImageUI extends PIXI.Container {
         }
     }
 
-    /* 사이즈 오류 있슴
-    getImageMaxSize(bounds) {
-        var imageRect = Calc.getImageSizeKeepAspectRatio(this, bounds);
-        var imagePoint = {
-            lt: {x: 0, y: 0},
-            rt: {x: imageRect.width, y: 0},
-            rb: {x: imageRect.width, y: imageRect.height},
-            lb: {x: 0, y: imageRect.height}
-        };
-        var rotationPoints = Calc.getRotationRectanglePoints({
-            x: imageRect.width / 2,
-            y: imageRect.height / 2
-        }, imagePoint, Calc.toDegrees(45));
-        var rotationRect = Calc.getBoundsRectangle(rotationPoints, 0);
-        var scale = Calc.getBoundsScale(rotationRect, imageRect);
-        var sw = imageRect.width * scale.max;
-        var sh = imageRect.height * scale.max;
-        return {width:sw, height:sh};
-    }
-    */
-
     /**
      * 회전 시 이미지가 최대로 커질 사이즈를 구하고
      * 그에 따른 최대 스케일 값을 구합니다.
@@ -266,27 +245,6 @@ export class ImageUI extends PIXI.Container {
         return true;
     }
 
-    /**
-     * 좌우 충돌 감지
-     * @param bounds
-     */
-    isHitSide(bounds) {
-        var lt = this.lt;
-        var rt = this.rt;
-        var rb = this.rb;
-        var lb = this.lb;
-
-        // 왼쪽 도달
-        if (Calc.triangleArea(bounds.lt, lb, lt) > 0 || Calc.triangleArea(bounds.lb, lb, lt) > 0)
-            return true;
-
-        // 오른쪽 도달
-        if (Calc.triangleArea(bounds.rt, rt, rb) > 0 || Calc.triangleArea(bounds.rb, rt, rb) > 0)
-            return true;
-
-        return false;
-    }
-
     getHitSide(bounds) {
         var lt = this.lt;
         var rt = this.rt;
@@ -312,6 +270,53 @@ export class ImageUI extends PIXI.Container {
             hitSide = (hitSide === HitSide.NONE) ? HitSide.BOTTOM : hitSide += '-' + HitSide.BOTTOM;
 
         return hitSide;
+    }
+
+    getHitPoints(bounds) {
+        var lt = this.lt;
+        var rt = this.rt;
+        var rb = this.rb;
+        var lb = this.lb;
+
+        var hitPoints = [];
+
+        // 왼쪽 도달
+        if (Calc.triangleArea(bounds.lt, lb, lt) > 0) {
+            hitPoints.push({point:bounds.lt, hitSide:HitSide.LEFT});
+        }
+
+        if (Calc.triangleArea(bounds.lb, lb, lt) > 0) {
+            hitPoints.push({point:bounds.lb, hitSide:HitSide.LEFT});
+        }
+
+        // 오른쪽 도달
+        if (Calc.triangleArea(bounds.rt, rt, rb) > 0) {
+            hitPoints.push({point:bounds.rt, hitSide:HitSide.RIGHT});
+        }
+
+        if (Calc.triangleArea(bounds.rb, rt, rb) > 0) {
+            hitPoints.push({point:bounds.rb, hitSide:HitSide.RIGHT});
+        }
+
+        // 상단
+        if (Calc.triangleArea(bounds.lt, lt, rt) > 0) {
+            hitPoints.push({point:bounds.lt, hitSide:HitSide.TOP});
+        }
+
+        if (Calc.triangleArea(bounds.rt, lt, rt) > 0) {
+            hitPoints.push({point:bounds.rt, hitSide:HitSide.TOP});
+        }
+
+        // 하단
+        if (Calc.triangleArea(bounds.rb, rb, lb) > 0) {
+            hitPoints.push({point:bounds.rb, hitSide:HitSide.BOTTOM});
+        }
+
+        if (Calc.triangleArea(bounds.lb, rb, lb) > 0) {
+            hitPoints.push({point:bounds.lb, hitSide:HitSide.BOTTOM});
+        }
+
+        return hitPoints;
     }
 
     /**
