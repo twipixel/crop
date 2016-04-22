@@ -368,7 +368,7 @@ export class Calc {
         var x = centerX + distance * Math.cos(rotation);
         var y = centerY + distance * Math.sin(rotation);
 
-        console.log(Calc.trace(x), Calc.trace(y), Calc.trace(distance * Math.cos(rotation)), Calc.trace(distance * Math.sin(rotation)));
+        //console.log(Calc.trace(x), Calc.trace(y), Calc.trace(distance * Math.cos(rotation)), Calc.trace(distance * Math.sin(rotation)));
         return {x:x, y:y};
     }
 

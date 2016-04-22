@@ -30,7 +30,6 @@ export class Painter {
         graphics.endFill();
     }
 
-
     static drawPoints(graphics, points, initClear = true, thickness = 1, color = 0xFF3300, alpha = 0.7) {
         if(initClear)
             graphics.clear();
@@ -49,6 +48,14 @@ export class Painter {
         graphics.endFill();
     }
 
+    static drawCircle(graphics, point, radius = 5, color = 0xFF3300, alpha = 0.7, initClear = false) {
+        if(initClear)
+            graphics.clear();
+
+        graphics.beginFill(color, alpha);
+        graphics.drawCircle(point.x, point.y, radius);
+        graphics.endFill();
+    }
 
     static drawGrid(graphics, width, height) {
         var lightLineAlpha = 0.1;

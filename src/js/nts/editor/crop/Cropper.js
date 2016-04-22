@@ -42,6 +42,7 @@ export class Cropper extends PIXI.Container {
         this.gBounds = new PIXI.Graphics();
         this.gRotate = new PIXI.Graphics();
         this.gMove = new PIXI.Graphics();
+        this.gTest = new PIXI.Graphics();
         this.addChild(this.gLens);
         this.addChild(this.gLine);
         this.addChild(this.gGrid);
@@ -49,6 +50,7 @@ export class Cropper extends PIXI.Container {
         this.addChild(this.gBounds);
         this.addChild(this.gRotate);
         this.addChild(this.gMove);
+        this.addChild(this.gTest);
     }
 
     clearGraphics() {
@@ -59,6 +61,7 @@ export class Cropper extends PIXI.Container {
         this.gBounds.clear();
         this.gRotate.clear();
         this.gMove.clear();
+        this.gTest.clear();
     }
 
     addEvent() {
@@ -181,6 +184,29 @@ export class Cropper extends PIXI.Container {
         //this.moveUI.visible = false;
         //this.gBounds.visible = false;
         //Painter.drawGrid(this.gGrid, this.canvas.width, this.canvas.height);
+
+        //this.testNextPosition();
+    }
+
+    testNextPosition() {
+        var cx = this.canvas.width / 2;
+        var cy = this.canvas.height / 2;
+        var radius = 30;
+        var rotation30 = Calc.toRadians(30);
+        var rotation45 = Calc.toRadians(45);
+
+        var p1 = Calc.getNextMovePosition(cx, cy, radius, rotation45);
+        var p2 = Calc.getNextMovePosition(cx, cy, -radius, rotation45);
+        var p3 = Calc.getNextMovePosition(cx, cy, 60, -rotation45);
+        var p4 = Calc.getNextMovePosition(cx, cy, 90, rotation30);
+        var p5 = Calc.getNextMovePosition(cx, cy, 90, -rotation30);
+
+        Painter.drawCircle(this.gTest, {x:cx, y:cy}, 4, 0x000000);
+        Painter.drawCircle(this.gTest, p1, 4);
+        Painter.drawCircle(this.gTest, p2, 4);
+        Painter.drawCircle(this.gTest, p3, 4);
+        Painter.drawCircle(this.gTest, p4, 4);
+        Painter.drawCircle(this.gTest, p5, 4);
     }
 
     testNextPoint() {
@@ -210,11 +236,50 @@ export class Cropper extends PIXI.Container {
     }
 
     moveChange(e) {
-        this.image.x += e.change.x;
-        this.image.y += e.change.y;
+        var nextPoint;
+        var dx = e.change.x;
+        var dy = e.change.y;
+        var ax = Math.abs(dx);
+        var ay = Math.abs(dy);
+        var cx = this.prevImageX;
+        var cy = this.prevImageY;
+        var rotation = this.image.rotation;
+        this.image.x += dx;
+        this.image.y += dy;
 
-        if (this.image.isContainsBounds(this.resizeUI) === false)
-            this.image.fixMove(this.resizeUI);
+        //console.log(Calc.trace(dx), Calc.trace(dy), Calc.trace(dx + dy), Calc.trace(Calc.toDegrees(this.image.rotation)));
+
+        if (this.image.isContainsBounds(this.resizeUI) === false) {
+            if(this.isHit) {
+                var hitSide = this.image.getHitSide(this.resizeUI);
+
+                switch (hitSide) {
+                    case HitSide.LEFT:
+                    case HitSide.RIGHT:
+                        nextPoint = Calc.getNextMovePosition(cx, cy, dy, rotation + this.rotation90);
+                        break;
+
+                    case HitSide.TOP:
+                    case HitSide.BOTTOM:
+                        nextPoint = Calc.getNextMovePosition(cx, cy, dx, rotation);
+                        break;
+
+                    default:
+                        this.image.fixMove(this.resizeUI);
+                        break;
+                }
+
+                if(nextPoint) {
+                    this.image.x = nextPoint.x;
+                    this.image.y = nextPoint.y;
+                }
+            } else {
+                this.isHit = true;
+                this.image.fixMove(this.resizeUI);
+            }
+        } else {
+            this.isHit = false;
+        }
 
         if (this.image.isContainsBounds(this.resizeUI)) {
             this.prevImageX = this.image.x;
@@ -242,8 +307,6 @@ export class Cropper extends PIXI.Container {
 
     testPivot(keycode) {
         var offset;
-        var prevX = this.image.x;
-        var prevY = this.image.y;
 
         switch (keycode) {
             case KeyCode.NUM_1:
@@ -286,16 +349,6 @@ export class Cropper extends PIXI.Container {
             var sw = w * scale.max;
             var sh = h * scale.max;
 
-            /*console.log(
-                'IMAGE WH[' +
-                Calc.leadingZero(parseInt(this.image.width)) + ', ' +
-                Calc.leadingZero(parseInt(this.image.height)) + ']' +
-                ' SCALE WH[' +
-                Calc.leadingZero(parseInt(sw)) + ', ' +
-                Calc.leadingZero(parseInt(sh)) + ']' +
-                ' Diagonal[' + Calc.leadingZero((parseInt(Calc.getDiagonal(w, h)))) + ']'
-            );*/
-
             // 이미지가 최대 사이즈 보다 작은 경우에만 스케일을 하도록 조건 변경 필요
             if (w <= sw && h <= sh) {
                 this.image.width = sw;
@@ -315,9 +368,7 @@ export class Cropper extends PIXI.Container {
     }
 
     cornerResizeStart(e) {
-        this.prevLensPoints = this.resizeUI.points;
         this.startLensBounds = this.resizeUI.bounds;
-
         this.image.updatePrevLtPointForPivot();
     }
 
