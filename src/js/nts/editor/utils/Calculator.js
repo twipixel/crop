@@ -363,10 +363,10 @@ export class Calc {
      * @param rotation
      * @returns {{x: *, y: *}}
      */
-    static getNextMovePosition(centerX, centerY, distance, rotation) {
+    static getNextMovePosition(centerX, centerY, radius, rotation) {
         //distance *= 0.4;
-        var x = centerX + distance * Math.cos(rotation);
-        var y = centerY + distance * Math.sin(rotation);
+        var x = centerX + radius * Math.cos(rotation);
+        var y = centerY + radius * Math.sin(rotation);
 
         //console.log(Calc.trace(x), Calc.trace(y), Calc.trace(distance * Math.cos(rotation)), Calc.trace(distance * Math.sin(rotation)));
         return {x:x, y:y};

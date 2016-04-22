@@ -353,10 +353,38 @@ export class ResizeUI extends PIXI.Container {
         return points;
     }*/
 
-
     fixCorner(corner, points, image) {
+        var hitPoints = image.getHitPoints(points);
 
+        for(var i=0; i<hitPoints.length; i++) {
+            var hitInfo = hitPoints[i];
 
+            var limit;
+            var point = hitInfo.point;
+            var hitSide = hitInfo.hitSide;
+
+            switch (hitSide) {
+                case HitSide.LEFT:
+                    limit = this.getLeft(points, image);
+                    points = this.getCornerUpdatePoints(point, limit.x, limit.y);
+                    break;
+
+                case HitSide.RIGHT:
+                    limit = this.getRight(points, image);
+                    points = this.getCornerUpdatePoints(point, limit.x, limit.y);
+                    break;
+
+                case HitSide.TOP:
+                    limit = this.getTop(points, image);
+                    points = this.getCornerUpdatePoints(point, limit.x, limit.y);
+                    break;
+
+                case HitSide.BOTTOM:
+                    limit = this.getBottom(points, image);
+                    points = this.getCornerUpdatePoints(point, limit.x, limit.y);
+                    break;
+            }
+        }
 
         return points;
     }
