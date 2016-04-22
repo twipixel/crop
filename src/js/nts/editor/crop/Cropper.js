@@ -93,6 +93,10 @@ export class Cropper extends PIXI.Container {
                 case KeyCode.C:
                     this.clearGraphics();
                     break;
+
+                case KeyCode.R:
+                    this.rotate();
+                    break;
             }
         });
 
@@ -108,6 +112,35 @@ export class Cropper extends PIXI.Container {
     }
 
     update() {
+    }
+
+
+    /*magnifyImage(lens) {
+        var offsetX = this.image.lt.x - lens.x;
+        var offsetY = this.image.lt.y - lens.y;
+
+        var zoom = Calc.getBoundsScale(this.bounds, lens).min;
+        var rubberband = Calc.getImageSizeKeepAspectRatio(lens, this.bounds);
+        rubberband.x = this.canvas.width / 2 - rubberband.width / 2;
+        rubberband.y = this.canvas.height / 2 - rubberband.height / 2;
+        this.resizeUI.setSize(rubberband);
+
+        this.image.width = this.image.width * zoom;
+        this.image.height = this.image.height * zoom;
+
+        var posX = offsetX * zoom;
+        var posY = offsetY * zoom;
+        var pivotOffsetX = this.image.x - this.image.lt.x;
+        var pivotOffsetY = this.image.y - this.image.lt.y;
+        this.image.x = rubberband.x + posX + pivotOffsetX;
+        this.image.y = rubberband.y + posY + pivotOffsetY;
+
+        this.image.updatePrevLtPointForPivot();
+    }*/
+
+    rotate() {
+        this.image.rotation += -Calc.toRadians(90);
+        //this.resizeUI.rotation += -Calc.toRadians(90);
     }
 
     resize() {
@@ -196,7 +229,6 @@ export class Cropper extends PIXI.Container {
 
     moveStart(e) {
         this.isHit = false;
-
         this.prevImageX = this.image.x;
         this.prevImageY = this.image.y;
 
@@ -261,17 +293,22 @@ export class Cropper extends PIXI.Container {
     }
 
     moveEnd(e) {
+        this.setImagePivot();
         this.image.updatePrevLtPointForPivot();
     }
 
     rotateStart(e) {
-        var cx = this.canvas.width / 2;
-        var cy = this.canvas.height / 2;
-        this.image.setPivot({x:cx, y:cy});
-
+        this.setImagePivot();
         this.resizeUIPoints = this.resizeUI.points;
         this.image.updatePrevLtPointForPivot();
     }
+
+    setImagePivot() {
+        var cx = this.canvas.width / 2;
+        var cy = this.canvas.height / 2;
+        this.image.setPivot({x:cx, y:cy});
+    }
+
 
     testPivot(keycode) {
         var offset;
@@ -417,6 +454,7 @@ export class Cropper extends PIXI.Container {
         this.moveUI.setSize(this.resizeUI.bounds);
         this.gLens.clear();
 
+        this.setImagePivot();
         this.image.updatePrevLtPointForPivot();
     }
 
