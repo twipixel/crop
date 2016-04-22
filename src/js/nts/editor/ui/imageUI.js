@@ -8,7 +8,7 @@ export class ImageUI extends PIXI.Container {
         //super(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         super();
         this.initialize(textureCanvas);
-        //this.addDebugPoint();
+        this.addDebugPoint();
     }
 
     initialize(textureCanvas) {
@@ -43,6 +43,22 @@ export class ImageUI extends PIXI.Container {
         this.addChild(this.rtp);
         this.addChild(this.rbp);
         this.addChild(this.lbp);
+    }
+
+    rotatePoints() {
+        var toBeLt = {x:this.rtp.x, y:this.rtp.y};
+        var toBeRt = {x:this.rbp.x, y:this.rbp.y};
+        var toBeRb = {x:this.lbp.x, y:this.lbp.y};
+        var toBeLb = {x:this.ltp.x, y:this.ltp.y};
+
+        this.ltp.x = toBeLt.x;
+        this.ltp.y = toBeLt.y;
+        this.rtp.x = toBeRt.x;
+        this.rtp.y = toBeRt.y;
+        this.rbp.x = toBeRb.x;
+        this.rbp.y = toBeRb.y;
+        this.lbp.x = toBeLb.x;
+        this.lbp.y = toBeLb.y;
     }
 
     /**
@@ -426,7 +442,4 @@ export class ImageUI extends PIXI.Container {
             height: this.rb.y - this.rt.y
         };
     }
-
-
-
 }
