@@ -104,8 +104,10 @@ export class ImageUI extends PIXI.Container {
         return points;
     }
 
-    fixMove(resizeUI) {
-        var rotation = this.rotation;
+    fixMove(resizeUI, stageRotation = 0) {
+        var rotation = this.rotation - stageRotation;
+
+        // console.log(Calc.toDegrees(rotation), rotation);
 
         // 위로 회전
         if (rotation > 0) {
@@ -132,7 +134,6 @@ export class ImageUI extends PIXI.Container {
                 //console.log('case1-4');
                 Calc.moveToCollision(this, resizeUI.rb, this.rightLine);
             }
-
 
         } else {
             if (this.isOutTopLine(resizeUI.lt) &&
@@ -442,4 +443,6 @@ export class ImageUI extends PIXI.Container {
             height: this.rb.y - this.rt.y
         };
     }
+
+
 }
