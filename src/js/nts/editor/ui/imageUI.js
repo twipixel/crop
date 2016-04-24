@@ -45,6 +45,36 @@ export class ImageUI extends PIXI.Container {
         this.addChild(this.lbp);
     }
 
+    /**
+     * TODO 디버그 테스트 용
+     */
+    addDebugPoint() {
+        this.pivotGraphics = new PIXI.Graphics();
+        this.pivotGraphics.beginFill(0xFF3300, 0.3);
+        this.pivotGraphics.drawRect(-2, -2, 4, 4);
+        this.pivotGraphics.endFill();
+        this.addChild(this.pivotGraphics);
+
+        var size = 16;
+        var half = size / 2;
+        var ltd = Painter.getRect(size, 0xF9EE00);  //노랑
+        var rtd = Painter.getRect(size, 0xDA9C00);  //주황
+        var rbd = Painter.getRect(size, 0x009CD7);  //하늘
+        var lbd = Painter.getRect(size, 0x1861B1);  //파랑
+        ltd.x = half;
+        ltd.y = half;
+        rtd.x = -half;
+        rtd.y = half;
+        rbd.x = -half;
+        rbd.y = -half;
+        lbd.x = half;
+        lbd.y = -half;
+        this.ltp.addChild(ltd);
+        this.rtp.addChild(rtd);
+        this.rbp.addChild(rbd);
+        this.lbp.addChild(lbd);
+    }
+
     rotatePoints() {
         var toBeLt = {x:this.rtp.x, y:this.rtp.y};
         var toBeRt = {x:this.rbp.x, y:this.rbp.y};
@@ -59,36 +89,6 @@ export class ImageUI extends PIXI.Container {
         this.rbp.y = toBeRb.y;
         this.lbp.x = toBeLb.x;
         this.lbp.y = toBeLb.y;
-    }
-
-    /**
-     * TODO 디버그 테스트 용
-     */
-    addDebugPoint() {
-        this.pivotGraphics = new PIXI.Graphics();
-        this.pivotGraphics.beginFill(0xFF3300, 0.3);
-        this.pivotGraphics.drawRect(-2, -2, 4, 4);
-        this.pivotGraphics.endFill();
-        this.addChild(this.pivotGraphics);
-
-        var size = 4;
-        var half = size / 2;
-        var ltd = Painter.getRect(size, 0x009999);
-        var rtd = Painter.getRect(size, 0x009999);
-        var rbd = Painter.getRect(size, 0x009999);
-        var lbd = Painter.getRect(size, 0x009999);
-        ltd.x = half;
-        ltd.y = half;
-        rtd.x = -half;
-        rtd.y = half;
-        rbd.x = -half;
-        rbd.y = -half;
-        lbd.x = half;
-        lbd.y = -half;
-        this.ltp.addChild(ltd);
-        this.rtp.addChild(rtd);
-        this.rbp.addChild(rbd);
-        this.lbp.addChild(lbd);
     }
 
     getMoveUpdatePoints(dx, dy) {

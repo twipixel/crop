@@ -328,8 +328,15 @@ export class ResizeUI extends PIXI.Container {
 
         return Math.min(rby, lby);
     }
-
-
+    
+    pointsToBounds(points) {
+        return {
+            x:points.lt.x,
+            y:points.lt.y,
+            width:points.rt.x - points.lt.x,
+            height:points.rb.y - points.rt.y
+        }
+    }
 
     /**
      * 좌상단 점이 바운드안에 포함되었는지 여부
@@ -462,6 +469,28 @@ export class ResizeUI extends PIXI.Container {
             rb: {x:this.rb.x, y:this.rb.y},
             lb: {x:this.lb.x, y:this.lb.y}
         }
+    }
+
+    get rotationPoints() {
+        // lt -> lb
+        // lb -> rb
+        // rb -> rt
+        // rt -> lt
+        var pivot = {x:this.cx, y:this.cy};
+        return {
+            lt: Calc.getRotationPoint(pivot, this.rt, -90),
+            rt: Calc.getRotationPoint(pivot, this.rb, -90),
+            rb: Calc.getRotationPoint(pivot, this.lb, -90),
+            lb: Calc.getRotationPoint(pivot, this.lt, -90)
+        }
+    }
+
+    get cx() {
+        return this.lt.x + this.bounds.width / 2;
+    }
+
+    get cy() {
+        return this.lt.y + this.bounds.height / 2;
     }
 
     get isMinWidth() {
