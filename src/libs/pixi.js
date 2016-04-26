@@ -1,7 +1,7 @@
 /**
  * @license
  * pixi.js - v3.0.10
- * Compiled 2016-02-25T20:39:20.286Z
+ * Compiled 2016-03-31T20:39:38.722Z
  *
  * pixi.js is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license.php
@@ -13506,7 +13506,7 @@ CanvasRenderer.prototype.renderDisplayObject = function (displayObject, context)
 };
 
 /**
- * @extends PIXI.SystemRenderer#setSize
+ * @extends PIXI.SystemRenderer#resize
  *
  * @param {number} w
  * @param {number} h
@@ -14886,6 +14886,8 @@ WebGLRenderer.prototype.destroy = function (removeView)
 
     this.gl.useProgram(null);
 
+    this.gl.flush();
+
     this.gl = null;
 };
 
@@ -14962,7 +14964,7 @@ function AbstractFilter(vertexSrc, fragmentSrc, uniforms)
      * The extra padding that the filter might need
      * @member {number}
      */
-    this.paddingX = 0;
+    this.padding = 0;
 
     /**
      * The uniforms as an object
@@ -15342,7 +15344,7 @@ FilterManager.prototype.pushFilter = function (target, filters)
 
 
     // padding!
-    var padding = filters[0].paddingX | 0;
+    var padding = filters[0].padding | 0;
     bounds.x -= padding;
     bounds.y -= padding;
     bounds.width += padding * 2;
@@ -18804,6 +18806,8 @@ var Sprite = require('../sprites/Sprite'),
  * @param [style.strokeThickness=0] {number} A number that represents the thickness of the stroke. Default is 0 (no stroke)
  * @param [style.wordWrap=false] {boolean} Indicates if word wrap should be used
  * @param [style.wordWrapWidth=100] {number} The width at which text will wrap, it needs wordWrap to be set to true
+ * @param [style.letterSpacing=0] {number} The amount of spacing between letters, default is 0
+ * @param [style.breakWords=false] {boolean} Indicates if lines can be wrapped within words, it needs wordWrap to be set to true
  * @param [style.lineHeight] {number} The line height, a number that represents the vertical space that a letter uses
  * @param [style.dropShadow=false] {boolean} Set a drop shadow for the text
  * @param [style.dropShadowColor='#000000'] {string} A fill style to be used on the dropshadow e.g 'red', '#00FF00'
@@ -18973,6 +18977,8 @@ Object.defineProperties(Text.prototype, {
             style.strokeThickness = style.strokeThickness || 0;
             style.wordWrap = style.wordWrap || false;
             style.wordWrapWidth = style.wordWrapWidth || 100;
+            style.breakWords = style.breakWords || false;
+            style.letterSpacing = style.letterSpacing || 0;
 
             style.dropShadow = style.dropShadow || false;
             style.dropShadowColor = style.dropShadowColor || '#000000';
@@ -18980,7 +18986,7 @@ Object.defineProperties(Text.prototype, {
             style.dropShadowDistance = style.dropShadowDistance !== undefined ? style.dropShadowDistance : 5;
             style.dropShadowBlur = style.dropShadowBlur !== undefined ? style.dropShadowBlur : 0; //shadowBlur is '0' by default according to HTML
 
-            style.paddingX = style.paddingX || 0;
+            style.padding = style.padding || 0;
 
             style.textBaseline = style.textBaseline || 'alphabetic';
 
@@ -19038,7 +19044,7 @@ Text.prototype.updateText = function ()
     var fontProperties = this.determineFontProperties(style.font);
     for (var i = 0; i < lines.length; i++)
     {
-        var lineWidth = this.context.measureText(lines[i]).width;
+        var lineWidth = this.context.measureText(lines[i]).width + ((lines[i].length - 1) * style.letterSpacing);
         lineWidths[i] = lineWidth;
         maxLineWidth = Math.max(maxLineWidth, lineWidth);
     }
@@ -19049,7 +19055,7 @@ Text.prototype.updateText = function ()
         width += style.dropShadowDistance;
     }
 
-    this.canvas.width = ( width + this.context.lineWidth ) * this.resolution;
+    this.canvas.width = Math.ceil( ( width + this.context.lineWidth ) * this.resolution );
 
     // calculate text height
     var lineHeight = this.style.lineHeight || fontProperties.fontSize + style.strokeThickness;
@@ -19060,7 +19066,7 @@ Text.prototype.updateText = function ()
         height += style.dropShadowDistance;
     }
 
-    this.canvas.height = ( height + this._style.paddingX * 2 ) * this.resolution;
+    this.canvas.height = Math.ceil( ( height + this._style.padding * 2 ) * this.resolution );
 
     this.context.scale( this.resolution, this.resolution);
 
@@ -19111,7 +19117,7 @@ Text.prototype.updateText = function ()
 
             if (style.fill)
             {
-                this.context.fillText(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + this._style.paddingX);
+                this.drawLetterSpacing(lines[i], linePositionX + xShadowOffset, linePositionY + yShadowOffset + style.padding);
             }
         }
     }
@@ -19136,16 +19142,61 @@ Text.prototype.updateText = function ()
 
         if (style.stroke && style.strokeThickness)
         {
-            this.context.strokeText(lines[i], linePositionX, linePositionY + this._style.paddingX);
+            this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding, true);
         }
 
         if (style.fill)
         {
-            this.context.fillText(lines[i], linePositionX, linePositionY + this._style.paddingX);
+            this.drawLetterSpacing(lines[i], linePositionX, linePositionY + style.padding);
         }
     }
 
     this.updateTexture();
+};
+
+/**
+ * Render the text with letter-spacing.
+ *
+ * @private
+ */
+Text.prototype.drawLetterSpacing = function(text, x, y, isStroke)
+{
+    var style = this._style;
+
+    // letterSpacing of 0 means normal
+    var letterSpacing = style.letterSpacing;
+
+    if (letterSpacing === 0)
+    {
+        if (isStroke)
+        {
+            this.context.strokeText(text, x, y);
+        }
+        else
+        {
+            this.context.fillText(text, x, y);
+        }
+        return;
+    }
+
+    var characters = String.prototype.split.call(text, ''),
+        index = 0,
+        current,
+        currentPosition = x;
+
+    while (index < text.length)
+    {
+        current = characters[index++];
+        if (isStroke) 
+        {
+            this.context.strokeText(current, currentPosition, y);
+        }
+        else
+        {
+            this.context.fillText(current, currentPosition, y);
+        }
+        currentPosition += this.context.measureText(current).width + letterSpacing;
+    }
 };
 
 /**
@@ -19156,6 +19207,7 @@ Text.prototype.updateText = function ()
 Text.prototype.updateTexture = function ()
 {
     var texture = this._texture;
+    var style = this._style;
 
     texture.baseTexture.hasLoaded = true;
     texture.baseTexture.resolution = this.resolution;
@@ -19166,10 +19218,10 @@ Text.prototype.updateTexture = function ()
     texture.crop.height = texture._frame.height = this.canvas.height / this.resolution;
 
     texture.trim.x = 0;
-    texture.trim.y = -this._style.paddingX;
+    texture.trim.y = -style.padding;
 
     texture.trim.width = texture._frame.width;
-    texture.trim.height = texture._frame.height - this._style.paddingX*2;
+    texture.trim.height = texture._frame.height - style.padding*2;
 
     this._width = this.canvas.width / this.resolution;
     this._height = this.canvas.height / this.resolution;
@@ -19337,22 +19389,48 @@ Text.prototype.wordWrap = function (text)
         for (var j = 0; j < words.length; j++)
         {
             var wordWidth = this.context.measureText(words[j]).width;
-            var wordWidthWithSpace = wordWidth + this.context.measureText(' ').width;
-            if (j === 0 || wordWidthWithSpace > spaceLeft)
+            if (this._style.breakWords && wordWidth > wordWrapWidth) 
             {
-                // Skip printing the newline if it's the first word of the line that is
-                // greater than the word wrap width.
-                if (j > 0)
+                // Word should be split in the middle
+                var characters = words[j].split('');
+                for (var c = 0; c < characters.length; c++) 
                 {
-                    result += '\n';
+                  var characterWidth = this.context.measureText(characters[c]).width;
+                  if (characterWidth > spaceLeft) 
+                  {
+                    result += '\n' + characters[c];
+                    spaceLeft = wordWrapWidth - characterWidth;
+                  } 
+                  else 
+                  {
+                    if (c === 0) 
+                    {
+                      result += ' ';
+                    }
+                    result += characters[c];
+                    spaceLeft -= characterWidth;
+                  }
                 }
-                result += words[j];
-                spaceLeft = wordWrapWidth - wordWidth;
             }
-            else
+            else 
             {
-                spaceLeft -= wordWidthWithSpace;
-                result += ' ' + words[j];
+                var wordWidthWithSpace = wordWidth + this.context.measureText(' ').width;
+                if (j === 0 || wordWidthWithSpace > spaceLeft)
+                {
+                    // Skip printing the newline if it's the first word of the line that is
+                    // greater than the word wrap width.
+                    if (j > 0)
+                    {
+                        result += '\n';
+                    }
+                    result += words[j];
+                    spaceLeft = wordWrapWidth - wordWidth;
+                }
+                else
+                {
+                    spaceLeft -= wordWidthWithSpace;
+                    result += ' ' + words[j];
+                }
             }
         }
 
@@ -23137,7 +23215,7 @@ TilingSprite.prototype._renderCanvas = function (renderer)
     if(!this._canvasPattern)
     {
         // cut an object from a spritesheet..
-        var tempCanvas = new core.CanvasBuffer(texture._frame.width, texture._frame.height);
+        var tempCanvas = new core.CanvasBuffer(texture._frame.width * resolution, texture._frame.height * resolution);
 
         // Tint the tiling sprite
         if (this.tint !== 0xFFFFFF)
@@ -23152,7 +23230,7 @@ TilingSprite.prototype._renderCanvas = function (renderer)
         }
         else
         {
-            tempCanvas.context.drawImage(baseTexture.source, -texture._frame.x, -texture._frame.y);
+            tempCanvas.context.drawImage(baseTexture.source, -texture._frame.x * resolution, -texture._frame.y * resolution);
         }
         this._canvasPattern = tempCanvas.context.createPattern( tempCanvas.canvas, 'repeat' );
     }
@@ -23167,7 +23245,7 @@ TilingSprite.prototype._renderCanvas = function (renderer)
                        transform.ty * resolution);
 
     // TODO - this should be rolled into the setTransform above..
-    context.scale(this.tileScale.x,this.tileScale.y);
+    context.scale(this.tileScale.x / resolution, this.tileScale.y / resolution);
 
     context.translate(modX + (this.anchor.x * -this._width ),
                       modY + (this.anchor.y * -this._height));
@@ -23183,8 +23261,8 @@ TilingSprite.prototype._renderCanvas = function (renderer)
     context.fillStyle = this._canvasPattern;
     context.fillRect(-modX,
                      -modY,
-                     this._width / this.tileScale.x,
-                     this._height / this.tileScale.y);
+                     this._width * resolution / this.tileScale.x,
+                     this._height * resolution / this.tileScale.y);
 
 
     //TODO - pretty sure this can be deleted...
@@ -23468,7 +23546,7 @@ DisplayObject.prototype._initCachedDisplayObject = function (renderer)
     // add some padding!
     if(this._filters)
     {
-        var padding = this._filters[0].paddingX;
+        var padding = this._filters[0].padding;
         bounds.x -= padding;
         bounds.y -= padding;
 
@@ -23961,7 +24039,7 @@ Object.defineProperties(BlurDirFilter.prototype, {
         },
         set: function (value)
         {
-            this.paddingX = value * 0.5;
+            this.padding = value * 0.5;
             this.strength = value;
         }
     },
@@ -24051,7 +24129,7 @@ Object.defineProperties(BlurFilter.prototype, {
         },
         set: function (value)
         {
-            this.paddingX = Math.abs(value) * 0.5;
+            this.padding = Math.abs(value) * 0.5;
             this.blurXFilter.blur = this.blurYFilter.blur = value;
         }
     },
@@ -24198,7 +24276,7 @@ Object.defineProperties(BlurXFilter.prototype, {
         },
         set: function (value)
         {
-            this.paddingX =  Math.abs(value) * 0.5;
+            this.padding =  Math.abs(value) * 0.5;
             this.strength = value;
         }
     }
@@ -24284,7 +24362,7 @@ Object.defineProperties(BlurYFilter.prototype, {
         },
         set: function (value)
         {
-            this.paddingX = Math.abs(value) * 0.5;
+            this.padding = Math.abs(value) * 0.5;
             this.strength = value;
         }
     }
@@ -24346,10 +24424,10 @@ function ColorMatrixFilter()
         // vertex shader
         null,
         // fragment shader
-        "precision mediump float;\n\nvarying vec2 vTextureCoord;\nuniform sampler2D uSampler;\nuniform float m[25];\n\nvoid main(void)\n{\n\n    vec4 c = texture2D(uSampler, vTextureCoord);\n\n    gl_FragColor.r = (m[0] * c.r);\n        gl_FragColor.r += (m[1] * c.g);\n        gl_FragColor.r += (m[2] * c.b);\n        gl_FragColor.r += (m[3] * c.a);\n        gl_FragColor.r += m[4];\n\n    gl_FragColor.g = (m[5] * c.r);\n        gl_FragColor.g += (m[6] * c.g);\n        gl_FragColor.g += (m[7] * c.b);\n        gl_FragColor.g += (m[8] * c.a);\n        gl_FragColor.g += m[9];\n\n     gl_FragColor.b = (m[10] * c.r);\n        gl_FragColor.b += (m[11] * c.g);\n        gl_FragColor.b += (m[12] * c.b);\n        gl_FragColor.b += (m[13] * c.a);\n        gl_FragColor.b += m[14];\n\n     gl_FragColor.a = (m[15] * c.r);\n        gl_FragColor.a += (m[16] * c.g);\n        gl_FragColor.a += (m[17] * c.b);\n        gl_FragColor.a += (m[18] * c.a);\n        gl_FragColor.a += m[19];\n\n}\n",
+        "precision mediump float;\n\nvarying vec2 vTextureCoord;\nuniform sampler2D uSampler;\nuniform float m[25];\n\nvoid main(void)\n{\n\n    vec4 c = texture2D(uSampler, vTextureCoord);\n\n    gl_FragColor.r = (m[0] * c.r);\n        gl_FragColor.r += (m[1] * c.g);\n        gl_FragColor.r += (m[2] * c.b);\n        gl_FragColor.r += (m[3] * c.a);\n        gl_FragColor.r += m[4] * c.a;\n\n    gl_FragColor.g = (m[5] * c.r);\n        gl_FragColor.g += (m[6] * c.g);\n        gl_FragColor.g += (m[7] * c.b);\n        gl_FragColor.g += (m[8] * c.a);\n        gl_FragColor.g += m[9] * c.a;\n\n     gl_FragColor.b = (m[10] * c.r);\n        gl_FragColor.b += (m[11] * c.g);\n        gl_FragColor.b += (m[12] * c.b);\n        gl_FragColor.b += (m[13] * c.a);\n        gl_FragColor.b += m[14] * c.a;\n\n     gl_FragColor.a = (m[15] * c.r);\n        gl_FragColor.a += (m[16] * c.g);\n        gl_FragColor.a += (m[17] * c.b);\n        gl_FragColor.a += (m[18] * c.a);\n        gl_FragColor.a += m[19] * c.a;\n\n}\n",
         // custom uniforms
         {
-            dimmedTop: {
+            m: {
                 type: '1fv', value: [
                     1, 0, 0, 0, 0,
                     0, 1, 0, 0, 0,
@@ -24379,12 +24457,12 @@ ColorMatrixFilter.prototype._loadMatrix = function (matrix, multiply)
     var newMatrix = matrix;
 
     if (multiply) {
-        this._multiply(newMatrix, this.uniforms.dimmedTop.value, matrix);
+        this._multiply(newMatrix, this.uniforms.m.value, matrix);
         newMatrix = this._colorMatrix(newMatrix);
     }
 
     // set the new matrix
-    this.uniforms.dimmedTop.value = newMatrix;
+    this.uniforms.m.value = newMatrix;
 };
 
 /**
@@ -24433,7 +24511,7 @@ ColorMatrixFilter.prototype._multiply = function (out, a, b)
  * Create a Float32 Array and normalize the offset component to 0-1
  *
  * @param matrix {number[]} (mat 5x4)
- * @return dimmedTop {number[]} (mat 5x4) with all values between 0-1
+ * @return m {number[]} (mat 5x4) with all values between 0-1
  */
 ColorMatrixFilter.prototype._colorMatrix = function (matrix)
 {
@@ -24847,11 +24925,11 @@ Object.defineProperties(ColorMatrixFilter.prototype, {
     matrix: {
         get: function ()
         {
-            return this.uniforms.dimmedTop.value;
+            return this.uniforms.m.value;
         },
         set: function (value)
         {
-            this.uniforms.dimmedTop.value = value;
+            this.uniforms.m.value = value;
         }
     }
 });
@@ -25263,7 +25341,7 @@ Object.defineProperties(BlurYTintFilter.prototype, {
         },
         set: function (value)
         {
-            this.paddingX = value * 0.5;
+            this.padding = value * 0.5;
             this.strength = value;
         }
     }
@@ -25291,7 +25369,7 @@ function DropShadowFilter()
 
     this.defaultFilter = new core.AbstractFilter();
 
-    this.paddingX = 30;
+    this.padding = 30;
 
     this._dirtyPosition = true;
     this._angle = 45 * Math.PI / 180;
@@ -26498,7 +26576,7 @@ function InteractionManager(renderer, options)
      * Setting to true will make things work more in line with how the DOM verison works.
      * Setting to false can make things easier for things like dragging
      * It is currently set to false as this is how pixi used to work. This will be set to true in future versions of pixi.
-     * @member {HTMLElement}
+     * @member {boolean}
      * @private
      */
     this.moveWhenInside = false;
@@ -26803,7 +26881,6 @@ InteractionManager.prototype.processInteractive = function (point, displayObject
         
         for (var i = children.length-1; i >= 0; i--)
         {
-
             var child = children[i];
 
             // time to get recursive.. if this function will return if somthing is hit..
@@ -26823,10 +26900,13 @@ InteractionManager.prototype.processInteractive = function (point, displayObject
                 
                 // If the child is interactive , that means that the object hit was actually interactive and not just the child of an interactive object. 
                 // This means we no longer need to hit test anything else. We still need to run through all objects, but we don't need to perform any hit tests.
-                if(child.interactive)
-                {
-                    hitTest = false;
-                }
+                //if(child.interactive)
+                //{
+                hitTest = false;
+                //}
+
+                // we can break now as we have hit an object.
+                //break;
             }
         }
     }
@@ -27587,14 +27667,19 @@ Resource.setExtensionXhrType('fnt', Resource.XHR_RESPONSE_TYPE.DOCUMENT);
 },{"./bitmapFontParser":120,"./spritesheetParser":123,"./textureParser":124,"resource-loader":16}],123:[function(require,module,exports){
 var Resource = require('resource-loader').Resource,
     path = require('path'),
-    core = require('../core');
+    core = require('../core'),
+    async = require('async');
+
+var BATCH_SIZE = 1000;
 
 module.exports = function ()
 {
     return function (resource, next)
     {
-        // skip if no data, its not json, or it isn't spritesheet data
-        if (!resource.data || !resource.isJson || !resource.data.frames)
+        var imageResourceName = resource.name + '_image';
+
+        // skip if no data, its not json, it isn't spritesheet data, or the image resource already exists
+        if (!resource.data || !resource.isJson || !resource.data.frames || this.resources[imageResourceName])
         {
             return next();
         }
@@ -27607,68 +27692,98 @@ module.exports = function ()
 
         var route = path.dirname(resource.url.replace(this.baseUrl, ''));
 
-        var resolution = core.utils.getResolutionOfUrl( resource.url );
-
         // load the image for this sheet
-        this.add(resource.name + '_image', route + '/' + resource.data.meta.imageElement, loadOptions, function (res)
+        this.add(imageResourceName, route + '/' + resource.data.meta.image, loadOptions, function (res)
         {
             resource.textures = {};
 
             var frames = resource.data.frames;
+            var frameKeys = Object.keys(frames);
+            var resolution = core.utils.getResolutionOfUrl(resource.url);
+            var batchIndex = 0;
 
-            for (var i in frames)
+            function processFrames(initialFrameIndex, maxFrames)
             {
-                var rect = frames[i].frame;
+                var frameIndex = initialFrameIndex;
 
-                if (rect)
+                while (frameIndex - initialFrameIndex < maxFrames && frameIndex < frameKeys.length)
                 {
-                    var size = null;
-                    var trim = null;
+                    var frame = frames[frameKeys[frameIndex]];
+                    var rect = frame.frame;
 
-                    if (frames[i].rotated) {
-                        size = new core.Rectangle(rect.x, rect.y, rect.h, rect.w);
-                    }
-                    else {
-                        size = new core.Rectangle(rect.x, rect.y, rect.w, rect.h);
-                    }
-
-                    //  Check to see if the sprite is trimmed
-                    if (frames[i].trimmed)
+                    if (rect)
                     {
-                        trim = new core.Rectangle(
-                            frames[i].spriteSourceSize.x / resolution,
-                            frames[i].spriteSourceSize.y / resolution,
-                            frames[i].sourceSize.w / resolution,
-                            frames[i].sourceSize.h / resolution
-                         );
+                        var size = null;
+                        var trim = null;
+
+                        if (frame.rotated)
+                        {
+                            size = new core.Rectangle(rect.x, rect.y, rect.h, rect.w);
+                        }
+                        else
+                        {
+                            size = new core.Rectangle(rect.x, rect.y, rect.w, rect.h);
+                        }
+
+                        //  Check to see if the sprite is trimmed
+                        if (frame.trimmed)
+                        {
+                            trim = new core.Rectangle(
+                                frame.spriteSourceSize.x / resolution,
+                                frame.spriteSourceSize.y / resolution,
+                                frame.sourceSize.w / resolution,
+                                frame.sourceSize.h / resolution
+                            );
+                        }
+
+                        // flip the width and height!
+                        if (frame.rotated)
+                        {
+                            var temp = size.width;
+                            size.width = size.height;
+                            size.height = temp;
+                        }
+
+                        size.x /= resolution;
+                        size.y /= resolution;
+                        size.width /= resolution;
+                        size.height /= resolution;
+
+                        resource.textures[frameKeys[frameIndex]] = new core.Texture(res.texture.baseTexture, size, size.clone(), trim, frame.rotated);
+
+                        // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
+                        core.utils.TextureCache[frameKeys[frameIndex]] = resource.textures[frameKeys[frameIndex]];
                     }
-
-                    // flip the width and height!
-                    if (frames[i].rotated)
-                    {
-                        var temp = size.width;
-                        size.width = size.height;
-                        size.height = temp;
-                    }
-
-                    size.x /= resolution;
-                    size.y /= resolution;
-                    size.width /= resolution;
-                    size.height /= resolution;
-
-                    resource.textures[i] = new core.Texture(res.texture.baseTexture, size, size.clone(), trim, frames[i].rotated ? 2 : 0);
-
-                    // lets also add the frame to pixi's global cache for fromFrame and fromImage functions
-                    core.utils.TextureCache[i] = resource.textures[i];
+                    frameIndex++;
                 }
             }
 
-            next();
+            function shouldProcessNextBatch()
+            {
+                return batchIndex * BATCH_SIZE < frameKeys.length;
+            }
+
+            function processNextBatch(done)
+            {
+                processFrames(batchIndex * BATCH_SIZE, BATCH_SIZE);
+                batchIndex++;
+                setTimeout(done, 0);
+            }
+
+            if (frameKeys.length <= BATCH_SIZE)
+            {
+                processFrames(0, BATCH_SIZE);
+                next();
+            }
+            else
+            {
+                async.whilst(shouldProcessNextBatch, processNextBatch, next);
+            }
         });
     };
 };
 
-},{"../core":29,"path":2,"resource-loader":16}],124:[function(require,module,exports){
+},{"../core":29,"async":1,"path":2,"resource-loader":16}],124:[function(require,module,exports){
 var core = require('../core');
 
 module.exports = function ()
@@ -27851,14 +27966,15 @@ Mesh.prototype._renderCanvas = function (renderer)
     var context = renderer.context;
 
     var transform = this.worldTransform;
+    var res = renderer.resolution;
 
     if (renderer.roundPixels)
     {
-        context.setTransform(transform.a, transform.b, transform.c, transform.d, transform.tx | 0, transform.ty | 0);
+        context.setTransform(transform.a * res, transform.b * res, transform.c * res, transform.d * res, (transform.tx * res) | 0, (transform.ty * res) | 0);
     }
     else
     {
-        context.setTransform(transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty);
+        context.setTransform(transform.a * res, transform.b * res, transform.c * res, transform.d * res, transform.tx * res, transform.ty * res);
     }
 
     if (this.drawMode === Mesh.DRAW_MODES.TRIANGLE_MESH)
@@ -27931,15 +28047,16 @@ Mesh.prototype._renderCanvasTriangles = function (context)
  */
 Mesh.prototype._renderCanvasDrawTriangle = function (context, vertices, uvs, index0, index1, index2)
 {
-    var textureSource = this._texture.baseTexture.source;
-    var textureWidth = this._texture.baseTexture.width;
-    var textureHeight = this._texture.baseTexture.height;
+    var base = this._texture.baseTexture;
+    var textureSource = base.source;
+    var textureWidth = base.width;
+    var textureHeight = base.height;
 
     var x0 = vertices[index0], x1 = vertices[index1], x2 = vertices[index2];
     var y0 = vertices[index0 + 1], y1 = vertices[index1 + 1], y2 = vertices[index2 + 1];
 
-    var u0 = uvs[index0] * textureWidth, u1 = uvs[index1] * textureWidth, u2 = uvs[index2] * textureWidth;
-    var v0 = uvs[index0 + 1] * textureHeight, v1 = uvs[index1 + 1] * textureHeight, v2 = uvs[index2 + 1] * textureHeight;
+    var u0 = uvs[index0] * base.width, u1 = uvs[index1] * base.width, u2 = uvs[index2] * base.width;
+    var v0 = uvs[index0 + 1] * base.height, v1 = uvs[index1 + 1] * base.height, v2 = uvs[index2 + 1] * base.height;
 
     if (this.canvasPadding > 0)
     {
@@ -27997,7 +28114,7 @@ Mesh.prototype._renderCanvasDrawTriangle = function (context, vertices, uvs, ind
         deltaB / delta, deltaE / delta,
         deltaC / delta, deltaF / delta);
 
-    context.drawImage(textureSource, 0, 0);
+    context.drawImage(textureSource, 0, 0, textureWidth * base.resolution, textureHeight * base.resolution, 0, 0, textureWidth, textureHeight);
     context.restore();
 };
 
