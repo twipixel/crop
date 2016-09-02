@@ -4,7 +4,8 @@
 ## 실행:
 
 
-    npm install
-    npm start
+    1. npm install
+    2. npm install --save-dev electron-prebuilt
+    3. npm start
     
     
