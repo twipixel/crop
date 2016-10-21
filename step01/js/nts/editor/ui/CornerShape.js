@@ -59,7 +59,7 @@ export class CornerShape extends PIXI.Sprite {
         var h = this.half;
         var s = this.size;
         this.buttonArea.clear();
-        this.buttonArea.beginFill(0x4285f4, 0.1);
+        this.buttonArea.beginFill(0x4285f4, 0.0);
         this.buttonArea.drawRect(-h, -h, s, s);
         this.buttonArea.endFill();
     }

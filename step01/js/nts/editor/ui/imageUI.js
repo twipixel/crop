@@ -8,7 +8,7 @@ export class ImageUI extends PIXI.Container {
         //super(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         super();
         this.initialize(textureCanvas);
-        this.addDebugPoint();
+        //this.addDebugPoint();
     }
 
     initialize(textureCanvas) {
@@ -50,7 +50,7 @@ export class ImageUI extends PIXI.Container {
      */
     addDebugPoint() {
         this.pivotGraphics = new PIXI.Graphics();
-        this.pivotGraphics.beginFill(0xFF3300, 0.3);
+        this.pivotGraphics.beginFill(0xFF3300, 0.0);
         this.pivotGraphics.drawRect(-2, -2, 4, 4);
         this.pivotGraphics.endFill();
         this.addChild(this.pivotGraphics);

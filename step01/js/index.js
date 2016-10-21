@@ -1,7 +1,6 @@
 import {ImageEditor} from './nts/editor/ImageEditor';
 
 
-
 var editor;
 var image = document.getElementById('image');
 var texture = document.getElementById('texture');

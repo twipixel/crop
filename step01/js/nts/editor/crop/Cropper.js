@@ -134,7 +134,7 @@ export class Cropper extends PIXI.Container {
         }
 
         this.rotateUI.resize();
-        Painter.drawBounds(this.gBounds, this.bounds);
+        //Painter.drawBounds(this.gBounds, this.bounds);
 
         this.gImage.clear();
         this.gRotate.clear();
@@ -256,7 +256,9 @@ export class Cropper extends PIXI.Container {
         //console.log(Calc.trace(dx), Calc.trace(dy), Calc.trace(dx + dy), Calc.trace(Calc.toDegrees(this.image.rotation)));
 
         if (this.image.isContainsBounds(this.resizeUI) === false) {
-            if(this.isHit) {
+            this.isHit = true;
+
+            /*if(this.isHit) {
                 var hitSide = this.image.getHitSide(this.resizeUI);
 
                 switch (hitSide) {
@@ -282,17 +284,17 @@ export class Cropper extends PIXI.Container {
             } else {
                 this.isHit = true;
                 this.image.fixMove(this.resizeUI, this.stageRotation);
-            }
+            }*/
         } else {
             this.isHit = false;
         }
 
         if (this.image.isContainsBounds(this.resizeUI)) {
-            this.prevImageX = this.image.x;
-            this.prevImageY = this.image.y;
+            //this.prevImageX = this.image.x;
+            //this.prevImageY = this.image.y;
         } else {
-            this.image.x = this.prevImageX;
-            this.image.y = this.prevImageY;
+            //this.image.x = this.prevImageX;
+            //this.image.y = this.prevImageY;
         }
 
         this.image.updatePrevLtPointForPivot();
