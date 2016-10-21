@@ -42,11 +42,8 @@
     "webpack": "^1.12.13"
   },
   "scripts": {
-    "start": "electron .",
-    "lint": "eslint ./src",
-    "test:unit": "npm run lint && jest -c ./scripts/unit-test.json",
-    "test:ui": "npm run test:unit  && nightwatch --test ./scripts/ui-test.js",
-    "build": "npm run test:ui  && webpack --config ./scripts/package.js --release"
+    "start": "electron electron.start.js",
+    "step01": "electron electron.step01.js"
   },
   "repository": {
     "type": "git",
