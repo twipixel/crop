@@ -16,6 +16,7 @@ export class Cropper extends PIXI.Container {
     }
 
     initialize(canvas, imageElement, textureCanvas) {
+        this.drawHitId = 0;
         this.paddingX = 216;
         this.paddingY = 158;
         this.canvas = canvas;
@@ -114,8 +115,7 @@ export class Cropper extends PIXI.Container {
         this.resizeUI.on('cornerResizeEnd', this.cornerResizeEnd.bind(this));
     }
 
-    update() {
-    }
+    update() {}
 
     resize() {
         // 최초 실행: 화면 초기화
@@ -126,6 +126,8 @@ export class Cropper extends PIXI.Container {
             this.resizeUI.resize(imageBounds);
             this.moveUI.setSize(this.resizeUI.bounds);
 
+            this.image.width = imageBounds.width * 1.2;
+            this.image.height = imageBounds.height * 1.2;
             this.test();
         } else {
             var resizeUIBounds = this.resizeUI.bounds;
@@ -253,8 +255,6 @@ export class Cropper extends PIXI.Container {
         this.image.x += dx;
         this.image.y += dy;
 
-        //console.log(Calc.trace(dx), Calc.trace(dy), Calc.trace(dx + dy), Calc.trace(Calc.toDegrees(this.image.rotation)));
-
         if (this.image.isContainsBounds(this.resizeUI) === false) {
             this.isHit = true;
 
@@ -285,6 +285,7 @@ export class Cropper extends PIXI.Container {
                 this.isHit = true;
                 this.image.fixMove(this.resizeUI, this.stageRotation);
             }*/
+
         } else {
             this.isHit = false;
         }
@@ -297,19 +298,50 @@ export class Cropper extends PIXI.Container {
             //this.image.y = this.prevImageY;
         }
 
+        this.image.displayHit(this.isHit);
         this.image.updatePrevLtPointForPivot();
     }
 
     moveEnd(e) {
+        this.displayHitPoint();
         this.setImagePivot();
         this.image.updatePrevLtPointForPivot();
     }
 
-    rotateStart(e) {
 
-        console.log('1', Calc.trace(this.image.x), Calc.trace(this.image.y));
+    displayHitPoint() {
+        var hitSide = this.image.getHitSide(this.resizeUI).split(',');
+        var isLtOut = !this.resizeUI.isLtInsideBounds(this.image);
+        var isRtOut = !this.resizeUI.isRtInsideBounds(this.image);
+        var isRbOut = !this.resizeUI.isRbInsideBounds(this.image);
+        var isLbOut = !this.resizeUI.isLbInsideBounds(this.image);
+        this.hitSide = this.hitSide;
+
+        console.log(hitSide.length, hitSide);
+        console.log('isLtOut:', isLtOut, 'isRtOut:', isRtOut, 'isRbOut', isRbOut, 'isLbOut', isLbOut);
+        this.startDrawHit();
+    }
+
+
+    startDrawHit() {
+        clearTimeout(this.drawHitId);
+        this.drawHitId = setTimeout(this.drawHit.bind(this), 1000);
+    }
+
+
+    drawHit() {
+        console.log('drawHit, this:', this, 'hitSide', this.hitSide);
+        var imageHitSide = this.hitSide.pop();
+
+        console.log('drawHit, imageHitSide:', imageHitSide);
+
+        if(this.hitSide.length > 0) this.startDrawHit();
+    }
+
+
+
+    rotateStart(e) {
         this.setImagePivot();
-        console.log('2', Calc.trace(this.image.x), Calc.trace(this.image.y));
         this.resizeUIPoints = this.resizeUI.points;
         this.image.updatePrevLtPointForPivot();
     }

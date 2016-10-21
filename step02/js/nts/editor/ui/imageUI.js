@@ -280,11 +280,11 @@ export class ImageUI extends PIXI.Container {
 
         // 상단
         if (Calc.triangleArea(bounds.lt, lt, rt) > 0 || Calc.triangleArea(bounds.rt, lt, rt) > 0)
-            hitSide = (hitSide === HitSide.NONE) ? HitSide.TOP : hitSide += '-' + HitSide.TOP;
+            hitSide = (hitSide === HitSide.NONE) ? HitSide.TOP : hitSide += ',' + HitSide.TOP;
 
         // 하단
         if (Calc.triangleArea(bounds.rb, rb, lb) > 0 || Calc.triangleArea(bounds.lb, rb, lb) > 0)
-            hitSide = (hitSide === HitSide.NONE) ? HitSide.BOTTOM : hitSide += '-' + HitSide.BOTTOM;
+            hitSide = (hitSide === HitSide.NONE) ? HitSide.BOTTOM : hitSide += ',' + HitSide.BOTTOM;
 
         return hitSide;
     }

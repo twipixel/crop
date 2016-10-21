@@ -2,13 +2,11 @@ import {Calc} from './../utils/Calculator';
 import {Painter} from './../utils/Painter';
 import {HitSide} from './../const/HitSide';
 
-//export class ImageUI extends PIXI.Sprite {
 export class ImageUI extends PIXI.Container {
     constructor(textureCanvas) {
-        //super(new PIXI.Texture(new PIXI.BaseTexture(imageElement)));
         super();
         this.initialize(textureCanvas);
-        //this.addDebugPoint();
+        this.addDebugPoint();
     }
 
     initialize(textureCanvas) {
@@ -17,7 +15,6 @@ export class ImageUI extends PIXI.Container {
         this.image = new PIXI.Sprite(new PIXI.Texture(new PIXI.BaseTexture(textureCanvas)));
         this.image.x = -this.image.width / 2;
         this.image.y = -this.image.height / 2;
-        //this.image.alpha = 0.2;
         this.addChild(this.image);
 
         this.ltp = new PIXI.Sprite();
@@ -34,11 +31,6 @@ export class ImageUI extends PIXI.Container {
         this.lbp.x = this.image.x;
         this.lbp.y = this.image.y + this.image.height;
 
-        /*this.rtp.x = this.width;
-         this.rbp.x = this.width;
-         this.rbp.y = this.height;
-         this.lbp.y = this.height;*/
-
         this.addChild(this.ltp);
         this.addChild(this.rtp);
         this.addChild(this.rbp);
@@ -49,6 +41,17 @@ export class ImageUI extends PIXI.Container {
      * TODO 디버그 테스트 용
      */
     addDebugPoint() {
+        this.hitSprite = new PIXI.Sprite();
+        this.hitSprite.alpha = 0;
+        this.hitColorRect = new PIXI.Graphics();
+        this.hitColorRect.beginFill(0xFF3300, 0.3);
+        this.hitColorRect.drawRect(-this.width / 2, -this.height / 2, this.width, this.height);
+        this.hitColorRect.endFill();
+        this.addChild(this.hitSprite);
+        this.hitSprite.addChild(this.hitColorRect);
+
+        return;
+
         this.pivotGraphics = new PIXI.Graphics();
         this.pivotGraphics.beginFill(0xFF3300, 0.0);
         this.pivotGraphics.drawRect(-2, -2, 4, 4);
@@ -73,6 +76,14 @@ export class ImageUI extends PIXI.Container {
         this.rtp.addChild(rtd);
         this.rbp.addChild(rbd);
         this.lbp.addChild(lbd);
+    }
+
+    displayHit(isHit) {
+        if(!this.hitColorRect) return;
+        var bounds = this.bounds;
+        console.log('boudns.width:', bounds.width, 'bounds.height:', bounds.height);
+        var alpha = (isHit === true) ? 0.3 : 0;
+        this.hitSprite.alpha = alpha;
     }
 
     rotatePoints() {
@@ -106,8 +117,6 @@ export class ImageUI extends PIXI.Container {
 
     fixMove(resizeUI, stageRotation = 0) {
         var rotation = this.rotation - stageRotation;
-
-        // console.log(Calc.toDegrees(rotation), rotation);
 
         // 위로 회전
         if (rotation > 0) {
@@ -280,11 +289,11 @@ export class ImageUI extends PIXI.Container {
 
         // 상단
         if (Calc.triangleArea(bounds.lt, lt, rt) > 0 || Calc.triangleArea(bounds.rt, lt, rt) > 0)
-            hitSide = (hitSide === HitSide.NONE) ? HitSide.TOP : hitSide += '-' + HitSide.TOP;
+            hitSide = (hitSide === HitSide.NONE) ? HitSide.TOP : hitSide += ',' + HitSide.TOP;
 
         // 하단
         if (Calc.triangleArea(bounds.rb, rb, lb) > 0 || Calc.triangleArea(bounds.lb, rb, lb) > 0)
-            hitSide = (hitSide === HitSide.NONE) ? HitSide.BOTTOM : hitSide += '-' + HitSide.BOTTOM;
+            hitSide = (hitSide === HitSide.NONE) ? HitSide.BOTTOM : hitSide += ',' + HitSide.BOTTOM;
 
         return hitSide;
     }
