@@ -5,7 +5,7 @@
 
 
     1. npm install
-    2. npm install --save-dev electron-prebuilt
+    2. npm install electron-prebuilt --save-dev
     3. npm start
     
     
