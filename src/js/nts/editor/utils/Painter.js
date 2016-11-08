@@ -1,4 +1,4 @@
-export class Painter {
+export default class Painter {
     constructor() {
 
     }
@@ -128,5 +128,15 @@ export class Painter {
         graphics.moveTo(p1.x, p1.y);
         graphics.lineTo(p2.x, p2.y);
         //graphics.endFill();
+    }
+
+
+    static drawHitSide(graphics, point, line, thickness = 1, color = 0xFF3300, alpha = 0.7) {
+        graphics.beginFill(color, alpha);
+        graphics.lineStyle(thickness, color, alpha);
+        graphics.moveTo(point.x, point.y);
+        graphics.lineTo(line.a.x, line.a.y);
+        graphics.lineTo(line.b.x, line.b.y);
+        graphics.endFill();
     }
 }

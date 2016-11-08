@@ -29,7 +29,7 @@
     "babel-plugin-transform-es2015-shorthand-properties": "^6.5.0",
     "babel-plugin-transform-es2015-template-literals": "^6.5.0",
     "babel-plugin-transform-object-rest-spread": "^6.5.0",
-    "babel-plugin-transform-react-jsx": "^6.5.0",
+    "babel-plugin-tranOOOsform-react-jsx": "^6.5.0",
     "electron-prebuilt": "^1.3.8",
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "^5.0.0",
@@ -42,8 +42,7 @@
     "webpack": "^1.12.13"
   },
   "scripts": {
-    "start": "electron electron.start.js",
-    "step01": "electron electron.step01.js"
+    "start": "electron electron.start.js"
   },
   "repository": {
     "type": "git",

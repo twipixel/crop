@@ -310,16 +310,17 @@ export class Cropper extends PIXI.Container {
 
 
     displayHitPoint() {
-        var hitSide = this.image.getHitSide(this.resizeUI).split(',');
+        var hitList = [];
         var isLtOut = !this.resizeUI.isLtInsideBounds(this.image);
         var isRtOut = !this.resizeUI.isRtInsideBounds(this.image);
         var isRbOut = !this.resizeUI.isRbInsideBounds(this.image);
         var isLbOut = !this.resizeUI.isLbInsideBounds(this.image);
-        this.hitSide = this.hitSide;
-
-        console.log(hitSide.length, hitSide);
-        console.log('isLtOut:', isLtOut, 'isRtOut:', isRtOut, 'isRbOut', isRbOut, 'isLbOut', isLbOut);
-        this.startDrawHit();
+        if(isLtOut) hitList.push('lt');
+        if(isRtOut) hitList.push('rt');
+        if(isRbOut) hitList.push('rb');
+        if(isLbOut) hitList.push('lb');
+        this.hitList = hitList;
+        if(hitList.length > 0) this.startDrawHit();
     }
 
 
@@ -330,14 +331,37 @@ export class Cropper extends PIXI.Container {
 
 
     drawHit() {
-        console.log('drawHit, this:', this, 'hitSide', this.hitSide);
-        var imageHitSide = this.hitSide.pop();
+        var point, distancePoint, line;
+        var hitSide = this.hitList.shift();
 
-        console.log('drawHit, imageHitSide:', imageHitSide);
+        console.log('drawHit(), hitSide:', hitSide);
 
-        if(this.hitSide.length > 0) this.startDrawHit();
+        switch (hitSide) {
+            case 'lt':
+                console.log('top', Calc.triangleArea(this.resizeUI.lt, this.image.lt, this.image.rt));
+                console.log('left', Calc.triangleArea(this.resizeUI.lt, this.image.lt, this.image.lb));
+                // Painter.drawHitSide(this.gLine, this.resizeUI.lt, this.image.topLine);
+                console.log(Painter.drawHitSide);
+                break;
+
+            case 'rt':
+                console.log('top', Calc.triangleArea(this.resizeUI.rt, this.image.lt, this.image.rt));
+                console.log('right', Calc.triangleArea(this.resizeUI.rt, this.image.rt, this.image.rb));
+                break;
+
+            case 'rb':
+                console.log('right', Calc.triangleArea(this.resizeUI.rb, this.image.rt, this.image.rb));
+                console.log('bottom', Calc.triangleArea(this.resizeUI.rb, this.image.lb, this.image.rb));
+                break;
+
+            case 'lb':
+                console.log('left', Calc.triangleArea(this.resizeUI.lb, this.image.lt, this.image.lb));
+                console.log('bottom', Calc.triangleArea(this.resizeUI.lb, this.image.lb, this.image.rb));
+                break;
+        }
+
+        if(this.hitList.length > 0) this.startDrawHit();
     }
-
 
 
     rotateStart(e) {
@@ -345,6 +369,7 @@ export class Cropper extends PIXI.Container {
         this.resizeUIPoints = this.resizeUI.points;
         this.image.updatePrevLtPointForPivot();
     }
+
 
     rotateChange(e) {
         this.image.rotation += e.change;
