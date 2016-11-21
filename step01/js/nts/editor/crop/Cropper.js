@@ -315,7 +315,7 @@ export class Cropper extends PIXI.Container {
         var isRtOut = !this.resizeUI.isRtInsideBounds(this.image);
         var isRbOut = !this.resizeUI.isRbInsideBounds(this.image);
         var isLbOut = !this.resizeUI.isLbInsideBounds(this.image);
-        this.hitSide = this.hitSide;
+        this.hitSide = hitSide;
 
         console.log(hitSide.length, hitSide);
         console.log('isLtOut:', isLtOut, 'isRtOut:', isRtOut, 'isRbOut', isRbOut, 'isLbOut', isLbOut);
@@ -325,19 +325,73 @@ export class Cropper extends PIXI.Container {
 
     startDrawHit() {
         clearTimeout(this.drawHitId);
-        this.drawHitId = setTimeout(this.drawHit.bind(this), 1000);
+        this.drawHitId = setTimeout(this.checkDrawHit.bind(this), 1000);
     }
 
 
-    drawHit() {
-        console.log('drawHit, this:', this, 'hitSide', this.hitSide);
-        var imageHitSide = this.hitSide.pop();
+    checkDrawHit() {
+        if(this.hitSide == HitSide.NONE || this.hitSide == void 0) return;
 
-        console.log('drawHit, imageHitSide:', imageHitSide);
+        var imageHitSide = this.hitSide.pop();
+        this.drawHit(imageHitSide);
 
         if(this.hitSide.length > 0) this.startDrawHit();
     }
 
+
+    drawHit(hitSide) {
+        console.log('drawHit(' + hitSide + ')');
+
+        var lt, rt, rb, lb, line,
+            ltHue, rtHue, rbHue, lbHue,
+            ltColor, rtColor, rbColor, lbColor;
+        var uiPoints = this.resizeUI.points;
+
+        switch (hitSide) {
+            case HitSide.TOP:
+                line = this.image.topLine;
+                break;
+
+            case HitSide.RIGHT:
+            case HitSide.RIGHT_TOP:
+            case HitSide.RIGHT_BOTTOM:
+                line = this.image.rightLine;
+                break;
+
+            case HitSide.BOTTOM:
+                line = this.image.bottomLine;
+                break;
+
+            case HitSide.LEFT:
+            case HitSide.LEFT_TOP:
+            case HitSide.LEFT_BOTTOM:
+                line = this.image.leftLine;
+                break;
+        }
+
+
+        this.gTest.clear();
+        ltColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
+        rtColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
+        rbColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
+        lbColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
+
+        lt = Calc.triangleArea(uiPoints.lt, line.a, line.b);
+        rt = Calc.triangleArea(uiPoints.rt, line.a, line.b);
+        rb = Calc.triangleArea(uiPoints.rb, line.a, line.b);
+        lb = Calc.triangleArea(uiPoints.lb, line.a, line.b);
+
+        Painter.drawLine(this.gTest, uiPoints.lt, line.a, 1, ltColor);
+        Painter.drawLine(this.gTest, uiPoints.lt, line.b, 1, ltColor);
+        Painter.drawLine(this.gTest, uiPoints.rt, line.a, 1, rtColor);
+        Painter.drawLine(this.gTest, uiPoints.rt, line.b, 1, rtColor);
+        Painter.drawLine(this.gTest, uiPoints.rb, line.a, 1, rbColor);
+        Painter.drawLine(this.gTest, uiPoints.rb, line.b, 1, rbColor);
+        Painter.drawLine(this.gTest, uiPoints.lb, line.a, 1, lbColor);
+        Painter.drawLine(this.gTest, uiPoints.lb, line.b, 1, lbColor);
+
+        console.log('lt', lt, 'rt', rt, 'rb', rb, 'lb', lb);
+    }
 
 
     rotateStart(e) {
