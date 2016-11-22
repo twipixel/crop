@@ -129,4 +129,16 @@ export class Painter {
         graphics.lineTo(p2.x, p2.y);
         //graphics.endFill();
     }
+
+    static drawTriagle(graphics, p0, p1, p2, thickness = 1, color= 0xFF3300, alpha = 1, isFill = false) {
+        if(isFill) graphics.beginFill(color, alpha);
+
+        graphics.lineStyle(thickness, color, alpha);
+        graphics.moveTo(p0.x, p0.y);
+        graphics.lineTo(p1.x, p1.y);
+        graphics.lineTo(p2.x, p2.y);
+        graphics.lineTo(p0.x, p0.y);
+
+        if(isFill) graphics.endFill();
+    }
 }

@@ -163,7 +163,6 @@ export class Calc {
         return true;
     }
 
-
     /**
      * 이미지 좌우상하 어디에 히트 되었는지 체크 하는 샘플 코드입니다.
      */
@@ -402,4 +401,15 @@ export class Calc {
             copy[prop] = obj[prop];
         return copy;
     }
+
+
+    static getTriangleCenterPoint(p0, p1, p2) {
+        return {
+            x: (p0.x + p1.x + p2.x) / 3,
+            y: (p0.y + p1.y + p2.y) / 3,
+        };
+    }
+
+
+
 }

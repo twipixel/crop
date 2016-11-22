@@ -236,6 +236,8 @@ export class Cropper extends PIXI.Container {
     }
 
     moveStart(e) {
+        this.stopDrawHit();
+
         this.isHit = false;
         this.prevImageX = this.image.x;
         this.prevImageY = this.image.y;
@@ -317,6 +319,8 @@ export class Cropper extends PIXI.Container {
         var isLbOut = !this.resizeUI.isLbInsideBounds(this.image);
         this.hitSide = hitSide;
 
+        this.drawTime = 6000;
+
         console.log(hitSide.length, hitSide);
         console.log('isLtOut:', isLtOut, 'isRtOut:', isRtOut, 'isRbOut', isRbOut, 'isLbOut', isLbOut);
         this.startDrawHit();
@@ -325,7 +329,13 @@ export class Cropper extends PIXI.Container {
 
     startDrawHit() {
         clearTimeout(this.drawHitId);
-        this.drawHitId = setTimeout(this.checkDrawHit.bind(this), 1000);
+        this.checkDrawHit();
+    }
+
+
+    stopDrawHit() {
+        this.gTest.clear();
+        clearTimeout(this.drawHitId);
     }
 
 
@@ -334,18 +344,13 @@ export class Cropper extends PIXI.Container {
 
         var imageHitSide = this.hitSide.pop();
         this.drawHit(imageHitSide);
-
-        if(this.hitSide.length > 0) this.startDrawHit();
     }
 
 
     drawHit(hitSide) {
         console.log('drawHit(' + hitSide + ')');
 
-        var lt, rt, rb, lb, line,
-            ltHue, rtHue, rbHue, lbHue,
-            ltColor, rtColor, rbColor, lbColor;
-        var uiPoints = this.resizeUI.points;
+        var line;
 
         switch (hitSide) {
             case HitSide.TOP:
@@ -369,29 +374,73 @@ export class Cropper extends PIXI.Container {
                 break;
         }
 
+        this.drawTriangle(line);
+    }
+
+
+    drawTriangle(line) {
+
+        var uiPoints = this.resizeUI.points;
+        var lt, rt, rb, lb, result, color,
+            ltColor, rtColor, rbColor, lbColor;
+
 
         this.gTest.clear();
-        ltColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
-        rtColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
-        rbColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
-        lbColor = '0x'+Math.floor(Math.random()*16777215).toString(16);
+
+        var inColor = 0x0D99FC;
+        var outColor = 0xEB3333;
+
+        var alpha = 1;
+        var thickness = 1;
+        var isFill = false;
+
 
         lt = Calc.triangleArea(uiPoints.lt, line.a, line.b);
         rt = Calc.triangleArea(uiPoints.rt, line.a, line.b);
         rb = Calc.triangleArea(uiPoints.rb, line.a, line.b);
         lb = Calc.triangleArea(uiPoints.lb, line.a, line.b);
 
-        Painter.drawLine(this.gTest, uiPoints.lt, line.a, 1, ltColor);
-        Painter.drawLine(this.gTest, uiPoints.lt, line.b, 1, ltColor);
-        Painter.drawLine(this.gTest, uiPoints.rt, line.a, 1, rtColor);
-        Painter.drawLine(this.gTest, uiPoints.rt, line.b, 1, rtColor);
-        Painter.drawLine(this.gTest, uiPoints.rb, line.a, 1, rbColor);
-        Painter.drawLine(this.gTest, uiPoints.rb, line.b, 1, rbColor);
-        Painter.drawLine(this.gTest, uiPoints.lb, line.a, 1, lbColor);
-        Painter.drawLine(this.gTest, uiPoints.lb, line.b, 1, lbColor);
+        this.drawId0 = setTimeout(() => {
+            var result = Calc.triangleArea(uiPoints.lt, line.a, line.b);
+            color = (result > 0) ? outColor : inColor;
+            Painter.drawLine(this.gTest, uiPoints.lt, line.a, 1, color);
+            Painter.drawLine(this.gTest, uiPoints.lt, line.b, 1, color);
+            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.lt, line.a, line.b), thickness, color);
+            Painter.drawTriagle(this.gTest, uiPoints.lt, line.a, line.b, thickness, color, alpha, isFill);
+        }, this.drawTime);
 
-        console.log('lt', lt, 'rt', rt, 'rb', rb, 'lb', lb);
+        this.drawId1 = setTimeout(() => {
+            var result = Calc.triangleArea(uiPoints.rt, line.a, line.b);
+            color = (result > 0) ? outColor : inColor;
+            Painter.drawLine(this.gTest, uiPoints.rt, line.a, 1, color);
+            Painter.drawLine(this.gTest, uiPoints.rt, line.b, 1, color);
+            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.rt, line.a, line.b), thickness, color);
+            Painter.drawTriagle(this.gTest, uiPoints.rt, line.a, line.b, thickness, color, alpha, isFill);
+        }, this.drawTime * 2);
+
+        this.drawId2 = setTimeout(() => {
+            var result = Calc.triangleArea(uiPoints.rb, line.a, line.b);
+            color = (result > 0) ? outColor : inColor;
+            Painter.drawLine(this.gTest, uiPoints.rb, line.a, 1, color);
+            Painter.drawLine(this.gTest, uiPoints.rb, line.b, 1, color);
+            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.rb, line.a, line.b), thickness, color);
+            Painter.drawTriagle(this.gTest, uiPoints.rb, line.a, line.b, thickness, color, alpha, isFill);
+        }, this.drawTime * 3);
+
+        this.drawId3 = setTimeout(() => {
+            var result = Calc.triangleArea(uiPoints.lb, line.a, line.b);
+            color = (result > 0) ? outColor : inColor;
+            Painter.drawLine(this.gTest, uiPoints.lb, line.a, 1, color);
+            Painter.drawLine(this.gTest, uiPoints.lb, line.b, 1, color);
+            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.lb, line.a, line.b), thickness, color);
+            Painter.drawTriagle(this.gTest, uiPoints.lb, line.a, line.b, thickness, color, alpha, isFill);
+        }, this.drawTime * 4);
+
+        this.drawId4 = setTimeout(() => {
+            if(this.hitSide.length > 0) this.startDrawHit();
+        }, this.drawTime * 5);
     }
+
 
 
     rotateStart(e) {
