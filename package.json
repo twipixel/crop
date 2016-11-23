@@ -38,7 +38,7 @@
   },
   "scripts": {
     "start": "electron electron.start.js",
-    "start01": "electron electron.step01.js"
+    "example": "electron electron.example.js"
   },
   "repository": {
     "type": "git",

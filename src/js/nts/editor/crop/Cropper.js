@@ -114,8 +114,7 @@ export class Cropper extends PIXI.Container {
         this.resizeUI.on('cornerResizeEnd', this.cornerResizeEnd.bind(this));
     }
 
-    update() {
-    }
+    update() {}
 
     resize() {
         // 최초 실행: 화면 초기화
@@ -134,7 +133,7 @@ export class Cropper extends PIXI.Container {
         }
 
         this.rotateUI.resize();
-        Painter.drawBounds(this.gBounds, this.bounds);
+        //Painter.drawBounds(this.gBounds, this.bounds);
 
         this.gImage.clear();
         this.gRotate.clear();
