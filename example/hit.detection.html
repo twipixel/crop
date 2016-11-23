@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hit Detection</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+        }
+        #canvas {
+            background: #000000;
+        }
+    </style>
+</head>
+<body>
+
+<!--
+    이미지를 이동 시키면서 자르는 영역과 충돌 여부를 눈에 보이도록
+-->
+
+<img id="image" style="visibility: hidden;" src="./../src/img/09.jpeg">
+<canvas id="canvas" width="0" height="0"></canvas>
+<canvas id="texture" width="0" height="0"></canvas>
+
+<script src="./../src/libs/dat.gui.js"></script>
+<script src="./../src/libs/pixi.js"></script>
+<!--<script src="bundle.js"></script>-->
+
+<script>
+    // Install babel hooks to the browser process
+    require('babel-core/register')();
+    require('./js/index');
+</script>
+
+</body>
+</html>
