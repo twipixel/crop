@@ -1,3 +1,5 @@
+import {Calc} from './Calculator';
+
 export class Painter {
     constructor() {
 
@@ -140,5 +142,58 @@ export class Painter {
         graphics.lineTo(p0.x, p0.y);
 
         if(isFill) graphics.endFill();
+    }
+
+
+
+
+    static getIcon(str, radius = 10, color = 0xFFFFFF) {
+        let container = new PIXI.Sprite();
+
+        let text = new PIXI.Text(str, {fontSize:14, fill:0xFFFFFF});
+        text.x = -text.width / 2;
+        text.y = -text.height / 2;
+
+        let bg = new PIXI.Graphics();
+        bg.beginFill(color);
+        bg.drawRect(text.x, text.y, text.width, text.height);
+        bg.endFill();
+
+        container.addChild(bg);
+        container.addChild(text);
+
+        return container;
+    }
+
+
+    static getArrow(startPoint, endPoint, thickness = 1, color = 0xFFFFFF, alpha = 1) {
+        let container = new PIXI.Sprite();
+
+        let angleRadians = Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
+
+        let radius = 10;
+        let g = new PIXI.Graphics();
+        g.lineStyle(thickness, color, alpha);
+        g.moveTo(startPoint.x, startPoint.y);
+        g.lineTo(endPoint.x, endPoint.y);
+
+
+        /*let angle = 45 * Calc.DEG_TO_RAD;
+        let right = {
+            x: endPoint.x + radius * Math.cos(angle + angleRadians),
+            y: endPoint.y + radius * Math.sin(angle + angleRadians)
+        };
+
+        let left = {
+            x: endPoint.x + radius * Math.cos(-angle + angleRadians),
+            y: endPoint.y + radius * Math.sin(-angle + angleRadians)
+        };
+
+        g.lineTo(left.x, left.y);
+        g.moveTo(endPoint.x, endPoint.y);
+        g.lineTo(right.x, right.y);*/
+
+        container.addChild(g);
+        return container;
     }
 }

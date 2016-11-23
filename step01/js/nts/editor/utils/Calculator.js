@@ -406,10 +406,17 @@ export class Calc {
     static getTriangleCenterPoint(p0, p1, p2) {
         return {
             x: (p0.x + p1.x + p2.x) / 3,
-            y: (p0.y + p1.y + p2.y) / 3,
+            y: (p0.y + p1.y + p2.y) / 3
         };
     }
 
+
+    static getLineMiddle(p0, p1) {
+        return {
+            x: (p0.x + p1.x) / 2,
+            y: (p0.y + p1.y) / 2
+        };
+    }
 
 
 }

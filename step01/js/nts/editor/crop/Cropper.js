@@ -319,7 +319,7 @@ export class Cropper extends PIXI.Container {
         var isLbOut = !this.resizeUI.isLbInsideBounds(this.image);
         this.hitSide = hitSide;
 
-        this.drawTime = 6000;
+        this.drawTime = 4000;
 
         console.log(hitSide.length, hitSide);
         console.log('isLtOut:', isLtOut, 'isRtOut:', isRtOut, 'isRbOut', isRbOut, 'isLbOut', isLbOut);
@@ -329,19 +329,23 @@ export class Cropper extends PIXI.Container {
 
     startDrawHit() {
         clearTimeout(this.drawHitId);
+        clearTimeout(this.drawId0);
+        clearTimeout(this.drawId1);
+        clearTimeout(this.drawId2);
+        clearTimeout(this.drawId3);
+        clearTimeout(this.drawId4);
         this.checkDrawHit();
     }
 
 
     stopDrawHit() {
-        this.gTest.clear();
+        this.drawClear();
         clearTimeout(this.drawHitId);
     }
 
 
     checkDrawHit() {
         if(this.hitSide == HitSide.NONE || this.hitSide == void 0) return;
-
         var imageHitSide = this.hitSide.pop();
         this.drawHit(imageHitSide);
     }
@@ -378,22 +382,32 @@ export class Cropper extends PIXI.Container {
     }
 
 
+    drawClear() {
+        this.gTest.clear();
+        if(this.icon) this.removeChild(this.icon);
+        if(this.arrow) this.removeChild(this.arrow);
+    }
+
+
     drawTriangle(line) {
 
-        var uiPoints = this.resizeUI.points;
-        var lt, rt, rb, lb, result, color,
+        this.drawClear();
+
+        let inColor = 0x0D99FC;
+        let outColor = 0xEB3333;
+
+        let uiPoints = this.resizeUI.points;
+        let lt, rt, rb, lb, color,
             ltColor, rtColor, rbColor, lbColor;
 
-
-        this.gTest.clear();
-
-        var inColor = 0x0D99FC;
-        var outColor = 0xEB3333;
-
-        var alpha = 1;
-        var thickness = 1;
-        var isFill = false;
-
+        let result;
+        let alpha = 1;
+        let thickness = 1;
+        let isFill = false;
+        let iconRadius = 10;
+        let iconStr, iconPoint;
+        let leftString = '+ LEFT (OUT)';
+        let rightString = '- RIGHT (IN)';
 
         lt = Calc.triangleArea(uiPoints.lt, line.a, line.b);
         rt = Calc.triangleArea(uiPoints.rt, line.a, line.b);
@@ -401,46 +415,91 @@ export class Cropper extends PIXI.Container {
         lb = Calc.triangleArea(uiPoints.lb, line.a, line.b);
 
         this.drawId0 = setTimeout(() => {
-            var result = Calc.triangleArea(uiPoints.lt, line.a, line.b);
+            this.drawClear();
+
+            result = Calc.triangleArea(uiPoints.lt, line.a, line.b);
             color = (result > 0) ? outColor : inColor;
             Painter.drawLine(this.gTest, uiPoints.lt, line.a, 1, color);
             Painter.drawLine(this.gTest, uiPoints.lt, line.b, 1, color);
-            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.lt, line.a, line.b), thickness, color);
+
+            iconStr = (result > 0) ? leftString : rightString;
+            this.icon = Painter.getIcon(iconStr, iconRadius, color);
+            iconPoint = Calc.getTriangleCenterPoint(uiPoints.lt, line.a, line.b);
+            this.icon.x = iconPoint.x;
+            this.icon.y = iconPoint.y;
+            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
+            this.addChild(this.arrow);
+            this.addChild(this.icon);
+
             Painter.drawTriagle(this.gTest, uiPoints.lt, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime);
+        }, this.drawTime * 0);
 
         this.drawId1 = setTimeout(() => {
-            var result = Calc.triangleArea(uiPoints.rt, line.a, line.b);
+            this.drawClear();
+
+            result = Calc.triangleArea(uiPoints.rt, line.a, line.b);
             color = (result > 0) ? outColor : inColor;
             Painter.drawLine(this.gTest, uiPoints.rt, line.a, 1, color);
             Painter.drawLine(this.gTest, uiPoints.rt, line.b, 1, color);
-            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.rt, line.a, line.b), thickness, color);
+
+            iconStr = (result > 0) ? leftString : rightString;
+            this.icon = Painter.getIcon(iconStr, iconRadius, color);
+            iconPoint = Calc.getTriangleCenterPoint(uiPoints.rt, line.a, line.b);
+            this.icon.x = iconPoint.x;
+            this.icon.y = iconPoint.y;
+            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
+            this.addChild(this.arrow);
+            this.addChild(this.icon);
+
             Painter.drawTriagle(this.gTest, uiPoints.rt, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime * 2);
+        }, this.drawTime * 1);
 
         this.drawId2 = setTimeout(() => {
-            var result = Calc.triangleArea(uiPoints.rb, line.a, line.b);
+            this.drawClear();
+
+            result = Calc.triangleArea(uiPoints.rb, line.a, line.b);
             color = (result > 0) ? outColor : inColor;
             Painter.drawLine(this.gTest, uiPoints.rb, line.a, 1, color);
             Painter.drawLine(this.gTest, uiPoints.rb, line.b, 1, color);
-            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.rb, line.a, line.b), thickness, color);
+
+            iconStr = (result > 0) ? leftString : rightString;
+            this.icon = Painter.getIcon(iconStr, iconRadius, color);
+            iconPoint = Calc.getTriangleCenterPoint(uiPoints.rb, line.a, line.b);
+            this.icon.x = iconPoint.x;
+            this.icon.y = iconPoint.y;
+            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
+            this.addChild(this.arrow);
+            this.addChild(this.icon);
+
             Painter.drawTriagle(this.gTest, uiPoints.rb, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime * 3);
+        }, this.drawTime * 2);
 
         this.drawId3 = setTimeout(() => {
-            var result = Calc.triangleArea(uiPoints.lb, line.a, line.b);
+            this.drawClear();
+
+            result = Calc.triangleArea(uiPoints.lb, line.a, line.b);
             color = (result > 0) ? outColor : inColor;
             Painter.drawLine(this.gTest, uiPoints.lb, line.a, 1, color);
             Painter.drawLine(this.gTest, uiPoints.lb, line.b, 1, color);
-            Painter.drawCircle(this.gTest, Calc.getTriangleCenterPoint(uiPoints.lb, line.a, line.b), thickness, color);
+
+            iconStr = (result > 0) ? leftString : rightString;
+            this.icon = Painter.getIcon(iconStr, iconRadius, color);
+            iconPoint = Calc.getTriangleCenterPoint(uiPoints.lb, line.a, line.b);
+            this.icon.x = iconPoint.x;
+            this.icon.y = iconPoint.y;
+            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
+            this.addChild(this.arrow);
+            this.addChild(this.icon);
+
             Painter.drawTriagle(this.gTest, uiPoints.lb, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime * 4);
+        }, this.drawTime * 3);
 
         this.drawId4 = setTimeout(() => {
-            if(this.hitSide.length > 0) this.startDrawHit();
-        }, this.drawTime * 5);
-    }
+            this.drawClear();
 
+            if(this.hitSide.length > 0) this.startDrawHit();
+        }, this.drawTime * 4);
+    }
 
 
     rotateStart(e) {
@@ -448,6 +507,7 @@ export class Cropper extends PIXI.Container {
         this.resizeUIPoints = this.resizeUI.points;
         this.image.updatePrevLtPointForPivot();
     }
+
 
     rotateChange(e) {
         this.image.rotation += e.change;
