@@ -9,6 +9,7 @@
             padding: 0;
             background-color: #000000;
         }
+
         #canvas {
             background: #000000;
         }
@@ -26,12 +27,16 @@
 
 <script src="./../src/libs/dat.gui.js"></script>
 <script src="./../src/libs/pixi.js"></script>
-<!--<script src="bundle.js"></script>-->
 
-<script>
-    // Install babel hooks to the browser process
-    require('babel-core/register')();
-    require('./js/index');
+<script type="text/javascript">
+    (function(){
+        if (navigator.userAgent.indexOf('Electron') >= 0) {
+            require('babel-core/register')(); 
+            require('./js/index');
+        } else {
+            document.write('<script type=' + '"' + 'text/javascript' + '"' + 'src="bundle.js' + '"' + '></script>');
+        }
+    })();
 </script>
 
 </body>
