@@ -115,8 +115,7 @@ export class Cropper extends PIXI.Container {
         this.resizeUI.on('cornerResizeEnd', this.cornerResizeEnd.bind(this));
     }
 
-    update() {
-    }
+    update() {}
 
     resize() {
         // 최초 실행: 화면 초기화
@@ -127,11 +126,11 @@ export class Cropper extends PIXI.Container {
             this.resizeUI.resize(imageBounds);
             this.moveUI.setSize(this.resizeUI.bounds);
 
+            //this.image.width = imageBounds.width;
+            //this.image.height = imageBounds.height;
             this.image.width = imageBounds.width * 1.02;
             this.image.height = imageBounds.height * 1.02;
 
-            //this.image.width = imageBounds.width;
-            //this.image.height = imageBounds.height;
             this.test();
         } else {
             var resizeUIBounds = this.resizeUI.bounds;
@@ -305,7 +304,7 @@ export class Cropper extends PIXI.Container {
             //this.image.y = this.prevImageY;
         }
 
-        this.image.displayHit(this.image.isContainsBounds(this.resizeUI) === false);
+        this.displayImageHit();
         this.image.updatePrevLtPointForPivot();
     }
 
@@ -315,6 +314,9 @@ export class Cropper extends PIXI.Container {
         this.image.updatePrevLtPointForPivot();
     }
 
+    displayImageHit() {
+        this.image.displayHit(this.image.isContainsBounds(this.resizeUI) === false);
+    }
 
     displayHit() {
         var hitSide = this.image.getHitSide(this.resizeUI).split(',');
@@ -329,7 +331,6 @@ export class Cropper extends PIXI.Container {
         this.startDrawHit();
     }
 
-
     startDrawHit(delayTime = 4000) {
         this.drawTime = delayTime;
 
@@ -343,7 +344,6 @@ export class Cropper extends PIXI.Container {
         //this.checkHitSide();
     }
 
-
     stopDrawHit() {
         var totalInterval = this.intervalId.length;
 
@@ -353,14 +353,12 @@ export class Cropper extends PIXI.Container {
         this.clearDrawHit();
     }
 
-
     clearDrawHit() {
         if (this.gTest) this.gTest.clear();
         if (this.text) this.removeChild(this.text);
         if (this.directionArrow) this.removeChild(this.directionArrow);
         if (this.vectorDirectionArrow) this.removeChild(this.vectorDirectionArrow);
     }
-
 
     /**
      * 한개의 꼭지점당 5번 히트 정보 노출
@@ -554,7 +552,7 @@ export class Cropper extends PIXI.Container {
         this.image.x = this.image.x + returnPoint.x + (space * signX);
         this.image.y = this.image.y + returnPoint.y + (space * signY);
 
-        this.image.displayHit(this.image.isContainsBounds(this.resizeUI) === false);
+        this.displayImageHit();
     }
 
 
@@ -714,7 +712,7 @@ export class Cropper extends PIXI.Container {
             this.image.fixMove(this.resizeUI, this.stageRotation);
         }
         this.image.updatePrevLtPointForPivot();
-        this.image.displayHit(this.image.isContainsBounds(this.resizeUI) === false);
+        this.displayImageHit();
     }
 
     /**
