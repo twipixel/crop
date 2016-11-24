@@ -240,6 +240,17 @@ export class Calc {
     }
 
 
+    static getRotationPointWithDistance(pivot, point, angle, distance) {
+        var diffX = point.x - pivot.x;
+        var diffY = point.y - pivot.y;
+        var ca = Math.atan2(diffY, diffX) * 180 / Math.PI;
+        var na = ((ca + angle) % 360) * Math.PI / 180;
+        var x = (pivot.x + distance * Math.cos(na) + 0.5) | 0;
+        var y = (pivot.y + distance * Math.sin(na) + 0.5) | 0;
+        return {x: x, y: y};
+    }
+
+
     /**
      * 회전각과 사각형의 포인트를 넘겨주면 회전된 사각형의 포인트를 전달합니다.
      * @param pivot 사각형의 pivot(anchor) 포인트

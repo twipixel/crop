@@ -415,7 +415,7 @@ export class ImageUI extends PIXI.Container {
     }
 
     get bottomLine() {
-        return {a: this.lb, b: this.rb};
+        return {a: this.rb, b: this.lb};
     }
 
 

@@ -29,8 +29,9 @@
 <script src="./../src/libs/pixi.js"></script>
 
 <script>
-    /*(function(){
+    (function(){
         if (navigator.userAgent.indexOf('Electron') >= 0) {
+            // Install babel hooks to the browser process
             require('babel-core/register')();
             require('./js/index');
         } else {
@@ -40,10 +41,7 @@
             script.src="./bundle.js";
             body.appendChild(script);
         }
-    })();*/
-
-    require('babel-core/register')();
-    require('./js/index');
+    })();
 </script>
 
 </body>

@@ -16,7 +16,7 @@ export class Cropper extends PIXI.Container {
     }
 
     initialize(canvas, imageElement, textureCanvas) {
-        this.drawHitId = 0;
+        this.intervalId = [];
         this.paddingX = 216;
         this.paddingY = 158;
         this.canvas = canvas;
@@ -126,8 +126,11 @@ export class Cropper extends PIXI.Container {
             this.resizeUI.resize(imageBounds);
             this.moveUI.setSize(this.resizeUI.bounds);
 
-            this.image.width = imageBounds.width * 1.2;
-            this.image.height = imageBounds.height * 1.2;
+            //this.image.width = imageBounds.width * 1.2;
+            //this.image.height = imageBounds.height * 1.2;
+
+            this.image.width = imageBounds.width;
+            this.image.height = imageBounds.height;
             this.test();
         } else {
             var resizeUIBounds = this.resizeUI.bounds;
@@ -237,6 +240,7 @@ export class Cropper extends PIXI.Container {
 
     moveStart(e) {
         this.stopDrawHit();
+        this.stopFixMove();
 
         this.isHit = false;
         this.prevImageX = this.image.x;
@@ -305,60 +309,254 @@ export class Cropper extends PIXI.Container {
     }
 
     moveEnd(e) {
-        this.displayHitPoint();
+        this.displayHit();
         this.setImagePivot();
         this.image.updatePrevLtPointForPivot();
     }
 
 
-    displayHitPoint() {
+    displayHit() {
         var hitSide = this.image.getHitSide(this.resizeUI).split(',');
         var isLtOut = !this.resizeUI.isLtInsideBounds(this.image);
         var isRtOut = !this.resizeUI.isRtInsideBounds(this.image);
         var isRbOut = !this.resizeUI.isRbInsideBounds(this.image);
         var isLbOut = !this.resizeUI.isLbInsideBounds(this.image);
         this.hitSide = hitSide;
-
-        this.drawTime = 4000;
-
         console.log(hitSide.length, hitSide);
         console.log('isLtOut:', isLtOut, 'isRtOut:', isRtOut, 'isRbOut', isRbOut, 'isLbOut', isLbOut);
+
         this.startDrawHit();
     }
 
 
-    startDrawHit() {
-        clearTimeout(this.drawHitId);
-        clearTimeout(this.drawId0);
-        clearTimeout(this.drawId1);
-        clearTimeout(this.drawId2);
-        clearTimeout(this.drawId3);
-        clearTimeout(this.drawId4);
-        this.checkDrawHit();
+    startDrawHit(delayTime = 4000) {
+        this.drawTime = delayTime;
+
+        this.stopDrawHit();
+        this.stopFixMove();
+
+        // 모든 ui 의 충돌 결과 보여주기
+        this.drawHitAll();
+
+        // 충돌된 라인을 기준으로 히트 결과 보여주기
+        //this.checkHitSide();
     }
 
 
     stopDrawHit() {
-        this.drawClear();
-        clearTimeout(this.drawHitId);
+        var totalInterval = this.intervalId.length;
+
+        for(var i=0; i<totalInterval; i++)
+            clearTimeout(this.intervalId.pop());
+
+        this.clearDrawHit();
     }
 
 
-    checkDrawHit() {
+    clearDrawHit() {
+        if(this.gTest) this.gTest.clear();
+        if(this.text) this.removeChild(this.text);
+        if(this.directionArrow) this.removeChild(this.directionArrow);
+        if(this.vectorDirectionArrow) this.removeChild(this.vectorDirectionArrow);
+    }
+
+
+    /**
+     * 한개의 꼭지점당 5번 히트 정보 노출
+     */
+    drawHitAll() {
+
+        this.clearDrawHit();
+
+        let delayIndex = 0;
+        let delayTime = 3000;
+
+        let uiPoints = [
+            this.resizeUI.lt,
+            this.resizeUI.rt,
+            this.resizeUI.rb,
+            this.resizeUI.lb
+        ];
+
+        let imageLines = [
+            this.image.leftLine,
+            this.image.topLine,
+            this.image.rightLine,
+            this.image.bottomLine
+        ];
+
+
+        this.startFixMove();
+
+        return;
+
+        for(var i=0; i<uiPoints.length; i++) {
+            let point = uiPoints[i];
+            for(var j=0; j<imageLines.length; j++) {
+                this.doDrawHit(point, imageLines[j], delayIndex++, delayTime);
+            }
+        }
+
+        setTimeout(() => {
+            this.fixMove();
+        }, this.getDelayTime(delayIndex++));
+    }
+
+
+    startFixMove() {
+        this.stopFixMove();
+
+        let delayIndex = 0;
+        let delayTime = 3000;
+        let image = this.image;
+        let resizeUI = this.resizeUI;
+        let rotation = this.image.rotation - this.stageRotation;
+
+        // 위로 회전
+        if (rotation > 0) {
+            console.log('111111111111');
+            if (image.isOutLeftLine(resizeUI.lt) &&
+                resizeUI.isLtInsideBounds(image) === false) {
+                console.log('isOutLeftLine');
+                this.doFixMove(resizeUI.lt, image.leftLine, delayIndex++, delayTime, 'lt leftLine');
+            }
+
+            if (image.isOutBottomLine(resizeUI.lb) &&
+                resizeUI.isLbInsideBounds(image) === false) {
+                console.log('isOutBottomLine');
+                this.doFixMove(resizeUI.lb, image.bottomLine, delayIndex++, delayTime, 'lb bottomLine');
+            }
+
+            if (image.isOutTopLine(resizeUI.rt) &&
+                resizeUI.isRtInsideBounds(image) === false) {
+                console.log('isOutTopLine');
+                this.doFixMove(resizeUI.rt, image.topLine, delayIndex++, delayTime, 'rt topLine');
+            }
+
+            if (image.isOutRightLine(resizeUI.rb) &&
+                resizeUI.isRbInsideBounds(image) === false) {
+                console.log('isOutRightLine');
+                this.doFixMove(resizeUI.rb, image.rightLine, delayIndex++, delayTime, 'rb rightLine');
+            }
+
+        } else {
+
+            console.log('2222222222');
+            if (image.isOutTopLine(resizeUI.lt) &&
+                resizeUI.isLtInsideBounds(image) === false) {
+                console.log('isOutTopLine');
+                this.doFixMove(resizeUI.lt, image.topLine, delayIndex++, delayTime, 'lt topLine');
+            }
+
+            if (image.isOutLeftLine(resizeUI.lb) &&
+                resizeUI.isLbInsideBounds(image) === false) {
+                console.log('isOutLeftLine');
+                this.doFixMove(resizeUI.lb, image.leftLine, delayIndex++, delayTime, 'lb leftLine');
+            }
+
+            if (image.isOutRightLine(resizeUI.rt) &&
+                resizeUI.isRtInsideBounds(image) === false) {
+                console.log('isOutRightLine');
+                this.doFixMove(resizeUI.rt, image.rightLine, delayIndex++, delayTime, 'rt rightLine');
+            }
+
+            if (image.isOutBottomLine(resizeUI.rb) &&
+                resizeUI.isRbInsideBounds(image) === false) {
+                console.log('isOutBottomLine');
+                this.doFixMove(resizeUI.rb, image.bottomLine, delayIndex++, delayTime, 'rb bottomLine');
+            }
+
+        }
+    }
+
+    stopFixMove() {
+        var totalInterval = this.intervalId.length;
+
+        for(var i=0; i<totalInterval; i++)
+            clearTimeout(this.intervalId.pop());
+
+        this.clearFixMove();
+    }
+
+
+    clearFixMove() {
+        if(this.gTest) this.gTest.clear();
+        if(this.imageCircle) this.removeChild(this.imageCircle);
+        if(this.returnCircle) this.removeChild(this.returnCircle);
+        if(this.fixArrow) this.removeChild(this.fixArrow);
+    }
+
+
+    doFixMove(uiPoint, line, delayIndex, delayTime = 3000, displayString = '') {
+        console.log('doFixMove(', displayString, ')');
+
+        let id = setTimeout(() => {
+            this.fixMove(uiPoint, line);
+        }, this.getDelayTime(delayIndex, delayTime));
+
+        this.intervalId.push(id);
+    }
+
+
+    fixMove(uiPoint, line) {
+        this.clearFixMove();
+
+        let inColor = 0x0D99FC;
+        let outColor = 0xEB3333;
+        let arrowColor = 0xFFFFFF;
+        let distancePoint = Calc.getShortestDistancePoint(uiPoint, line.a, line.b);
+        let returnPoint = Calc.getReturnPoint(uiPoint, distancePoint);
+
+        this.imageCircle = Painter.getCircle(50, inColor);
+        this.imageCircle.x = this.image.x;
+        this.imageCircle.y = this.image.y;
+        this.returnCircle = Painter.getCircle(50, outColor);
+        this.returnCircle.x = this.image.x + returnPoint.x;
+        this.returnCircle.y = this.image.y + returnPoint.y;
+        this.fixArrow = Painter.getArrow(this.imageCircle, this.returnCircle, 10, 4, outColor);
+        this.addChild(this.imageCircle);
+        this.addChild(this.returnCircle);
+        this.addChild(this.fixArrow);
+        this.image.x = this.image.x + returnPoint.x;
+        this.image.y = this.image.y + returnPoint.y;
+    }
+
+
+    doDrawHit(point, line, delayIndex, delayTime) {
+
+        let id = setTimeout(() => {
+            this.drawHit(point, line);
+        }, this.getDelayTime(delayIndex, delayTime));
+
+        this.intervalId.push(id);
+    }
+
+
+    getDelayTime(delayIndex, delayTime = 3000) {
+        return delayIndex * delayTime;
+    }
+
+
+    checkHitSide() {
         if(this.hitSide == HitSide.NONE || this.hitSide == void 0) return;
         var imageHitSide = this.hitSide.pop();
-        this.drawHit(imageHitSide);
+        this.drawHitSide(imageHitSide);
     }
 
 
-    drawHit(hitSide) {
-        console.log('drawHit(' + hitSide + ')');
+    /**
+     * 충돌 감지된 라인을 중심으로
+     * UI 4개 포인트의 충돌된지 여부를 표시합니다.
+     * @param imageHitSide
+     */
+    drawHitSide(imageHitSide) {
+        console.log('drawHit(' + imageHitSide + ')');
 
         var line;
 
-        switch (hitSide) {
+        switch (imageHitSide) {
             case HitSide.TOP:
-                line = this.image.topLine;
+                line = this.image.leftLine;
                 break;
 
             case HitSide.RIGHT:
@@ -378,132 +576,72 @@ export class Cropper extends PIXI.Container {
                 break;
         }
 
-        this.drawTriangle(line);
+        this.drawHitLine(line);
     }
 
 
-    drawClear() {
-        this.gTest.clear();
-        if(this.icon) this.removeChild(this.icon);
-        if(this.arrow) this.removeChild(this.arrow);
-    }
+    drawHitLine(line) {
+        this.clearDrawHit();
 
-
-    drawTriangle(line) {
-
-        this.drawClear();
-
-        let inColor = 0x0D99FC;
-        let outColor = 0xEB3333;
-
+        let drawIndex = 0;
+        let drawTime = 5000;
         let uiPoints = this.resizeUI.points;
-        let lt, rt, rb, lb, color,
-            ltColor, rtColor, rbColor, lbColor;
 
-        let result;
-        let alpha = 1;
-        let thickness = 1;
-        let isFill = false;
-        let iconRadius = 10;
-        let iconStr, iconPoint;
-        let leftString = '+ LEFT (OUT)';
-        let rightString = '- RIGHT (IN)';
+        this.doDrawHit(uiPoints.lt, line, drawIndex++, drawTime);
+        this.doDrawHit(uiPoints.rt, line, drawIndex++, drawTime);
+        this.doDrawHit(uiPoints.rb, line, drawIndex++, drawTime);
+        this.doDrawHit(uiPoints.lb, line, drawIndex++, drawTime);
 
-        lt = Calc.triangleArea(uiPoints.lt, line.a, line.b);
-        rt = Calc.triangleArea(uiPoints.rt, line.a, line.b);
-        rb = Calc.triangleArea(uiPoints.rb, line.a, line.b);
-        lb = Calc.triangleArea(uiPoints.lb, line.a, line.b);
-
-        this.drawId0 = setTimeout(() => {
-            this.drawClear();
-
-            result = Calc.triangleArea(uiPoints.lt, line.a, line.b);
-            color = (result > 0) ? outColor : inColor;
-            Painter.drawLine(this.gTest, uiPoints.lt, line.a, 1, color);
-            Painter.drawLine(this.gTest, uiPoints.lt, line.b, 1, color);
-
-            iconStr = (result > 0) ? leftString : rightString;
-            this.icon = Painter.getIcon(iconStr, iconRadius, color);
-            iconPoint = Calc.getTriangleCenterPoint(uiPoints.lt, line.a, line.b);
-            this.icon.x = iconPoint.x;
-            this.icon.y = iconPoint.y;
-            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
-            this.addChild(this.arrow);
-            this.addChild(this.icon);
-
-            Painter.drawTriagle(this.gTest, uiPoints.lt, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime * 0);
-
-        this.drawId1 = setTimeout(() => {
-            this.drawClear();
-
-            result = Calc.triangleArea(uiPoints.rt, line.a, line.b);
-            color = (result > 0) ? outColor : inColor;
-            Painter.drawLine(this.gTest, uiPoints.rt, line.a, 1, color);
-            Painter.drawLine(this.gTest, uiPoints.rt, line.b, 1, color);
-
-            iconStr = (result > 0) ? leftString : rightString;
-            this.icon = Painter.getIcon(iconStr, iconRadius, color);
-            iconPoint = Calc.getTriangleCenterPoint(uiPoints.rt, line.a, line.b);
-            this.icon.x = iconPoint.x;
-            this.icon.y = iconPoint.y;
-            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
-            this.addChild(this.arrow);
-            this.addChild(this.icon);
-
-            Painter.drawTriagle(this.gTest, uiPoints.rt, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime * 1);
-
-        this.drawId2 = setTimeout(() => {
-            this.drawClear();
-
-            result = Calc.triangleArea(uiPoints.rb, line.a, line.b);
-            color = (result > 0) ? outColor : inColor;
-            Painter.drawLine(this.gTest, uiPoints.rb, line.a, 1, color);
-            Painter.drawLine(this.gTest, uiPoints.rb, line.b, 1, color);
-
-            iconStr = (result > 0) ? leftString : rightString;
-            this.icon = Painter.getIcon(iconStr, iconRadius, color);
-            iconPoint = Calc.getTriangleCenterPoint(uiPoints.rb, line.a, line.b);
-            this.icon.x = iconPoint.x;
-            this.icon.y = iconPoint.y;
-            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
-            this.addChild(this.arrow);
-            this.addChild(this.icon);
-
-            Painter.drawTriagle(this.gTest, uiPoints.rb, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime * 2);
-
-        this.drawId3 = setTimeout(() => {
-            this.drawClear();
-
-            result = Calc.triangleArea(uiPoints.lb, line.a, line.b);
-            color = (result > 0) ? outColor : inColor;
-            Painter.drawLine(this.gTest, uiPoints.lb, line.a, 1, color);
-            Painter.drawLine(this.gTest, uiPoints.lb, line.b, 1, color);
-
-            iconStr = (result > 0) ? leftString : rightString;
-            this.icon = Painter.getIcon(iconStr, iconRadius, color);
-            iconPoint = Calc.getTriangleCenterPoint(uiPoints.lb, line.a, line.b);
-            this.icon.x = iconPoint.x;
-            this.icon.y = iconPoint.y;
-            this.arrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), this.icon);
-            this.addChild(this.arrow);
-            this.addChild(this.icon);
-
-            Painter.drawTriagle(this.gTest, uiPoints.lb, line.a, line.b, thickness, color, alpha, isFill);
-        }, this.drawTime * 3);
-
-        this.drawId4 = setTimeout(() => {
-            this.drawClear();
-
+        let id = setTimeout(() => {
+            this.clearDrawHit();
             if(this.hitSide.length > 0) this.startDrawHit();
-        }, this.drawTime * 4);
+        }, this.getDelayTime(drawIndex++, drawTime));
+        this.intervalId.push(id);
+    }
+
+
+    drawHit(uiPoint, line, options = {}) {
+
+        console.log('drawHit(' + uiPoint + ', ' + line + ')');
+        console.log('uiPoint', uiPoint.x, uiPoint.y);
+        console.log('line', line.a, line.b);
+
+        this.clearDrawHit();
+
+        let alpha = options.alpha || 1;
+        let thickness = options.thickness || 1;
+        let isFill = options.isFill || false;
+        let inColor = options.inColor || 0x0D99FC;
+        let outColor = options.outColor || 0xEB3333;
+        let textColor = options.textColor || 0xFFFFFF;
+        let inString = options.inString || '- RIGHT (IN)';
+        let outString = options.outString || '+ LEFT (OUT)';
+
+        let triangleArea = Calc.triangleArea(uiPoint, line.a, line.b);
+
+        let color = (triangleArea > 0) ? outColor : inColor;
+        Painter.drawLine(this.gTest, uiPoint, line.a, 1, color);
+        Painter.drawLine(this.gTest, uiPoint, line.b, 1, color);
+
+        let hitString = (triangleArea > 0) ? outString : inString;
+        this.text = Painter.getText(hitString, textColor, color);
+        let textPoint = Calc.getTriangleCenterPoint(uiPoint, line.a, line.b);
+        this.text.x = textPoint.x;
+        this.text.y = textPoint.y;
+        this.directionArrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), uiPoint);
+        this.vectorDirectionArrow = Painter.getArrow(line.a, line.b, 10, 1, color);
+
+        this.addChild(this.vectorDirectionArrow);
+        this.addChild(this.directionArrow);
+        this.addChild(this.text);
+
+        Painter.drawTriagle(this.gTest, uiPoint, line.a, line.b, thickness, color, alpha, isFill);
     }
 
 
     rotateStart(e) {
         this.stopDrawHit();
+        this.stopFixMove();
 
         this.setImagePivot();
         this.resizeUIPoints = this.resizeUI.points;
