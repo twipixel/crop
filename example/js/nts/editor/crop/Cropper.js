@@ -115,7 +115,8 @@ export class Cropper extends PIXI.Container {
         this.resizeUI.on('cornerResizeEnd', this.cornerResizeEnd.bind(this));
     }
 
-    update() {}
+    update() {
+    }
 
     resize() {
         // 최초 실행: 화면 초기화
@@ -126,11 +127,11 @@ export class Cropper extends PIXI.Container {
             this.resizeUI.resize(imageBounds);
             this.moveUI.setSize(this.resizeUI.bounds);
 
-            //this.image.width = imageBounds.width * 1.2;
-            //this.image.height = imageBounds.height * 1.2;
+            this.image.width = imageBounds.width * 1.02;
+            this.image.height = imageBounds.height * 1.02;
 
-            this.image.width = imageBounds.width;
-            this.image.height = imageBounds.height;
+            //this.image.width = imageBounds.width;
+            //this.image.height = imageBounds.height;
             this.test();
         } else {
             var resizeUIBounds = this.resizeUI.bounds;
@@ -181,7 +182,7 @@ export class Cropper extends PIXI.Container {
         var p4 = Calc.getNextMovePosition(cx, cy, 90, rotation30);
         var p5 = Calc.getNextMovePosition(cx, cy, 90, -rotation30);
 
-        Painter.drawCircle(this.gTest, {x:cx, y:cy}, 4, 0x000000);
+        Painter.drawCircle(this.gTest, {x: cx, y: cy}, 4, 0x000000);
         Painter.drawCircle(this.gTest, p1, 4);
         Painter.drawCircle(this.gTest, p2, 4);
         Painter.drawCircle(this.gTest, p3, 4);
@@ -197,7 +198,7 @@ export class Cropper extends PIXI.Container {
         var rotation = Calc.toRadians(45) - Calc.toRadians(90);   // 우상단으로
         //var rotation = Calc.toRadians(45) + Calc.toRadians(90);     // 좌하단으로
 
-        for(var i=0; i<90; i++) {
+        for (var i = 0; i < 90; i++) {
             var x = this.prevX + d * Math.cos(rotation);
             var y = this.prevY + d * Math.sin(rotation);
             //Painter.drawLine(this.gMove, {x:this.prevX, y:this.prevY}, {x:x, y:y}, 2);
@@ -212,22 +213,22 @@ export class Cropper extends PIXI.Container {
         switch (keycode) {
             case KeyCode.NUM_1:
                 offset = 0;
-                this.image.setPivot({x:offset, y:offset});
+                this.image.setPivot({x: offset, y: offset});
                 break;
 
             case KeyCode.NUM_2:
                 offset = -10;
-                this.image.setPivot({x:offset, y:offset});
+                this.image.setPivot({x: offset, y: offset});
                 break;
 
             case KeyCode.NUM_3:
                 offset = -20;
-                this.image.setPivot({x:offset, y:offset});
+                this.image.setPivot({x: offset, y: offset});
                 break;
 
             case KeyCode.NUM_4:
                 offset = -30;
-                this.image.setPivot({x:offset, y:offset});
+                this.image.setPivot({x: offset, y: offset});
                 break;
         }
     }
@@ -235,7 +236,7 @@ export class Cropper extends PIXI.Container {
     setImagePivot() {
         var cx = this.canvas.width / 2;
         var cy = this.canvas.height / 2;
-        this.image.setPivot({x:cx, y:cy});
+        this.image.setPivot({x: cx, y: cy});
     }
 
     moveStart(e) {
@@ -265,32 +266,32 @@ export class Cropper extends PIXI.Container {
             this.isHit = true;
 
             /*if(this.isHit) {
-                var hitSide = this.image.getHitSide(this.resizeUI);
+             var hitSide = this.image.getHitSide(this.resizeUI);
 
-                switch (hitSide) {
-                    case HitSide.LEFT:
-                    case HitSide.RIGHT:
-                        nextPoint = Calc.getNextMovePosition(cx, cy, dy, rotation + this.rotation90);
-                        break;
+             switch (hitSide) {
+             case HitSide.LEFT:
+             case HitSide.RIGHT:
+             nextPoint = Calc.getNextMovePosition(cx, cy, dy, rotation + this.rotation90);
+             break;
 
-                    case HitSide.TOP:
-                    case HitSide.BOTTOM:
-                        nextPoint = Calc.getNextMovePosition(cx, cy, dx, rotation);
-                        break;
+             case HitSide.TOP:
+             case HitSide.BOTTOM:
+             nextPoint = Calc.getNextMovePosition(cx, cy, dx, rotation);
+             break;
 
-                    default:
-                        this.image.fixMove(this.resizeUI, this.stageRotation);
-                        break;
-                }
+             default:
+             this.image.fixMove(this.resizeUI, this.stageRotation);
+             break;
+             }
 
-                if(nextPoint) {
-                    this.image.x = nextPoint.x;
-                    this.image.y = nextPoint.y;
-                }
-            } else {
-                this.isHit = true;
-                this.image.fixMove(this.resizeUI, this.stageRotation);
-            }*/
+             if(nextPoint) {
+             this.image.x = nextPoint.x;
+             this.image.y = nextPoint.y;
+             }
+             } else {
+             this.isHit = true;
+             this.image.fixMove(this.resizeUI, this.stageRotation);
+             }*/
 
         } else {
             this.isHit = false;
@@ -304,7 +305,7 @@ export class Cropper extends PIXI.Container {
             //this.image.y = this.prevImageY;
         }
 
-        this.image.displayHit(this.isHit);
+        this.image.displayHit(this.image.isContainsBounds(this.resizeUI) === false);
         this.image.updatePrevLtPointForPivot();
     }
 
@@ -346,7 +347,7 @@ export class Cropper extends PIXI.Container {
     stopDrawHit() {
         var totalInterval = this.intervalId.length;
 
-        for(var i=0; i<totalInterval; i++)
+        for (var i = 0; i < totalInterval; i++)
             clearTimeout(this.intervalId.pop());
 
         this.clearDrawHit();
@@ -354,10 +355,10 @@ export class Cropper extends PIXI.Container {
 
 
     clearDrawHit() {
-        if(this.gTest) this.gTest.clear();
-        if(this.text) this.removeChild(this.text);
-        if(this.directionArrow) this.removeChild(this.directionArrow);
-        if(this.vectorDirectionArrow) this.removeChild(this.vectorDirectionArrow);
+        if (this.gTest) this.gTest.clear();
+        if (this.text) this.removeChild(this.text);
+        if (this.directionArrow) this.removeChild(this.directionArrow);
+        if (this.vectorDirectionArrow) this.removeChild(this.vectorDirectionArrow);
     }
 
 
@@ -387,24 +388,27 @@ export class Cropper extends PIXI.Container {
 
 
         this.startFixMove();
-
         return;
 
-        for(var i=0; i<uiPoints.length; i++) {
+        for (var i = 0; i < uiPoints.length; i++) {
             let point = uiPoints[i];
-            for(var j=0; j<imageLines.length; j++) {
+            for (var j = 0; j < imageLines.length; j++) {
                 this.doDrawHit(point, imageLines[j], delayIndex++, delayTime);
             }
         }
 
-        setTimeout(() => {
-            this.fixMove();
-        }, this.getDelayTime(delayIndex++));
+
+        let id = setTimeout(() => {
+            this.startFixMove();
+        }, this.getDelayTime(delayIndex++, delayTime));
+
+        this.intervalId.push(id);
     }
 
 
     startFixMove() {
         this.stopFixMove();
+        if (this.image.isContainsBounds(this.resizeUI)) return;
 
         let delayIndex = 0;
         let delayTime = 3000;
@@ -419,24 +423,32 @@ export class Cropper extends PIXI.Container {
                 resizeUI.isLtInsideBounds(image) === false) {
                 console.log('isOutLeftLine');
                 this.doFixMove(resizeUI.lt, image.leftLine, delayIndex++, delayTime, 'lt leftLine');
+                this.delayFixMove(delayIndex++, delayTime);
+                return;
             }
 
             if (image.isOutBottomLine(resizeUI.lb) &&
                 resizeUI.isLbInsideBounds(image) === false) {
                 console.log('isOutBottomLine');
                 this.doFixMove(resizeUI.lb, image.bottomLine, delayIndex++, delayTime, 'lb bottomLine');
+                this.delayFixMove(delayIndex++, delayTime);
+                return;
             }
 
             if (image.isOutTopLine(resizeUI.rt) &&
                 resizeUI.isRtInsideBounds(image) === false) {
                 console.log('isOutTopLine');
                 this.doFixMove(resizeUI.rt, image.topLine, delayIndex++, delayTime, 'rt topLine');
+                this.delayFixMove(delayIndex++, delayTime);
+                return;
             }
 
             if (image.isOutRightLine(resizeUI.rb) &&
                 resizeUI.isRbInsideBounds(image) === false) {
                 console.log('isOutRightLine');
                 this.doFixMove(resizeUI.rb, image.rightLine, delayIndex++, delayTime, 'rb rightLine');
+                this.delayFixMove(delayIndex++, delayTime);
+                return;
             }
 
         } else {
@@ -446,33 +458,50 @@ export class Cropper extends PIXI.Container {
                 resizeUI.isLtInsideBounds(image) === false) {
                 console.log('isOutTopLine');
                 this.doFixMove(resizeUI.lt, image.topLine, delayIndex++, delayTime, 'lt topLine');
+                this.delayFixMove(delayIndex++, delayTime);
+                return;
             }
 
             if (image.isOutLeftLine(resizeUI.lb) &&
                 resizeUI.isLbInsideBounds(image) === false) {
                 console.log('isOutLeftLine');
                 this.doFixMove(resizeUI.lb, image.leftLine, delayIndex++, delayTime, 'lb leftLine');
+                this.delayFixMove(delayIndex++, delayTime);
+                return;
             }
 
             if (image.isOutRightLine(resizeUI.rt) &&
                 resizeUI.isRtInsideBounds(image) === false) {
                 console.log('isOutRightLine');
                 this.doFixMove(resizeUI.rt, image.rightLine, delayIndex++, delayTime, 'rt rightLine');
+                // this.delayFixMove(delayIndex++, delayTime);
+                // return;
             }
 
             if (image.isOutBottomLine(resizeUI.rb) &&
                 resizeUI.isRbInsideBounds(image) === false) {
                 console.log('isOutBottomLine');
                 this.doFixMove(resizeUI.rb, image.bottomLine, delayIndex++, delayTime, 'rb bottomLine');
+                this.delayFixMove(delayIndex++, delayTime);
+                return;
             }
 
         }
     }
 
+
+    delayFixMove(delayIndex, delayTime) {
+        let id = setTimeout(() => {
+            this.startFixMove();
+        }, this.getDelayTime(delayIndex, delayTime));
+        this.intervalId.push(id);
+    }
+
+
     stopFixMove() {
         var totalInterval = this.intervalId.length;
 
-        for(var i=0; i<totalInterval; i++)
+        for (var i = 0; i < totalInterval; i++)
             clearTimeout(this.intervalId.pop());
 
         this.clearFixMove();
@@ -480,10 +509,10 @@ export class Cropper extends PIXI.Container {
 
 
     clearFixMove() {
-        if(this.gTest) this.gTest.clear();
-        if(this.imageCircle) this.removeChild(this.imageCircle);
-        if(this.returnCircle) this.removeChild(this.returnCircle);
-        if(this.fixArrow) this.removeChild(this.fixArrow);
+        if (this.gTest) this.gTest.clear();
+        if (this.imageCircle) this.removeChild(this.imageCircle);
+        if (this.returnCircle) this.removeChild(this.returnCircle);
+        if (this.fixArrow) this.removeChild(this.fixArrow);
     }
 
 
@@ -506,6 +535,8 @@ export class Cropper extends PIXI.Container {
         let arrowColor = 0xFFFFFF;
         let distancePoint = Calc.getShortestDistancePoint(uiPoint, line.a, line.b);
         let returnPoint = Calc.getReturnPoint(uiPoint, distancePoint);
+        let space = 0.2;
+
 
         this.imageCircle = Painter.getCircle(50, inColor);
         this.imageCircle.x = this.image.x;
@@ -517,8 +548,13 @@ export class Cropper extends PIXI.Container {
         this.addChild(this.imageCircle);
         this.addChild(this.returnCircle);
         this.addChild(this.fixArrow);
-        this.image.x = this.image.x + returnPoint.x;
-        this.image.y = this.image.y + returnPoint.y;
+
+        let signX = (returnPoint.x < 0) ? -1 : 1;
+        let signY = (returnPoint.y < 0) ? -1 : 1;
+        this.image.x = this.image.x + returnPoint.x + (space * signX);
+        this.image.y = this.image.y + returnPoint.y + (space * signY);
+
+        this.image.displayHit(this.image.isContainsBounds(this.resizeUI) === false);
     }
 
 
@@ -538,7 +574,7 @@ export class Cropper extends PIXI.Container {
 
 
     checkHitSide() {
-        if(this.hitSide == HitSide.NONE || this.hitSide == void 0) return;
+        if (this.hitSide == HitSide.NONE || this.hitSide == void 0) return;
         var imageHitSide = this.hitSide.pop();
         this.drawHitSide(imageHitSide);
     }
@@ -594,7 +630,7 @@ export class Cropper extends PIXI.Container {
 
         let id = setTimeout(() => {
             this.clearDrawHit();
-            if(this.hitSide.length > 0) this.startDrawHit();
+            if (this.hitSide.length > 0) this.startDrawHit();
         }, this.getDelayTime(drawIndex++, drawTime));
         this.intervalId.push(id);
     }
@@ -629,13 +665,13 @@ export class Cropper extends PIXI.Container {
         this.text.x = textPoint.x;
         this.text.y = textPoint.y;
         this.directionArrow = Painter.getArrow(Calc.getLineMiddle(line.a, line.b), uiPoint);
-        this.vectorDirectionArrow = Painter.getArrow(line.a, line.b, 10, 1, color);
+        this.vectorDirectionArrow = Painter.getArrow(line.a, line.b, 10, 1, 0xFFFFFF);
 
         this.addChild(this.vectorDirectionArrow);
         this.addChild(this.directionArrow);
         this.addChild(this.text);
 
-        Painter.drawTriagle(this.gTest, uiPoint, line.a, line.b, thickness, color, alpha, isFill);
+        //Painter.drawTriagle(this.gTest, uiPoint, line.a, line.b, thickness, color, alpha, isFill);
     }
 
 
@@ -658,7 +694,7 @@ export class Cropper extends PIXI.Container {
         //this.displayImageRotationBounds();
 
         if (this.image.isContainsBounds(this.resizeUI) === false) {
-            var pivot = {x:this.image.x, y:this.image.y};
+            var pivot = {x: this.image.x, y: this.image.y};
             var rPoints = Calc.getRotationRectanglePoints(pivot, this.resizeUIPoints, Calc.toDegrees(this.image.rotation));
             var rRect = Calc.getBoundsRectangle(rPoints);
             var scale = Calc.getBoundsScale(rRect, this.image);
@@ -678,6 +714,7 @@ export class Cropper extends PIXI.Container {
             this.image.fixMove(this.resizeUI, this.stageRotation);
         }
         this.image.updatePrevLtPointForPivot();
+        this.image.displayHit(this.image.isContainsBounds(this.resizeUI) === false);
     }
 
     /**
@@ -828,7 +865,7 @@ export class Cropper extends PIXI.Container {
         this._stageRotation = radians;
 
         /*if(-360 == Calc.toDegrees(this._stageRotation))
-            this._stageRotation = 0;*/
+         this._stageRotation = 0;*/
     }
 
     get stageRotation() {
@@ -861,6 +898,6 @@ export class Cropper extends PIXI.Container {
         rotationRect.x = this.canvas.width / 2 - rotationRect.width / 2;
         rotationRect.y = this.canvas.height / 2 - rotationRect.height / 2;
 
-         //Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4); // 하늘색
+        //Painter.drawBounds(this.gImage, rotationRect, true, 2, 0x00FCFF, 0.4); // 하늘색
     }
 }
