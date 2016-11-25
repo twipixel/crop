@@ -20,7 +20,7 @@ export class ImageEditor {
         this.renderer = new PIXI.CanvasRenderer(this.canvas.width, this.canvas.height, {
             view: this.canvas,
             autoResize: true,
-            backgroundColor: 0x000000
+            backgroundColor: 0x1B1B1B
         });
 
         this.stage = new PIXI.Container(0xE6E9EC);

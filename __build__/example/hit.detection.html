@@ -7,11 +7,11 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #000000;
+            background-color: #1B1B1B;
         }
 
         #canvas {
-            background: #000000;
+            background: #1B1B1B;
         }
     </style>
 </head>
@@ -21,7 +21,7 @@
     이미지를 이동 시키면서 자르는 영역과 충돌 여부를 눈에 보이도록
 -->
 
-<img id="image" style="visibility: hidden;" src="./../src/img/09.jpeg">
+<img id="image" style="visibility: hidden;" src="./../src/img/02.jpeg">
 <canvas id="canvas" width="0" height="0"></canvas>
 <canvas id="texture" width="0" height="0"></canvas>
 
@@ -29,8 +29,9 @@
 <script src="./../src/libs/pixi.js"></script>
 
 <script>
-    /*(function(){
+    (function(){
         if (navigator.userAgent.indexOf('Electron') >= 0) {
+            // Install babel hooks to the browser process
             require('babel-core/register')();
             require('./js/index');
         } else {
@@ -40,10 +41,7 @@
             script.src="./bundle.js";
             body.appendChild(script);
         }
-    })();*/
-
-    require('babel-core/register')();
-    require('./js/index');
+    })();
 </script>
 
 </body>

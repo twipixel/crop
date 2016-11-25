@@ -81,7 +81,6 @@ export class ImageUI extends PIXI.Container {
     displayHit(isHit) {
         if(!this.hitColorRect) return;
         var bounds = this.bounds;
-        console.log('boudns.width:', bounds.width, 'bounds.height:', bounds.height);
         var alpha = (isHit === true) ? 0.3 : 0;
         this.hitSprite.alpha = alpha;
     }

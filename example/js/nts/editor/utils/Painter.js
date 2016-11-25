@@ -18,7 +18,7 @@ export class Painter {
     static getCircle(radius = 2, color = 0xFF3300, alpha = 1) {
         var cicle = new PIXI.Graphics();
         cicle.beginFill(color, alpha);
-        cicle.drawRect(0, 0, radius);
+        cicle.drawCircle(0, 0, radius);
         cicle.endFill();
         return cicle;
     }
