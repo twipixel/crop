@@ -330,7 +330,7 @@ export class Cropper extends PIXI.Container {
         var isRbOut = !this.resizeUI.isRbInsideBounds(this.image);
         var isLbOut = !this.resizeUI.isLbInsideBounds(this.image);
         this.hitSide = hitSide;
-        this.startDrawHit(2000);
+        this.startDrawHit();
     }
 
 
@@ -367,8 +367,9 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    startDrawHit(delayTime = 2000) {
+    startDrawHit(delayTime = 500) {
         this.delayTime = delayTime;
+
 
         this.stopGuide();
         this.stopDrawHit();
@@ -403,6 +404,7 @@ export class Cropper extends PIXI.Container {
      */
     drawHitAll() {
 
+        this.fixHistory = [];
         this.clearDrawHit();
 
         let delayIndex = 0;
@@ -540,13 +542,30 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    doFixMove(uiPoint, line, delayIndex, delayTime = 3000, displayString = '') {
+    doFixMove(uiPoint, line, delayIndex, delayTime = 3000, fixPoint = '') {
 
-        let id = setTimeout(() => {
-            this.fixMove(uiPoint, line);
-        }, this.getDelayTime(delayIndex, delayTime));
+        var isFixed = false;
 
-        this.intervalId.push(id);
+        for(var i=0; i<this.fixHistory.length; i++) {
+            if(fixPoint == this.fixHistory[i]) {
+                isFixed = true;
+                break;
+            }
+        }
+
+        //console.log(this.fixHistory.length, 'fixPoint:', fixPoint, 'isFixed', isFixed);
+
+        if(isFixed) {
+            this.stopFixMove();
+        } else {
+            this.fixHistory.push(fixPoint);
+
+            let id = setTimeout(() => {
+                this.fixMove(uiPoint, line);
+            }, this.getDelayTime(delayIndex, delayTime));
+
+            this.intervalId.push(id);
+        }
     }
 
 
