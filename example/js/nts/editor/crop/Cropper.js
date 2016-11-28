@@ -367,7 +367,7 @@ export class Cropper extends PIXI.Container {
     }
 
 
-    startDrawHit(delayTime = 500) {
+    startDrawHit(delayTime = 1000) {
         this.delayTime = delayTime;
 
 
