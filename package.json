@@ -1,13 +1,10 @@
 {
-  "name": "study-image-editor",
+  "name": "image-crop",
   "version": "0.0.1",
   "license": "MIT",
   "author": "twipixel",
   "main": "electron.js",
-  "dependencies": {
-    "jquery": "^2.2.0",
-    "jquery-ui": "^1.10.5"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.18.0",
@@ -19,7 +16,7 @@
     "babelify": "^7.3.0",
     "browserify": "^13.1.1",
     "del": "^2.2.2",
-    "electron-prebuilt": "^1.3.8",
+    "electron-prebuilt": "^1.4.8",
     "fs": "0.0.1-security",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
