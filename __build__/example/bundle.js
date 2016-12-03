@@ -752,7 +752,7 @@ var Cropper = exports.Cropper = function (_PIXI$Container) {
     };
 
     Cropper.prototype.startDrawHit = function startDrawHit() {
-        var delayTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1500;
+        var delayTime = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1200;
 
         this.delayTime = delayTime;
 
