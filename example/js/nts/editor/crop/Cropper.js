@@ -356,7 +356,10 @@ export class Cropper extends PIXI.Container {
     doGuide() {
         if(this.isGuide === false) {
             this.isGuide = true;
-            this.guideText = Painter.getText('DRAG IMAGE', 0xFFFFFF, 0xEB3333);
+
+            if(!this.guideText)
+                this.guideText = Painter.getText('DRAG IMAGE', 0xFFFFFF, 0xEB3333);
+
             this.guideText.x = this.canvas.width / 2;
             this.guideText.y = this.canvas.height / 2;
             this.addChild(this.guideText);

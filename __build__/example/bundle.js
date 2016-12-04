@@ -741,7 +741,9 @@ var Cropper = exports.Cropper = function (_PIXI$Container) {
     Cropper.prototype.doGuide = function doGuide() {
         if (this.isGuide === false) {
             this.isGuide = true;
-            this.guideText = _Painter.Painter.getText('DRAG IMAGE', 0xFFFFFF, 0xEB3333);
+
+            if (!this.guideText) this.guideText = _Painter.Painter.getText('DRAG IMAGE', 0xFFFFFF, 0xEB3333);
+
             this.guideText.x = this.canvas.width / 2;
             this.guideText.y = this.canvas.height / 2;
             this.addChild(this.guideText);
