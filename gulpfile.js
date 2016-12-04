@@ -42,14 +42,14 @@ gulp.task('clean', () => del(dirRoot + dirBuild + '**/*', {
 
 
 gulp.task('img', () => {
-    return gulp.src([dirRoot + dirSrc + dirImg + '**/*'])
+    return gulp.src([dirRoot + dirSrc + dirImg + '/**/*.*'])
         .pipe(cached('img'))
         .pipe(imagemin({
             progressive: true,
             svgoPlugins: [],
             use: [pngquant()]
         }))
-        .pipe(gulp.dest(dirRoot + dirBuild + dirSrc));
+        .pipe(gulp.dest(dirRoot + dirBuild + dirSrc + dirImg));
 });
 
 
@@ -65,9 +65,9 @@ gulp.task('html', () => {
 
 
 gulp.task('libs', () => {
-    return gulp.src(dirRoot + dirSrc + dirLibs + '**/*')
+    return gulp.src(dirRoot + dirSrc + dirLibs + '/**/*.js')
         .pipe(cached('libs'))
-        .pipe(gulp.dest(dirRoot + dirBuild + dirSrc));
+        .pipe(gulp.dest(dirRoot + dirBuild + dirSrc + dirLibs));
 });
 
 
