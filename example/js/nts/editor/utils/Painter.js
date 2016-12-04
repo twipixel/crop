@@ -150,7 +150,7 @@ export class Painter {
     static getText(str, textColor = 0xFFFFFF, backgroundColor = 0xFFFFFF) {
         let container = new PIXI.Sprite();
 
-        let text = new PIXI.Text(str, {fontSize:14, fill:0xFFFFFF});
+        let text = new PIXI.Text(str, {fontSize:14, fill:textColor});
         text.x = -text.width / 2;
         text.y = -text.height / 2;
 

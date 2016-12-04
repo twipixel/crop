@@ -3498,7 +3498,7 @@ var Painter = exports.Painter = function () {
 
         var container = new PIXI.Sprite();
 
-        var text = new PIXI.Text(str, { fontSize: 14, fill: 0xFFFFFF });
+        var text = new PIXI.Text(str, { fontSize: 14, fill: textColor });
         text.x = -text.width / 2;
         text.y = -text.height / 2;
 
