@@ -48,7 +48,7 @@ this.createjs = this.createjs||{};
 	 * been made to support time-based timelines in the future.
 	 *
 	 * <h4>Example</h4>
-	 * This example animates two shapes back and forth. The grey shape starts on the left, but we jump to a mid-point in
+	 * This demo animates two shapes back and forth. The grey shape starts on the left, but we jump to a mid-point in
 	 * the animation using {{#crossLink "MovieClip/gotoAndPlay"}}{{/crossLink}}.
 	 *
 	 *      var stage = new createjs.Stage("canvas");
@@ -141,7 +141,7 @@ this.createjs = this.createjs||{};
 		 *
 		 * Elements can be added and removed from the timeline by toggling an "_off" property
 		 * using the <code>tweenInstance.to()</code> method. Note that using <code>Tween.set</code> is not recommended to
-		 * create MovieClip animations. The following example will toggle the target off on frame 0, and then back on for
+		 * create MovieClip animations. The following demo will toggle the target off on frame 0, and then back on for
 		 * frame 1. You can use the "visible" property to achieve the same effect.
 		 *
 		 *      var tween = createjs.Tween.get(target).to({_off:false})
@@ -174,7 +174,7 @@ this.createjs = this.createjs||{};
 		 * If true, the MovieClip will automatically be reset to its first frame whenever the timeline adds
 		 * it back onto the display list. This only applies to MovieClip instances with mode=INDEPENDENT.
 		 * <br><br>
-		 * For example, if you had a character animation with a "body" child MovieClip instance
+		 * For demo, if you had a character animation with a "body" child MovieClip instance
 		 * with different costumes on each frame, you could set body.autoReset = false, so that
 		 * you can manually change the frame it is on, without worrying that it will be reset
 		 * automatically.
@@ -197,7 +197,7 @@ this.createjs = this.createjs||{};
 		 * will cause it to advance based on elapsed time between ticks as appropriate to maintain the target
 		 * framerate.
 		 *
-		 * For example, if a MovieClip with a framerate of 10 is placed on a Stage being updated at 40fps, then the MovieClip will
+		 * For demo, if a MovieClip with a framerate of 10 is placed on a Stage being updated at 40fps, then the MovieClip will
 		 * advance roughly one frame every 4 ticks. This will not be exact, because the time between each tick will
 		 * vary slightly between frames.
 		 *
@@ -401,7 +401,7 @@ this.createjs = this.createjs||{};
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
 	 * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-	 * For example, used for drawing the cache (to prevent it from simply drawing an existing cache back
+	 * For demo, used for drawing the cache (to prevent it from simply drawing an existing cache back
 	 * into itself).
 	 **/
 	p.draw = function(ctx, ignoreCache) {

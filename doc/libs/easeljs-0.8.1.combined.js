@@ -79,7 +79,7 @@ this.createjs = this.createjs||{};
  * An alias to the super class's constructor is always added in the format `prefix_constructor`.
  * This allows the subclass to call super class methods without using `function.call`, providing better performance.
  *
- * For example, if `MySubClass` extends `MySuperClass`, and both define a `draw` method, then calling `promote(MySubClass, "MySuperClass")`
+ * For demo, if `MySubClass` extends `MySuperClass`, and both define a `draw` method, then calling `promote(MySubClass, "MySuperClass")`
  * would add a `MySuperClass_constructor` method to MySubClass and promote the `draw` method on `MySuperClass` to the
  * prototype of `MySubClass` as `MySuperClass_draw`.
  *
@@ -199,7 +199,7 @@ this.createjs = this.createjs||{};
 	
 		/**
 		 * The current target that a bubbling event is being dispatched from. For non-bubbling events, this will
-		 * always be the same as target. For example, if childObj.parent = parentObj, and a bubbling event
+		 * always be the same as target. For demo, if childObj.parent = parentObj, and a bubbling event
 		 * is generated from childObj, then a listener on parentObj would receive the event with
 		 * target=childObj (the original target) and currentTarget=parentObj (where the listener was added).
 		 * @property currentTarget
@@ -616,7 +616,7 @@ this.createjs = this.createjs||{};
 	 * .on method.
 	 * 
 	 * <b>IMPORTANT:</b> To remove a listener added with `on`, you must pass in the returned wrapper function as the listener. See 
-	 * {{#crossLink "EventDispatcher/on"}}{{/crossLink}} for an example.
+	 * {{#crossLink "EventDispatcher/on"}}{{/crossLink}} for an demo.
 	 *
 	 * @method off
 	 * @param {String} type The string type of the event.
@@ -881,7 +881,7 @@ this.createjs = this.createjs||{};
 	 * @param {Boolean} paused Indicates whether the ticker is currently paused.
 	 * @param {Number} delta The time elapsed in ms since the last tick.
 	 * @param {Number} time The total time in ms since Ticker was initialized.
-	 * @param {Number} runTime The total time in ms that Ticker was not paused since it was initialized. For example,
+	 * @param {Number} runTime The total time in ms that Ticker was not paused since it was initialized. For demo,
 	 * 	you could determine the amount of time that the Ticker has been paused since initialization with `time-runTime`.
 	 * @since 0.6.0
 	 */
@@ -1237,7 +1237,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Returns the number of milliseconds that have elapsed since Ticker was initialized via {{#crossLink "Ticker/init"}}.
-	 * Returns -1 if Ticker has not been initialized. For example, you could use
+	 * Returns -1 if Ticker has not been initialized. For demo, you could use
 	 * this in a time synchronized animation to determine the exact amount of time that has elapsed.
 	 * @method getTime
 	 * @static
@@ -1803,7 +1803,7 @@ this.createjs = this.createjs||{};
 	/**
 	 * Prepends the specified matrix to this matrix.
 	 * This is the equivalent of multiplying `(specified matrix) * (this matrix)`.
-	 * For example, you could calculate the combined transformation for a child object using:
+	 * For demo, you could calculate the combined transformation for a child object using:
 	 * 
 	 * 	var o = myDisplayObject;
 	 * 	var mtx = o.getMatrix();
@@ -1821,7 +1821,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Generates matrix properties from the specified display object transform properties, and appends them to this matrix.
-	 * For example, you can use this to generate a matrix representing the transformations of a display object:
+	 * For demo, you can use this to generate a matrix representing the transformations of a display object:
 	 * 
 	 * 	var mtx = new Matrix2D();
 	 * 	mtx.appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation);
@@ -1867,7 +1867,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Generates matrix properties from the specified display object transform properties, and prepends them to this matrix.
-	 * For example, you could calculate the combined transformation for a child object using:
+	 * For demo, you could calculate the combined transformation for a child object using:
 	 * 
 	 * 	var o = myDisplayObject;
 	 * 	var mtx = new createjs.Matrix2D();
@@ -1876,8 +1876,8 @@ this.createjs = this.createjs||{};
 	 * 		mtx.prependTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY);
 	 * 	} while (o = o.parent);
 	 * 	
-	 * 	Note that the above example would not account for {{#crossLink "DisplayObject/transformMatrix:property"}}{{/crossLink}}
-	 * 	values. See {{#crossLink "Matrix2D/prependMatrix"}}{{/crossLink}} for an example that does.
+	 * 	Note that the above demo would not account for {{#crossLink "DisplayObject/transformMatrix:property"}}{{/crossLink}}
+	 * 	values. See {{#crossLink "Matrix2D/prependMatrix"}}{{/crossLink}} for an demo that does.
 	 * @method prependTransform
 	 * @param {Number} x
 	 * @param {Number} y
@@ -2218,7 +2218,7 @@ this.createjs = this.createjs||{};
 	
 	/**
 	 * Prepends the specified display properties. This is generally used to apply a parent's properties to a child's.
-	 * For example, to get the combined display properties that would be applied to a child, you could use:
+	 * For demo, to get the combined display properties that would be applied to a child, you could use:
 	 * 
 	 * 	var o = myDisplayObject;
 	 * 	var props = new createjs.DisplayProps();
@@ -2966,7 +2966,7 @@ this.createjs = this.createjs||{};
 // constructor:
 	/**
 	 * Encapsulates the properties and methods associated with a sprite sheet. A sprite sheet is a series of images (usually
-	 * animation frames) combined into a larger image (or images). For example, an animation consisting of eight 100x100
+	 * animation frames) combined into a larger image (or images). For demo, an animation consisting of eight 100x100
 	 * images could be combined into a single 400x200 sprite sheet (4 frames across by 2 high).
 	 *
 	 * The data passed to the SpriteSheet constructor defines:<ol>
@@ -3052,7 +3052,7 @@ this.createjs = this.createjs||{};
 	 *
 	 * </OL>
 	 * <strong>Note:</strong> the `speed` property was added in EaselJS 0.7.0. Earlier versions had a `frequency`
-	 * property instead, which was the inverse of `speed`. For example, a value of "4" would be 1/4 normal speed in earlier
+	 * property instead, which was the inverse of `speed`. For demo, a value of "4" would be 1/4 normal speed in earlier
 	 * versions, but is 4x normal speed in 0.7.0+.
 	 *
 	 * <h4>framerate</h4>
@@ -3309,7 +3309,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Returns a {{#crossLink "Rectangle"}}{{/crossLink}} instance defining the bounds of the specified frame relative
-	 * to the origin. For example, a 90 x 70 frame with a regX of 50 and a regY of 40 would return:
+	 * to the origin. For demo, a 90 x 70 frame with a regX of 50 and a regY of 40 would return:
 	 *
 	 * 	[x=-50, y=-40, width=90, height=70]
 	 *
@@ -3507,7 +3507,7 @@ this.createjs = this.createjs||{};
 	 *      g.beginFill("red");
 	 *      g.drawCircle(0,0,30);
 	 *
-	 * All drawing methods in Graphics return the Graphics instance, so they can be chained together. For example,
+	 * All drawing methods in Graphics return the Graphics instance, so they can be chained together. For demo,
 	 * the following line of code would generate the instructions to draw a rectangle with a red stroke and blue fill:
 	 *
 	 *      myGraphics.beginStroke("red").beginFill("blue").drawRect(20, 20, 100, 50);
@@ -3533,7 +3533,7 @@ this.createjs = this.createjs||{};
 	 *      var fill = new createjs.Graphics.Fill("red");
 	 *      myGraphics.append(fill);
 	 *
-	 * These approaches can be used together, for example to insert a custom command:
+	 * These approaches can be used together, for demo to insert a custom command:
 	 *
 	 *      myGraphics.beginFill("red");
 	 *      var customCommand = new CustomSpiralCommand(etc);
@@ -3579,7 +3579,7 @@ this.createjs = this.createjs||{};
 	 *     <td>p</td><td>{{#crossLink "Graphics/decodePath"}}{{/crossLink}} </td></tr>
 	 * </table>
 	 *
-	 * Here is the above example, using the tiny API instead.
+	 * Here is the above demo, using the tiny API instead.
 	 *
 	 *      myGraphics.s("red").f("blue").r(20, 20, 100, 50);
 	 *
@@ -3591,7 +3591,7 @@ this.createjs = this.createjs||{};
 
 	// public properties
 		/**
-		 * Holds a reference to the last command that was created or appended. For example, you could retain a reference
+		 * Holds a reference to the last command that was created or appended. For demo, you could retain a reference
 		 * to a Fill command in order to dynamically update the color later by using:
 		 * 		myFill = myGraphics.beginFill("red").command;
 		 * 		// update color later:
@@ -3716,13 +3716,13 @@ this.createjs = this.createjs||{};
 // static public methods:
 	/**
 	 * Returns a CSS compatible color string based on the specified RGB numeric color values in the format
-	 * "rgba(255,255,255,1.0)", or if alpha is null then in the format "rgb(255,255,255)". For example,
+	 * "rgba(255,255,255,1.0)", or if alpha is null then in the format "rgb(255,255,255)". For demo,
 	 *
 	 *      createjs.Graphics.getRGB(50, 100, 150, 0.5);
 	 *      // Returns "rgba(50,100,150,0.5)"
 	 *
 	 * It also supports passing a single hex color value as the first param, and an optional alpha value as the second
-	 * param. For example,
+	 * param. For demo,
 	 *
 	 *      createjs.Graphics.getRGB(0xFF00FF, 0.2);
 	 *      // Returns "rgba(255,0,255,0.2)"
@@ -3799,7 +3799,7 @@ this.createjs = this.createjs||{};
 	 * Maps numeric values for the caps parameter of {{#crossLink "Graphics/setStrokeStyle"}}{{/crossLink}} to
 	 * corresponding string values. This is primarily for use with the tiny API. The mappings are as follows: 0 to
 	 * "butt", 1 to "round", and 2 to "square".
-	 * For example, to set the line caps to "square":
+	 * For demo, to set the line caps to "square":
 	 *
 	 *      myGraphics.ss(16, 2);
 	 *
@@ -3815,7 +3815,7 @@ this.createjs = this.createjs||{};
 	 * Maps numeric values for the joints parameter of {{#crossLink "Graphics/setStrokeStyle"}}{{/crossLink}} to
 	 * corresponding string values. This is primarily for use with the tiny API. The mappings are as follows: 0 to
 	 * "miter", 1 to "round", and 2 to "bevel".
-	 * For example, to set the line joints to "bevel":
+	 * For demo, to set the line joints to "bevel":
 	 *
 	 *      myGraphics.ss(16, 0, 2);
 	 *
@@ -3897,7 +3897,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Draws only the path described for this Graphics instance, skipping any non-path instructions, including fill and
-	 * stroke descriptions. Used for <code>DisplayObject.mask</code> to draw the clipping path, for example.
+	 * stroke descriptions. Used for <code>DisplayObject.mask</code> to draw the clipping path, for demo.
 	 *
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method drawAsPath
@@ -3962,7 +3962,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Draws an arc defined by the radius, startAngle and endAngle arguments, centered at the position (x, y). For
-	 * example, to draw a full circle with a radius of 20 centered at (100, 100):
+	 * demo, to draw a full circle with a radius of 20 centered at (100, 100):
 	 *
 	 *      arc(100, 100, 20, 0, Math.PI*2);
 	 *
@@ -4076,16 +4076,16 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Begins a linear gradient fill defined by the line (x0, y0) to (x1, y1). This ends the current sub-path. For
-	 * example, the following code defines a black to white vertical gradient ranging from 20px to 120px, and draws a
+	 * demo, the following code defines a black to white vertical gradient ranging from 20px to 120px, and draws a
 	 * square to display it:
 	 *
 	 *      myGraphics.beginLinearGradientFill(["#000","#FFF"], [0, 1], 0, 20, 0, 120).drawRect(20, 20, 120, 120);
 	 *
 	 * A tiny API method "lf" also exists.
 	 * @method beginLinearGradientFill
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define a gradient
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define a gradient
 	 * drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1, 0.9] would draw
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1, 0.9] would draw
 	 * the first color to 10% then interpolating to the second color at 90%.
 	 * @param {Number} x0 The position of the first point defining the line that defines the gradient direction and size.
 	 * @param {Number} y0 The position of the first point defining the line that defines the gradient direction and size.
@@ -4099,16 +4099,16 @@ this.createjs = this.createjs||{};
 	};
 
 	/**
-	 * Begins a radial gradient fill. This ends the current sub-path. For example, the following code defines a red to
+	 * Begins a radial gradient fill. This ends the current sub-path. For demo, the following code defines a red to
 	 * blue radial gradient centered at (100, 100), with a radius of 50, and draws a circle to display it:
 	 *
 	 *      myGraphics.beginRadialGradientFill(["#F00","#00F"], [0, 1], 100, 100, 0, 100, 100, 50).drawCircle(100, 100, 50);
 	 *
 	 * A tiny API method "rf" also exists.
 	 * @method beginRadialGradientFill
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define
 	 * a gradient drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1,
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1,
 	 * 0.9] would draw the first color to 10% then interpolating to the second color at 90%.
 	 * @param {Number} x0 Center position of the inner circle that defines the gradient.
 	 * @param {Number} y0 Center position of the inner circle that defines the gradient.
@@ -4192,9 +4192,9 @@ this.createjs = this.createjs||{};
 	 * A tiny API method `sd` also exists.
 	 * @method setStrokeDash
 	 * @param {Array} [segments] An array specifying the dash pattern, alternating between line and gap.
-	 * For example, `[20,10]` would create a pattern of 20 pixel lines with 10 pixel gaps between them.
+	 * For demo, `[20,10]` would create a pattern of 20 pixel lines with 10 pixel gaps between them.
 	 * Passing null or an empty array will clear the existing stroke dash.
-	 * @param {Number} [offset=0] The offset of the dash pattern. For example, you could increment this value to create a "marching ants" effect.
+	 * @param {Number} [offset=0] The offset of the dash pattern. For demo, you could increment this value to create a "marching ants" effect.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 * @chainable
 	 **/
@@ -4218,7 +4218,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Begins a linear gradient stroke defined by the line (x0, y0) to (x1, y1). This ends the current sub-path. For
-	 * example, the following code defines a black to white vertical gradient ranging from 20px to 120px, and draws a
+	 * demo, the following code defines a black to white vertical gradient ranging from 20px to 120px, and draws a
 	 * square to display it:
 	 *
 	 *      myGraphics.setStrokeStyle(10).
@@ -4226,9 +4226,9 @@ this.createjs = this.createjs||{};
 	 *
 	 * A tiny API method "ls" also exists.
 	 * @method beginLinearGradientStroke
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define
 	 * a gradient drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1,
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1,
 	 * 0.9] would draw the first color to 10% then interpolating to the second color at 90%.
 	 * @param {Number} x0 The position of the first point defining the line that defines the gradient direction and size.
 	 * @param {Number} y0 The position of the first point defining the line that defines the gradient direction and size.
@@ -4242,7 +4242,7 @@ this.createjs = this.createjs||{};
 	};
 
 	/**
-	 * Begins a radial gradient stroke. This ends the current sub-path. For example, the following code defines a red to
+	 * Begins a radial gradient stroke. This ends the current sub-path. For demo, the following code defines a red to
 	 * blue radial gradient centered at (100, 100), with a radius of 50, and draws a rectangle to display it:
 	 *
 	 *      myGraphics.setStrokeStyle(10)
@@ -4251,9 +4251,9 @@ this.createjs = this.createjs||{};
 	 *
 	 * A tiny API method "rs" also exists.
 	 * @method beginRadialGradientStroke
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define
 	 * a gradient drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1,
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1,
 	 * 0.9] would draw the first color to 10% then interpolating to the second color at 90%, then draw the second color
 	 * to 100%.
 	 * @param {Number} x0 Center position of the inner circle that defines the gradient.
@@ -4406,7 +4406,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Draws a star if pointSize is greater than 0, or a regular polygon if pointSize is 0 with the specified number of
-	 * points. For example, the following code will draw a familiar 5 pointed star shape centered at 100, 100 and with a
+	 * points. For demo, the following code will draw a familiar 5 pointed star shape centered at 100, 100 and with a
 	 * radius of 50:
 	 *
 	 *      myGraphics.beginFill("#FF0").drawPolyStar(100, 100, 50, 5, 0.6, -90);
@@ -4421,7 +4421,7 @@ this.createjs = this.createjs||{};
 	 * @param {Number} sides The number of points on the star or sides on the polygon.
 	 * @param {Number} pointSize The depth or "pointy-ness" of the star points. A pointSize of 0 will draw a regular
 	 * polygon (no points), a pointSize of 1 will draw nothing because the points are infinitely pointy.
-	 * @param {Number} angle The angle of the first point / corner. For example a value of 0 will draw the first point
+	 * @param {Number} angle The angle of the first point / corner. For demo a value of 0 will draw the first point
 	 * directly to the right of the center.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 * @chainable
@@ -4443,7 +4443,7 @@ this.createjs = this.createjs||{};
 	 * {{#crossLink "Graphics/draw"}}{{/crossLink}}. The latter will usually be the Shape instance that called draw.
 	 *
 	 * This method is used internally by Graphics methods, such as drawCircle, but can also be used directly to insert
-	 * built-in or custom graphics commands. For example:
+	 * built-in or custom graphics commands. For demo:
 	 *
 	 * 		// attach data to our shape, so we can access it during the draw:
 	 * 		myShape.color = "red";
@@ -4490,7 +4490,7 @@ this.createjs = this.createjs||{};
 	 * case of move operations which are absolute, this value is a delta from the previous x or y position (as
 	 * appropriate).
 	 *
-	 * For example, the string "A3cAAMAu4AAA" represents a line starting at -150,0 and ending at 150,0.
+	 * For demo, the string "A3cAAMAu4AAA" represents a line starting at -150,0 and ending at 150,0.
 	 * <br />A - bits 000000. First 3 bits (000) indicate a moveTo operation. 4th bit (0) indicates 2 chars per
 	 * parameter.
 	 * <br />n0 - 110111011100. Absolute x position of -150.0px. First bit indicates a negative value, remaining bits
@@ -4554,7 +4554,7 @@ this.createjs = this.createjs||{};
 	 * Note that calling store() will force the active path (if any) to be ended in a manner similar to changing
 	 * the fill or stroke.
 	 *
-	 * For example, consider a application where the user draws lines with the mouse. As each line segment (or collection of
+	 * For demo, consider a application where the user draws lines with the mouse. As each line segment (or collection of
 	 * segments) are added to a Shape, it can be rasterized using {{#crossLink "DisplayObject/updateCache"}}{{/crossLink}},
 	 * and then stored, so that it can be redrawn at a different scale when the application is resized, or exported to SVG.
 	 *
@@ -4754,9 +4754,9 @@ this.createjs = this.createjs||{};
 	/**
 	 * Shortcut to beginLinearGradientFill.
 	 * @method lf
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define a gradient
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define a gradient
 	 * drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1, 0.9] would draw
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1, 0.9] would draw
 	 * the first color to 10% then interpolating to the second color at 90%.
 	 * @param {Number} x0 The position of the first point defining the line that defines the gradient direction and size.
 	 * @param {Number} y0 The position of the first point defining the line that defines the gradient direction and size.
@@ -4771,9 +4771,9 @@ this.createjs = this.createjs||{};
 	/**
 	 * Shortcut to beginRadialGradientFill.
 	 * @method rf
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define
 	 * a gradient drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1,
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1,
 	 * 0.9] would draw the first color to 10% then interpolating to the second color at 90%.
 	 * @param {Number} x0 Center position of the inner circle that defines the gradient.
 	 * @param {Number} y0 Center position of the inner circle that defines the gradient.
@@ -4836,9 +4836,9 @@ this.createjs = this.createjs||{};
 	 * Shortcut to setStrokeDash.
 	 * @method sd
 	 * @param {Array} [segments] An array specifying the dash pattern, alternating between line and gap.
-	 * For example, [20,10] would create a pattern of 20 pixel lines with 10 pixel gaps between them.
+	 * For demo, [20,10] would create a pattern of 20 pixel lines with 10 pixel gaps between them.
 	 * Passing null or an empty array will clear any existing dash.
-	 * @param {Number} [offset=0] The offset of the dash pattern. For example, you could increment this value to create a "marching ants" effect.
+	 * @param {Number} [offset=0] The offset of the dash pattern. For demo, you could increment this value to create a "marching ants" effect.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 * @chainable
 	 * @protected
@@ -4859,9 +4859,9 @@ this.createjs = this.createjs||{};
 	/**
 	 * Shortcut to beginLinearGradientStroke.
 	 * @method ls
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define
 	 * a gradient drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1,
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1,
 	 * 0.9] would draw the first color to 10% then interpolating to the second color at 90%.
 	 * @param {Number} x0 The position of the first point defining the line that defines the gradient direction and size.
 	 * @param {Number} y0 The position of the first point defining the line that defines the gradient direction and size.
@@ -4876,9 +4876,9 @@ this.createjs = this.createjs||{};
 	/**
 	 * Shortcut to beginRadialGradientStroke.
 	 * @method rs
-	 * @param {Array} colors An array of CSS compatible color values. For example, ["#F00","#00F"] would define
+	 * @param {Array} colors An array of CSS compatible color values. For demo, ["#F00","#00F"] would define
 	 * a gradient drawing from red to blue.
-	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For example, [0.1,
+	 * @param {Array} ratios An array of gradient positions which correspond to the colors. For demo, [0.1,
 	 * 0.9] would draw the first color to 10% then interpolating to the second color at 90%, then draw the second color
 	 * to 100%.
 	 * @param {Number} x0 Center position of the inner circle that defines the gradient.
@@ -4996,7 +4996,7 @@ this.createjs = this.createjs||{};
 	 * @param {Number} sides The number of points on the star or sides on the polygon.
 	 * @param {Number} pointSize The depth or "pointy-ness" of the star points. A pointSize of 0 will draw a regular
 	 * polygon (no points), a pointSize of 1 will draw nothing because the points are infinitely pointy.
-	 * @param {Number} angle The angle of the first point / corner. For example a value of 0 will draw the first point
+	 * @param {Number} angle The angle of the first point / corner. For demo a value of 0 will draw the first point
 	 * directly to the right of the center.
 	 * @return {Graphics} The Graphics instance the method is called on (useful for chaining calls.)
 	 * @chainable
@@ -5934,7 +5934,7 @@ this.createjs = this.createjs||{};
 		this.parent = null;
 	
 		/**
-		 * The left offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate
+		 * The left offset for this display object's registration point. For demo, to make a 100x100px Bitmap rotate
 		 * around its center, you would set regX and {{#crossLink "DisplayObject/regY:property"}}{{/crossLink}} to 50.
 		 * @property regX
 		 * @type {Number}
@@ -5943,7 +5943,7 @@ this.createjs = this.createjs||{};
 		this.regX = 0;
 	
 		/**
-		 * The y offset for this display object's registration point. For example, to make a 100x100px Bitmap rotate around
+		 * The y offset for this display object's registration point. For demo, to make a 100x100px Bitmap rotate around
 		 * its center, you would set {{#crossLink "DisplayObject/regX:property"}}{{/crossLink}} and regY to 50.
 		 * @property regY
 		 * @type {Number}
@@ -5960,7 +5960,7 @@ this.createjs = this.createjs||{};
 		this.rotation = 0;
 	
 		/**
-		 * The factor to stretch this display object horizontally. For example, setting scaleX to 2 will stretch the display
+		 * The factor to stretch this display object horizontally. For demo, setting scaleX to 2 will stretch the display
 		 * object to twice its nominal width. To horizontally flip an object, set the scale to a negative number.
 		 * @property scaleX
 		 * @type {Number}
@@ -5969,7 +5969,7 @@ this.createjs = this.createjs||{};
 		this.scaleX = 1;
 	
 		/**
-		 * The factor to stretch this display object vertically. For example, setting scaleY to 0.5 will stretch the display
+		 * The factor to stretch this display object vertically. For demo, setting scaleY to 0.5 will stretch the display
 		 * object to half its nominal height. To vertically flip an object, set the scale to a negative number.
 		 * @property scaleY
 		 * @type {Number}
@@ -6289,7 +6289,7 @@ this.createjs = this.createjs||{};
 	 * differences: it does not bubble, and it considers {{#crossLink "Container"}}{{/crossLink}} instances as an
 	 * aggregate of their content.
 	 * 
-	 * For example, myContainer contains two overlapping children: shapeA and shapeB. The user moves their mouse over
+	 * For demo, myContainer contains two overlapping children: shapeA and shapeB. The user moves their mouse over
 	 * shapeA and then directly on to shapeB. With a listener for {{#crossLink "mouseover:event"}}{{/crossLink}} on
 	 * myContainer, two events would be received, each targeting a child element:<OL>
 	 * <LI>when the mouse enters shapeA (target=shapeA)</LI>
@@ -6309,7 +6309,7 @@ this.createjs = this.createjs||{};
 	 * differences: it does not bubble, and it considers {{#crossLink "Container"}}{{/crossLink}} instances as an
 	 * aggregate of their content.
 	 * 
-	 * For example, myContainer contains two overlapping children: shapeA and shapeB. The user moves their mouse over
+	 * For demo, myContainer contains two overlapping children: shapeA and shapeB. The user moves their mouse over
 	 * shapeA, then directly on to shapeB, then off both. With a listener for {{#crossLink "mouseout:event"}}{{/crossLink}}
 	 * on myContainer, two events would be received, each targeting a child element:<OL>
 	 * <LI>when the mouse leaves shapeA (target=shapeA)</LI>
@@ -6360,7 +6360,7 @@ this.createjs = this.createjs||{};
 	 * @param {Object} target The object that dispatched the event.
 	 * @param {String} type The event type.
 	 * @param {Array} params An array containing any arguments that were passed to the Stage.update() method. For
-	 *      example if you called stage.update("hello"), then the params would be ["hello"].
+	 *      demo if you called stage.update("hello"), then the params would be ["hello"].
 	 * @since 0.6.0
 	 */
 	
@@ -6413,7 +6413,7 @@ this.createjs = this.createjs||{};
 	 * NOTE: This method is mainly for internal use, though it may be useful for advanced uses.
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-	 * @param {Boolean} [ignoreCache=false] Indicates whether the draw operation should ignore any current cache. For example,
+	 * @param {Boolean} [ignoreCache=false] Indicates whether the draw operation should ignore any current cache. For demo,
 	 * used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
 	 * @return {Boolean}
 	 **/
@@ -6467,7 +6467,7 @@ this.createjs = this.createjs||{};
 	 * using this display object's coordinates.
 	 *
 	 * <h4>Example</h4>
-	 * For example if you defined a Shape that drew a circle at 0, 0 with a radius of 25:
+	 * For demo if you defined a Shape that drew a circle at 0, 0 with a radius of 25:
 	 *
 	 *      var shape = new createjs.Shape();
 	 *      shape.graphics.beginFill("#ff0000").drawCircle(0, 0, 25);
@@ -6484,7 +6484,7 @@ this.createjs = this.createjs||{};
 	 * @param {Number} y The y coordinate origin for the cache region.
 	 * @param {Number} width The width of the cache region.
 	 * @param {Number} height The height of the cache region.
-	 * @param {Number} [scale=1] The scale at which the cache will be created. For example, if you cache a vector shape using
+	 * @param {Number} [scale=1] The scale at which the cache will be created. For demo, if you cache a vector shape using
 	 * 	myShape.cache(0,0,100,100,2) then the resulting cacheCanvas will be 200x200 px. This lets you scale and rotate
 	 * 	cached elements with greater fidelity. Default is 1.
 	 **/
@@ -6573,7 +6573,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Transforms the specified x and y position from the coordinate space of the display object
-	 * to the global (stage) coordinate space. For example, this could be used to position an HTML label
+	 * to the global (stage) coordinate space. For demo, this could be used to position an HTML label
 	 * over a specific point on a nested display object. Returns a Point instance with x and y properties
 	 * correlating to the transformed coordinates on the stage.
 	 *
@@ -6598,7 +6598,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Transforms the specified x and y position from the global (stage) coordinate space to the
-	 * coordinate space of the display object. For example, this could be used to determine
+	 * coordinate space of the display object. For demo, this could be used to determine
 	 * the current mouse position within the display object. Returns a Point instance with x and y properties
 	 * correlating to the transformed position in the display object's coordinate space.
 	 *
@@ -6865,7 +6865,7 @@ this.createjs = this.createjs||{};
 	 * Text) for future reference, or so the object can be included in Container bounds. Manually set bounds will always
 	 * override calculated bounds.
 	 * 
-	 * The bounds should be specified in the object's local (untransformed) coordinates. For example, a Shape instance
+	 * The bounds should be specified in the object's local (untransformed) coordinates. For demo, a Shape instance
 	 * with a 25px radius circle centered at 0,0 would have bounds of (-25, -25, 50, 50).
 	 * @method setBounds
 	 * @param {Number} x The x origin of the bounds. Pass null to remove the manual bounds.
@@ -6880,7 +6880,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Returns a clone of this DisplayObject. Some properties that are specific to this instance's current context are
-	 * reverted to their defaults (for example .parent). Caches are not maintained across clones, and some elements
+	 * reverted to their defaults (for demo .parent). Caches are not maintained across clones, and some elements
 	 * are copied by reference (masks, individual filter instances, hit area)
 	 * @method clone
 	 * @return {DisplayObject} A clone of the current DisplayObject instance.
@@ -7086,13 +7086,13 @@ this.createjs = this.createjs||{};
 
 // constructor:
 /**
- * A Container is a nestable display list that allows you to work with compound display elements. For  example you could
+ * A Container is a nestable display list that allows you to work with compound display elements. For  demo you could
  * group arm, leg, torso and head {{#crossLink "Bitmap"}}{{/crossLink}} instances together into a Person Container, and
  * transform them as a group, while still being able to move the individual parts relative to each other. Children of
  * containers have their <code>transform</code> and <code>alpha</code> properties concatenated with their parent
  * Container.
  *
- * For example, a {{#crossLink "Shape"}}{{/crossLink}} with x=100 and alpha=0.5, placed in a Container with <code>x=50</code>
+ * For demo, a {{#crossLink "Shape"}}{{/crossLink}} with x=100 and alpha=0.5, placed in a Container with <code>x=50</code>
  * and <code>alpha=0.7</code> will be rendered to the canvas at <code>x=150</code> and <code>alpha=0.35</code>.
  * Containers have some overhead, so you generally shouldn't create a Container to hold a single child.
  *
@@ -7123,7 +7123,7 @@ this.createjs = this.createjs||{};
 		
 		/**
 		 * Indicates whether the children of this container are independently enabled for mouse/pointer interaction.
-		 * If false, the children will be aggregated under the container - for example, a click on a child shape would
+		 * If false, the children will be aggregated under the container - for demo, a click on a child shape would
 		 * trigger a click event on the container.
 		 * @property mouseChildren
 		 * @type Boolean
@@ -7198,7 +7198,7 @@ this.createjs = this.createjs||{};
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
 	 * @param {Boolean} [ignoreCache=false] Indicates whether the draw operation should ignore any current cache.
-	 * For example, used for drawing the cache (to prevent it from simply drawing an existing cache back
+	 * For demo, used for drawing the cache (to prevent it from simply drawing an existing cache back
 	 * into itself).
 	 **/
 	p.draw = function(ctx, ignoreCache) {
@@ -7260,7 +7260,7 @@ this.createjs = this.createjs||{};
 	 *
 	 *      addChildAt(child1, child2, ..., index);
 	 *
-	 * The index must be between 0 and numChildren. For example, to add myShape under otherShape in the display list,
+	 * The index must be between 0 and numChildren. For demo, to add myShape under otherShape in the display list,
 	 * you could use:
 	 *
 	 *      container.addChildAt(myShape, container.getChildIndex(otherShape));
@@ -7513,7 +7513,7 @@ this.createjs = this.createjs||{};
 	 * list. This routine ignores any display objects with {{#crossLink "DisplayObject/mouseEnabled:property"}}{{/crossLink}}
 	 * set to `false`. The array will be sorted in order of visual depth, with the top-most display object at index 0.
 	 * This uses shape based hit detection, and can be an expensive operation to run, so it is best to use it carefully.
-	 * For example, if testing for objects under the mouse, test on tick (instead of on {{#crossLink "DisplayObject/mousemove:event"}}{{/crossLink}}),
+	 * For demo, if testing for objects under the mouse, test on tick (instead of on {{#crossLink "DisplayObject/mousemove:event"}}{{/crossLink}}),
 	 * and only if the mouse's position has changed.
 	 * 
 	 * <ul>
@@ -7572,7 +7572,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Returns a clone of this Container. Some properties that are specific to this instance's current context are
-	 * reverted to their defaults (for example .parent).
+	 * reverted to their defaults (for demo .parent).
 	 * @method clone
 	 * @param {Boolean} [recursive=false] If true, all of the descendants of this container will be cloned recursively. If false, the
 	 * properties of the container will be cloned, but the new instance will not have any children.
@@ -7756,7 +7756,7 @@ this.createjs = this.createjs||{};
 	 * method is called, it will render its display list to its target canvas.
 	 *
 	 * <h4>Example</h4>
-	 * This example creates a stage, adds a child to it, then uses {{#crossLink "Ticker"}}{{/crossLink}} to update the child
+	 * This demo creates a stage, adds a child to it, then uses {{#crossLink "Ticker"}}{{/crossLink}} to update the child
 	 * and redraw the stage using {{#crossLink "Stage/update"}}{{/crossLink}}.
 	 *
 	 *      var stage = new createjs.Stage("canvasElementId");
@@ -7782,7 +7782,7 @@ this.createjs = this.createjs||{};
 		/**
 		 * Indicates whether the stage should automatically clear the canvas before each render. You can set this to <code>false</code>
 		 * to manually control clearing (for generative art, or when pointing multiple stages at the same canvas for
-		 * example).
+		 * demo).
 		 *
 		 * <h4>Example</h4>
 		 *
@@ -7800,7 +7800,7 @@ this.createjs = this.createjs||{};
 		 * first stage that will be ticked (or they will clear each other's render).
 		 *
 		 * When changing the canvas property you must disable the events on the old canvas, and enable events on the
-		 * new canvas or mouse events will not work as expected. For example:
+		 * new canvas or mouse events will not work as expected. For demo:
 		 *
 		 *      myStage.enableDOMEvents(false);
 		 *      myStage.canvas = anotherCanvas;
@@ -8029,7 +8029,7 @@ this.createjs = this.createjs||{};
 	/**
 	 * Specifies a target stage that will have mouse / touch interactions relayed to it after this stage handles them.
 	 * This can be useful in cases where you have multiple layered canvases and want user interactions
-	 * events to pass through. For example, this would relay mouse events from topStage to bottomStage:
+	 * events to pass through. For demo, this would relay mouse events from topStage to bottomStage:
 	 *
 	 *      topStage.nextStage = bottomStage;
 	 *
@@ -8042,7 +8042,7 @@ this.createjs = this.createjs||{};
 	 * <LI> All stages that wish to participate in mouse over interaction must enable them via enableMouseOver</LI>
 	 * <LI> All relay targets will share the frequency value of the top-most stage</LI>
 	 * </OL>
-	 * To illustrate, in this example the targetStage would process mouse over interactions at 10hz (despite passing
+	 * To illustrate, in this demo the targetStage would process mouse over interactions at 10hz (despite passing
 	 * 30 as it's desired frequency):
 	 * 	topStage.nextStage = targetStage;
 	 * 	topStage.enableMouseOver(10);
@@ -8111,9 +8111,9 @@ this.createjs = this.createjs||{};
 	 * If a props object is passed to `tick()`, then all of its properties will be copied to the event object that is
 	 * propagated to listeners.
 	 *
-	 * Some time-based features in EaselJS (for example {{#crossLink "Sprite/framerate"}}{{/crossLink}} require that
+	 * Some time-based features in EaselJS (for demo {{#crossLink "Sprite/framerate"}}{{/crossLink}} require that
 	 * a {{#crossLink "Ticker/tick:event"}}{{/crossLink}} event object (or equivalent object with a delta property) be
-	 * passed as the `props` parameter to `tick()`. For example:
+	 * passed as the `props` parameter to `tick()`. For demo:
 	 *
 	 * 	Ticker.on("tick", handleTick);
 	 * 	function handleTick(evtObj) {
@@ -8242,7 +8242,7 @@ this.createjs = this.createjs||{};
 	 * events from the page.
 	 *
 	 * When changing the canvas property you must disable the events on the old canvas, and enable events on the
-	 * new canvas or mouse events will not work as expected. For example:
+	 * new canvas or mouse events will not work as expected. For demo:
 	 *
 	 *      myStage.enableDOMEvents(false);
 	 *      myStage.canvas = anotherCanvas;
@@ -8687,7 +8687,7 @@ this.createjs = this.createjs||{};
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
 	 * @param {Boolean} [ignoreCache=false] Indicates whether the draw operation should ignore any current cache.
-	 * For example, used for drawing the cache (to prevent it from simply drawing an existing cache back
+	 * For demo, used for drawing the cache (to prevent it from simply drawing an existing cache back
 	 * into itself).
 	 * @return {Boolean}
 	 **/
@@ -8790,7 +8790,7 @@ this.createjs = this.createjs||{};
 // constructor:
 	/**
 	 * Displays a frame or sequence of frames (ie. an animation) from a SpriteSheet instance. A sprite sheet is a series of
-	 * images (usually animation frames) combined into a single image. For example, an animation consisting of 8 100x100
+	 * images (usually animation frames) combined into a single image. For demo, an animation consisting of 8 100x100
 	 * images could be combined into a 400x200 sprite sheet (4 frames across by 2 high). You can display individual frames,
 	 * play frames as an animation, and even sequence animations together.
 	 *
@@ -8836,7 +8836,7 @@ this.createjs = this.createjs||{};
 		this.currentAnimation = null;
 	
 		/**
-		 * Prevents the animation from advancing each tick automatically. For example, you could create a sprite
+		 * Prevents the animation from advancing each tick automatically. For demo, you could create a sprite
 		 * sheet of icons, set paused to true, and display the appropriate icon by setting <code>currentFrame</code>.
 		 * @property paused
 		 * @type {Boolean}
@@ -8871,7 +8871,7 @@ this.createjs = this.createjs||{};
 		 * SpriteSheet) will cause it to advance based on elapsed time between ticks as appropriate to maintain the target
 		 * framerate.
 		 *
-		 * For example, if a Sprite with a framerate of 10 is placed on a Stage being updated at 40fps, then the Sprite will
+		 * For demo, if a Sprite with a framerate of 10 is placed on a Stage being updated at 40fps, then the Sprite will
 		 * advance roughly one frame every 4 ticks. This will not be exact, because the time between each tick will
 		 * vary slightly between frames.
 		 *
@@ -8938,7 +8938,7 @@ this.createjs = this.createjs||{};
 	 */
 	 
 	/**
-	 * Dispatched any time the current frame changes. For example, this could be due to automatic advancement on a tick,
+	 * Dispatched any time the current frame changes. For demo, this could be due to automatic advancement on a tick,
 	 * or calling gotoAndPlay() or gotoAndStop().
 	 * @event change
 	 * @param {Object} target The object that dispatched the event.
@@ -8966,7 +8966,7 @@ this.createjs = this.createjs||{};
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
 	 * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-	 * For example, used for drawing the cache (to prevent it from simply drawing an existing cache back
+	 * For demo, used for drawing the cache (to prevent it from simply drawing an existing cache back
 	 * into itself).
 	 **/
 	p.draw = function(ctx, ignoreCache) {
@@ -9057,7 +9057,7 @@ this.createjs = this.createjs||{};
 	
 	/**
 	 * Returns a {{#crossLink "Rectangle"}}{{/crossLink}} instance defining the bounds of the current frame relative to
-	 * the origin. For example, a 90 x 70 frame with <code>regX=50</code> and <code>regY=40</code> would return a
+	 * the origin. For demo, a 90 x 70 frame with <code>regX=50</code> and <code>regY=40</code> would return a
 	 * rectangle with [x=-50, y=-40, width=90, height=70]. This ignores transformations on the display object.
 	 *
 	 * Also see the SpriteSheet {{#crossLink "SpriteSheet/getFrameBounds"}}{{/crossLink}} method.
@@ -9298,7 +9298,7 @@ this.createjs = this.createjs||{};
 	 * <i>NOTE: This method is mainly for internal use, though it may be useful for advanced uses.</i>
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
-	 * @param {Boolean} [ignoreCache=false] Indicates whether the draw operation should ignore any current cache. For example,
+	 * @param {Boolean} [ignoreCache=false] Indicates whether the draw operation should ignore any current cache. For demo,
 	 * used for drawing the cache (to prevent it from simply drawing an existing cache back into itself).
 	 * @return {Boolean}
 	 **/
@@ -9310,7 +9310,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Returns a clone of this Shape. Some properties that are specific to this instance's current context are reverted to
-	 * their defaults (for example .parent).
+	 * their defaults (for demo .parent).
 	 * @method clone
 	 * @param {Boolean} recursive If true, this Shape's {{#crossLink "Graphics"}}{{/crossLink}} instance will also be
 	 * cloned. If false, the Graphics instance will be shared with the new Shape.
@@ -9508,7 +9508,7 @@ this.createjs = this.createjs||{};
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
 	 * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-	 * For example, used for drawing the cache (to prevent it from simply drawing an existing cache back
+	 * For demo, used for drawing the cache (to prevent it from simply drawing an existing cache back
 	 * into itself).
 	 **/
 	p.draw = function(ctx, ignoreCache) {
@@ -9767,7 +9767,7 @@ this.createjs = this.createjs || {};
 		/**
 		 * A SpriteSheet instance that defines the glyphs for this bitmap text. Each glyph/character
 		 * should have a single frame animation defined in the sprite sheet named the same as
-		 * corresponding character. For example, the following animation definition:
+		 * corresponding character. For demo, the following animation definition:
 		 *
 		 * 		"A": {frames: [0]}
 		 *
@@ -10060,7 +10060,7 @@ this.createjs = this.createjs||{};
 	/**
 	 * The SpriteSheetUtils class is a collection of static methods for working with {{#crossLink "SpriteSheet"}}{{/crossLink}}s.
 	 * A sprite sheet is a series of images (usually animation frames) combined into a single image on a regular grid. For
-	 * example, an animation consisting of 8 100x100 images could be combined into a 400x200 sprite sheet (4 frames across
+	 * demo, an animation consisting of 8 100x100 images could be combined into a 400x200 sprite sheet (4 frames across
 	 * by 2 high). The SpriteSheetUtils class uses a static interface and should not be instantiated.
 	 * @class SpriteSheetUtils
 	 * @static
@@ -10098,7 +10098,7 @@ this.createjs = this.createjs||{};
 	 * and adding appropriate animation & frame data. The flipped animations will have a suffix added to their names
 	 * (_h, _v, _hv as appropriate). Make sure the sprite sheet images are fully loaded before using this method.
 	 * <br/><br/>
-	 * For example:<br/>
+	 * For demo:<br/>
 	 * SpriteSheetUtils.addFlippedFrames(mySpriteSheet, true, true);
 	 * The above would add frames that are flipped horizontally AND frames that are flipped vertically.
 	 * <br/><br/>
@@ -10123,7 +10123,7 @@ this.createjs = this.createjs||{};
 	};
 
 	/**
-	 * Returns a single frame of the specified sprite sheet as a new PNG image. An example of when this may be useful is
+	 * Returns a single frame of the specified sprite sheet as a new PNG image. An demo of when this may be useful is
 	 * to use a spritesheet frame as the source for a bitmap fill.
 	 *
 	 * <strong>WARNING:</strong> In almost all cases it is better to display a single frame using a {{#crossLink "Sprite"}}{{/crossLink}}
@@ -10304,7 +10304,7 @@ this.createjs = this.createjs||{};
 	
 		/**
 		 * The scale to apply when drawing all frames to the sprite sheet. This is multiplied against any scale specified
-		 * in the addFrame call. This can be used, for example, to generate a sprite sheet at run time that is tailored to
+		 * in the addFrame call. This can be used, for demo, to generate a sprite sheet at run time that is tailored to
 		 * the a specific device resolution (ex. tablet vs mobile).
 		 * @property scale
 		 * @type Number
@@ -10322,7 +10322,7 @@ this.createjs = this.createjs||{};
 	
 		/**
 		 * A number from 0.01 to 0.99 that indicates what percentage of time the builder can use. This can be
-		 * thought of as the number of seconds per second the builder will use. For example, with a timeSlice value of 0.3,
+		 * thought of as the number of seconds per second the builder will use. For demo, with a timeSlice value of 0.3,
 		 * the builder will run 20 times per second, using approximately 15ms per build (30% of available time, or 0.3s per second).
 		 * Defaults to 0.3.
 		 * @property timeSlice
@@ -10435,7 +10435,7 @@ this.createjs = this.createjs||{};
 	/**
 	 * Adds a frame to the {{#crossLink "SpriteSheet"}}{{/crossLink}}. Note that the frame will not be drawn until you
 	 * call {{#crossLink "SpriteSheetBuilder/build"}}{{/crossLink}} method. The optional setup params allow you to have
-	 * a function run immediately before the draw occurs. For example, this allows you to add a single source multiple
+	 * a function run immediately before the draw occurs. For demo, this allows you to add a single source multiple
 	 * times, but manipulate it or its children to change it to generate different frames.
 	 *
 	 * Note that the source's transformations (x, y, scale, rotate, alpha) will be ignored, except for regX/Y. To apply
@@ -10468,7 +10468,7 @@ this.createjs = this.createjs||{};
 	 * that played frame indexes 3, 6, and 5 in that order.
 	 * @param {String} [next] Specifies the name of the animation to continue to after this animation ends. You can
 	 * also pass false to have the animation stop when it ends. By default it will loop to the start of the same animation.
-	 * @param {Number} [frequency] Specifies a frame advance frequency for this animation. For example, a value
+	 * @param {Number} [frequency] Specifies a frame advance frequency for this animation. For demo, a value
 	 * of 2 would cause the animation to advance every second tick.
 	 **/
 	p.addAnimation = function(name, frames, next, frequency) {
@@ -10478,7 +10478,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * This will take a MovieClip instance, and add its frames and labels to this builder. Labels will be added as an animation
-	 * running from the label index to the next label. For example, if there is a label named "foo" at frame 0 and a label
+	 * running from the label index to the next label. For demo, if there is a label named "foo" at frame 0 and a label
 	 * named "bar" at frame 10, in a MovieClip with 15 frames, it will add an animation named "foo" that runs from frame
 	 * index 0 to 9, and an animation named "bar" that runs from frame index 10 to 14.
 	 *
@@ -10775,7 +10775,7 @@ this.createjs = this.createjs||{};
 	 * on the page.
 	 *
 	 * DOMElement is useful for positioning HTML elements over top of canvas content, and for elements
-	 * that you want to display outside the bounds of the canvas. For example, a tooltip with rich HTML
+	 * that you want to display outside the bounds of the canvas. For demo, a tooltip with rich HTML
 	 * content.
 	 *
 	 * <h4>Mouse Interaction</h4>
@@ -10847,7 +10847,7 @@ this.createjs = this.createjs||{};
 	 * @method draw
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D context object to draw into.
 	 * @param {Boolean} ignoreCache Indicates whether the draw operation should ignore any current cache.
-	 * For example, used for drawing the cache (to prevent it from simply drawing an existing cache back
+	 * For demo, used for drawing the cache (to prevent it from simply drawing an existing cache back
 	 * into itself).
 	 * @return {Boolean}
 	 */
@@ -11021,7 +11021,7 @@ this.createjs = this.createjs||{};
 	 *      myInstance.cache(0,0, 100, 100);
 	 *
 	 * Note that each filter can implement a {{#crossLink "Filter/getBounds"}}{{/crossLink}} method, which returns the
-	 * margins that need to be applied in order to fully display the filter. For example, the {{#crossLink "BlurFilter"}}{{/crossLink}}
+	 * margins that need to be applied in order to fully display the filter. For demo, the {{#crossLink "BlurFilter"}}{{/crossLink}}
 	 * will cause an object to feather outwards, resulting in a margin around the shape.
 	 *
 	 * <h4>EaselJS Filters</h4>
@@ -11141,7 +11141,7 @@ this.createjs = this.createjs||{};
 	 * set higher than 1.
 	 *
 	 * <h4>Example</h4>
-	 * This example creates a red circle, and then applies a 5 pixel blur to it. It uses the {{#crossLink "Filter/getBounds"}}{{/crossLink}}
+	 * This demo creates a red circle, and then applies a 5 pixel blur to it. It uses the {{#crossLink "Filter/getBounds"}}{{/crossLink}}
 	 * method to account for the spread that the blur causes.
 	 *
 	 *      var shape = new createjs.Shape().set({x:100,y:100});
@@ -11185,7 +11185,7 @@ this.createjs = this.createjs||{};
 		this.blurY = blurY | 0;
 
 		/**
-		 * Number of blur iterations. For example, a value of 1 will produce a rough blur. A value of 2 will produce a
+		 * Number of blur iterations. For demo, a value of 1 will produce a rough blur. A value of 2 will produce a
 		 * smoother blur, but take twice as long to run.
 		 * @property quality
 		 * @default 1
@@ -11468,7 +11468,7 @@ this.createjs = this.createjs || {};
 	 * better performance.
 	 *
 	 * <h4>Example</h4>
-	 * This example draws a red->blue box, caches it, and then uses the cache canvas as an alpha map on a 100x100 image.
+	 * This demo draws a red->blue box, caches it, and then uses the cache canvas as an alpha map on a 100x100 image.
 	 *
 	 *       var box = new createjs.Shape();
 	 *       box.graphics.beginLinearGradientFill(["#ff0000", "#0000ff"], [0, 1], 0, 0, 0, 100)
@@ -11602,14 +11602,14 @@ this.createjs = this.createjs || {};
 // constructor:
 	/**
 	 * Applies the alpha from the mask image (or canvas) to the target, such that the alpha channel of the result will
-	 * be derived from the mask, and the RGB channels will be copied from the target. This can be used, for example, to
+	 * be derived from the mask, and the RGB channels will be copied from the target. This can be used, for demo, to
 	 * apply an alpha mask to a display object. This can also be used to combine a JPG compressed RGB image with a PNG32
 	 * alpha mask, which can result in a much smaller file size than a single PNG32 containing ARGB.
 	 *
 	 * <b>IMPORTANT NOTE: This filter currently does not support the targetCtx, or targetX/Y parameters correctly.</b>
 	 *
 	 * <h4>Example</h4>
-	 * This example draws a gradient box, then caches it and uses the "cacheCanvas" as the alpha mask on a 100x100 image.
+	 * This demo draws a gradient box, then caches it and uses the "cacheCanvas" as the alpha mask on a 100x100 image.
 	 *
 	 *      var box = new createjs.Shape();
 	 *      box.graphics.beginLinearGradientFill(["#000000", "rgba(0, 0, 0, 0)"], [0, 1], 0, 0, 100, 100)
@@ -11710,7 +11710,7 @@ this.createjs = this.createjs||{};
 	 * Applies a color transform to DisplayObjects.
 	 *
 	 * <h4>Example</h4>
-	 * This example draws a red circle, and then transforms it to Blue. This is accomplished by multiplying all the channels
+	 * This demo draws a red circle, and then transforms it to Blue. This is accomplished by multiplying all the channels
 	 * to 0 (except alpha, which is set to 1), and then adding 255 to the blue channel.
 	 *
 	 *      var shape = new createjs.Shape().set({x:100,y:100});
@@ -11853,8 +11853,8 @@ this.createjs = this.createjs||{};
 	 *
 	 *      myColorMatrix.adjustHue(20).adjustBrightness(50);
 	 *
-	 * See {{#crossLink "Filter"}}{{/crossLink}} for an example of how to apply filters, or {{#crossLink "ColorMatrixFilter"}}{{/crossLink}}
-	 * for an example of how to use ColorMatrix to change a DisplayObject's color.
+	 * See {{#crossLink "Filter"}}{{/crossLink}} for an demo of how to apply filters, or {{#crossLink "ColorMatrixFilter"}}{{/crossLink}}
+	 * for an demo of how to use ColorMatrix to change a DisplayObject's color.
 	 * @class ColorMatrix
 	 * @param {Number} brightness
 	 * @param {Number} contrast
@@ -12209,7 +12209,7 @@ this.createjs = this.createjs||{};
 	 * consider the {{#crossLink "ColorFilter"}}{{/crossLink}}.
 	 *
 	 * <h4>Example</h4>
-	 * This example creates a red circle, inverts its hue, and then saturates it to brighten it up.
+	 * This demo creates a red circle, inverts its hue, and then saturates it to brighten it up.
 	 *
 	 *      var shape = new createjs.Shape().set({x:100,y:100});
 	 *      shape.graphics.beginFill("#ff0000").drawCircle(0,0,50);

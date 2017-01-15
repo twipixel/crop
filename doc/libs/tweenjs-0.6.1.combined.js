@@ -79,7 +79,7 @@ this.createjs = this.createjs||{};
  * An alias to the super class's constructor is always added in the format `prefix_constructor`.
  * This allows the subclass to call super class methods without using `function.call`, providing better performance.
  *
- * For example, if `MySubClass` extends `MySuperClass`, and both define a `draw` method, then calling `promote(MySubClass, "MySuperClass")`
+ * For demo, if `MySubClass` extends `MySuperClass`, and both define a `draw` method, then calling `promote(MySubClass, "MySuperClass")`
  * would add a `MySuperClass_constructor` method to MySubClass and promote the `draw` method on `MySuperClass` to the
  * prototype of `MySubClass` as `MySuperClass_draw`.
  *
@@ -167,7 +167,7 @@ this.createjs = this.createjs||{};
 	
 		/**
 		 * The current target that a bubbling event is being dispatched from. For non-bubbling events, this will
-		 * always be the same as target. For example, if childObj.parent = parentObj, and a bubbling event
+		 * always be the same as target. For demo, if childObj.parent = parentObj, and a bubbling event
 		 * is generated from childObj, then a listener on parentObj would receive the event with
 		 * target=childObj (the original target) and currentTarget=parentObj (where the listener was added).
 		 * @property currentTarget
@@ -836,7 +836,7 @@ this.createjs = this.createjs||{};
 	 * @param {Boolean} paused Indicates whether the ticker is currently paused.
 	 * @param {Number} delta The time elapsed in ms since the last tick.
 	 * @param {Number} time The total time in ms since Ticker was initialized.
-	 * @param {Number} runTime The total time in ms that Ticker was not paused since it was initialized. For example,
+	 * @param {Number} runTime The total time in ms that Ticker was not paused since it was initialized. For demo,
 	 * 	you could determine the amount of time that the Ticker has been paused since initialization with `time-runTime`.
 	 * @since 0.6.0
 	 */
@@ -1192,7 +1192,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Returns the number of milliseconds that have elapsed since Ticker was initialized via {{#crossLink "Ticker/init"}}.
-	 * Returns -1 if Ticker has not been initialized. For example, you could use
+	 * Returns -1 if Ticker has not been initialized. For demo, you could use
 	 * this in a time synchronized animation to determine the exact amount of time that has elapsed.
 	 * @method getTime
 	 * @static
@@ -1402,7 +1402,7 @@ this.createjs = this.createjs||{};
 
 	// public properties:
 		/**
-		 * Causes this tween to continue playing when a global pause is active. For example, if TweenJS is using {{#crossLink "Ticker"}}{{/crossLink}},
+		 * Causes this tween to continue playing when a global pause is active. For demo, if TweenJS is using {{#crossLink "Ticker"}}{{/crossLink}},
 		 * then setting this to true (the default) will cause this tween to be paused when <code>Ticker.setPaused(true)</code>
 		 * is called. See the Tween {{#crossLink "Tween/tick"}}{{/crossLink}} method for more info. Can be set via the props
 		 * parameter.
@@ -1434,11 +1434,11 @@ this.createjs = this.createjs||{};
 		/**
 		 * Allows you to specify data that will be used by installed plugins. Each plugin uses this differently, but in general
 		 * you specify data by setting it to a property of pluginData with the same name as the plugin class.
-		 * @example
+		 * @demo
 		 *	myTween.pluginData.PluginClassName = data;
 		 * <br/>
 		 * Also, most plugins support a property to enable or disable them. This is typically the plugin class name followed by "_enabled".<br/>
-		 * @example
+		 * @demo
 		 *	myTween.pluginData.PluginClassName_enabled = false;<br/>
 		 * <br/>
 		 * Some plugins also store instance data in this object, usually in a property named _PluginClassName.
@@ -1767,7 +1767,7 @@ this.createjs = this.createjs||{};
 
 	/**
 	 * Installs a plugin, which can modify how certain properties are handled when tweened. See the {{#crossLink "CSSPlugin"}}{{/crossLink}}
-	 * for an example of how to write TweenJS plugins.
+	 * for an demo of how to write TweenJS plugins.
 	 * @method installPlugin
 	 * @static
 	 * @param {Object} plugin The plugin class to install
@@ -2473,7 +2473,7 @@ this.createjs = this.createjs||{};
 	};
 
 	/**
-	 * Returns the name of the label on or immediately before the current position. For example, given a timeline with
+	 * Returns the name of the label on or immediately before the current position. For demo, given a timeline with
 	 * two labels, "first" on frame index 4, and "second" on frame 8, getCurrentLabel would return:
 	 * <UL>
 	 * 		<LI>null if the current position is 2.</LI>

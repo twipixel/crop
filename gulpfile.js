@@ -18,11 +18,11 @@ var watchify = require('watchify');
 // 디렉토리 설정
 var dirRoot = __dirname;
 var dirSrc = '/src';
-var dirExample = '/example';
-var dirJs = '/js';
+var dirDemo = '/demo';
+var dirEs6 = '/es6';
 var dirImg = '/img';
 var dirLibs = '/libs';
-var dirBuild = '/__build__';
+var dirBuild = '/build';
 
 
 
@@ -58,9 +58,9 @@ gulp.task('html', () => {
         .pipe(cached('html'))
         .pipe(gulp.dest(dirRoot + dirBuild + dirSrc));
 
-    return gulp.src(dirRoot + dirExample + '/*.html')
-        .pipe(cached('example-html'))
-        .pipe(gulp.dest(dirRoot + dirBuild + dirExample));
+    return gulp.src(dirRoot + dirDemo + '/*.html')
+        .pipe(cached('demo-html'))
+        .pipe(gulp.dest(dirRoot + dirBuild + dirDemo));
 });
 
 
@@ -72,14 +72,14 @@ gulp.task('libs', () => {
 
 
 gulp.task('bundle', () => {
-    if (!directoryExists(dirRoot + dirBuild + dirExample)) {
-        fs.mkdirSync(dirRoot + dirBuild + dirExample);
+    if (!directoryExists(dirRoot + dirBuild + dirDemo)) {
+        fs.mkdirSync(dirRoot + dirBuild + dirDemo);
     }
 
-    return browserify(dirRoot + dirExample + dirJs + "/index.js")
+    return browserify(dirRoot + dirDemo + dirEs6 + "/index.js")
         .transform(babelify, {presets: ['es2015-loose']})
         .bundle()
-        .pipe(fs.createWriteStream(dirRoot + dirBuild + dirExample + '/bundle.js'));
+        .pipe(fs.createWriteStream(dirRoot + dirBuild + dirDemo + '/bundle.js'));
 });
 
 

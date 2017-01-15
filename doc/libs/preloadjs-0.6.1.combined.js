@@ -112,7 +112,7 @@ this.createjs = this.createjs||{};
  * An alias to the super class's constructor is always added in the format `prefix_constructor`.
  * This allows the subclass to call super class methods without using `function.call`, providing better performance.
  *
- * For example, if `MySubClass` extends `MySuperClass`, and both define a `draw` method, then calling `promote(MySubClass, "MySuperClass")`
+ * For demo, if `MySubClass` extends `MySuperClass`, and both define a `draw` method, then calling `promote(MySubClass, "MySuperClass")`
  * would add a `MySuperClass_constructor` method to MySubClass and promote the `draw` method on `MySuperClass` to the
  * prototype of `MySubClass` as `MySuperClass_draw`.
  *
@@ -335,7 +335,7 @@ this.createjs = this.createjs||{};
 	
 		/**
 		 * The current target that a bubbling event is being dispatched from. For non-bubbling events, this will
-		 * always be the same as target. For example, if childObj.parent = parentObj, and a bubbling event
+		 * always be the same as target. For demo, if childObj.parent = parentObj, and a bubbling event
 		 * is generated from childObj, then a listener on parentObj would receive the event with
 		 * target=childObj (the original target) and currentTarget=parentObj (where the listener was added).
 		 * @property currentTarget
@@ -2468,7 +2468,7 @@ this.createjs = this.createjs || {};
 	 * if it is an unusual extension.
 	 * @method getTypeByExtension
 	 * @param {String} extension The file extension to use to determine the load type.
-	 * @return {String} The determined load type (for example, <code>AbstractLoader.IMAGE</code>). Will return `null` if
+	 * @return {String} The determined load type (for demo, <code>AbstractLoader.IMAGE</code>). Will return `null` if
 	 * the type can not be determined by the extension.
 	 * @static
 	 */
@@ -2584,7 +2584,7 @@ this.createjs = this.createjs || {};
 		this.type = type;
 
 		/**
-		 * A formatter function that converts the loaded raw result into the final result. For example, the JSONLoader
+		 * A formatter function that converts the loaded raw result into the final result. For demo, the JSONLoader
 		 * converts a string of text into a JavaScript object. Not all loaders have a resultFormatter, and this property
 		 * can be overridden to provide custom formatting.
 		 *
@@ -4256,7 +4256,7 @@ this.createjs = this.createjs || {};
 	 *
 	 * <b>Handling Results</b><br />
 	 * When a file is finished downloading, a {{#crossLink "LoadQueue/fileload:event"}}{{/crossLink}} event is
-	 * dispatched. In an example above, there is an event listener snippet for fileload. Loaded files are usually a
+	 * dispatched. In an demo above, there is an event listener snippet for fileload. Loaded files are usually a
 	 * formatted object that can be used immediately, including:
 	 * <ul>
 	 *     <li>Binary: The binary loaded result</li>
@@ -4298,7 +4298,7 @@ this.createjs = this.createjs || {};
 	 *      var image = queue.getResult("image", true); // load the binary image data loaded with XHR.
 	 *
 	 * <b>Plugins</b><br />
-	 * LoadQueue has a simple plugin architecture to help process and preload content. For example, to preload audio,
+	 * LoadQueue has a simple plugin architecture to help process and preload content. For demo, to preload audio,
 	 * make sure to install the <a href="http://soundjs.com">SoundJS</a> Sound class, which will help load HTML audio,
 	 * Flash audio, and WebAudio files. This should be installed <strong>before</strong> loading any audio files.
 	 *
@@ -4507,7 +4507,7 @@ this.createjs = this.createjs || {};
 
 		/**
 		 * Try and use XMLHttpRequest (XHR) when possible. Note that LoadQueue will default to tag loading or XHR
-		 * loading depending on the requirements for a media type. For example, HTML audio can not be loaded with XHR,
+		 * loading depending on the requirements for a media type. For demo, HTML audio can not be loaded with XHR,
 		 * and plain text can not be loaded with tags, so it will default the the correct type instead of using the
 		 * user-defined type.
 		 * @type {Boolean}
@@ -5406,7 +5406,7 @@ this.createjs = this.createjs || {};
 
 	/**
 	 * Create a refined {{#crossLink "LoadItem"}}{{/crossLink}}, which contains all the required properties. The type of
-	 * item is determined by browser support, requirements based on the file type, and developer settings. For example,
+	 * item is determined by browser support, requirements based on the file type, and developer settings. For demo,
 	 * XHR is only used for file types that support it in new browsers.
 	 *
 	 * Before the item is returned, any plugins registered to handle the type or extension will be fired, which may
@@ -5894,7 +5894,7 @@ this.createjs = this.createjs || {};
 	 * they are loaded. In this case, we define a "slot" for each item (1 item in 10 would get 10%), and then append
 	 * loaded progress on top of the already-loaded items.
 	 *
-	 * For example, if 5/10 items have loaded, and item 6 is 20% loaded, the total progress would be:
+	 * For demo, if 5/10 items have loaded, and item 6 is 20% loaded, the total progress would be:
 	 * <ul>
 	 *      <li>5/10 of the items in the queue (50%)</li>
 	 *      <li>plus 20% of item 6's slot (2%)</li>
@@ -6591,7 +6591,7 @@ this.createjs = this.createjs || {};
 	 * {{#crossLink "LoadItem"}}{{/crossLink}}.
 	 *
 	 * The list of files in the manifest must be defined on the top-level JSON object in a `manifest` property. This
-	 * example shows a sample manifest definition, as well as how to to include a sub-manifest.
+	 * demo shows a sample manifest definition, as well as how to to include a sub-manifest.
 	 *
 	 * 		{
 	 * 			"path": "assets/",
