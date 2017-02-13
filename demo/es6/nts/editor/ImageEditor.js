@@ -1,6 +1,6 @@
 import {Cropper} from './crop/Cropper';
 import {Resizer} from './resize/Resizer';
-import {requestAnimFrame} from './../../../../src/libs/animation';
+import {requestAnimFrame} from '../../../../src/lib/animation';
 
 
 export class ImageEditor {

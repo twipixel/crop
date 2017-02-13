@@ -1,5 +1,5 @@
 import {Cropper} from "./crop/Cropper";
-import {requestAnimFrame} from "../../../libs/animation";
+import {requestAnimFrame} from "../../../lib/animation";
 
 
 export class ImageEditor {
