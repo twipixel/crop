@@ -36,7 +36,8 @@
   },
   "scripts": {
     "crop": "electron electron.crop.js",
-    "hit": "electron electron.hit.js"
+    "hit": "electron electron.hit.js",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",

@@ -37,9 +37,11 @@ function directoryExists(path) {
 }
 
 
-gulp.task('clean', () => del(dirRoot + dirBuild + '**/*', {
-    force: true
-}));
+gulp.task('clean', () => {
+    return del(dirRoot + dirBuild + '**/*', {
+        force: true
+    });
+});
 
 
 gulp.task('copy-img', () => {
@@ -62,14 +64,6 @@ gulp.task('copy-lib', () => {
 
 
 gulp.task('copy-html', () => {
-    /*if (!directoryExists(dirRoot + dirBuild + dirBuildCrop)) {
-        fs.mkdirSync(dirRoot + dirBuild + dirBuildCrop);
-    }
-
-    if (!directoryExists(dirRoot + dirBuild + dirBuildHit)) {
-        fs.mkdirSync(dirRoot + dirBuild + dirBuildHit);
-    }*/
-
     gulp.src(dirRoot + dirSrc + dirCrop + '/*.html')
         .pipe(cached('cropHtml'))
         .pipe(gulp.dest(dirRoot + dirBuild + dirBuildCrop));
@@ -81,14 +75,6 @@ gulp.task('copy-html', () => {
 
 
 gulp.task('bundle', () => {
-    /*if (!directoryExists(dirRoot + dirBuild + dirBuildCrop)) {
-        fs.mkdirSync(dirRoot + dirBuild + dirBuildCrop);
-    }
-
-    if (!directoryExists(dirRoot + dirBuild + dirBuildHit)) {
-        fs.mkdirSync(dirRoot + dirBuild + dirBuildHit);
-    }*/
-
     browserify(dirRoot + dirSrc + dirCrop + "/index.js")
         .transform(babelify, {presets: ['es2015-loose']})
         .bundle()
