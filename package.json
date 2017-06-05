@@ -13,6 +13,7 @@
     "babel-loader": "^6.2.2",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-es2015-loose": "^8.0.0",
+    "babel-runtime": "^6.23.0",
     "babelify": "^7.3.0",
     "browserify": "^13.1.1",
     "del": "^2.2.2",
@@ -35,7 +36,7 @@
   },
   "scripts": {
     "crop": "electron electron.crop.js",
-    "hit.detection": "electron electron.hit.detection.js"
+    "hit": "electron electron.hit.js"
   },
   "repository": {
     "type": "git",

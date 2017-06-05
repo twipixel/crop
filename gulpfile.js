@@ -14,15 +14,16 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
 
-
 // 디렉토리 설정
 var dirRoot = __dirname;
 var dirSrc = '/src';
-var dirDemo = '/demo';
-var dirEs6 = '/es6';
+var dirCrop = '/es6Crop';
+var dirHit = '/es6Hit';
 var dirImg = '/img';
-var dirLibs = '/libs';
+var dirLib = '/lib';
 var dirBuild = '/build';
+var dirBuildCrop = '/crop';
+var dirBuildHit = '/hit';
 
 
 
@@ -41,7 +42,7 @@ gulp.task('clean', () => del(dirRoot + dirBuild + '**/*', {
 }));
 
 
-gulp.task('img', () => {
+gulp.task('copy-img', () => {
     return gulp.src([dirRoot + dirSrc + dirImg + '/**/*.*'])
         .pipe(cached('img'))
         .pipe(imagemin({
@@ -49,43 +50,61 @@ gulp.task('img', () => {
             svgoPlugins: [],
             use: [pngquant()]
         }))
-        .pipe(gulp.dest(dirRoot + dirBuild + dirSrc + dirImg));
+        .pipe(gulp.dest(dirRoot + dirBuild + dirImg));
 });
 
 
-gulp.task('html', () => {
-    gulp.src(dirRoot + dirSrc + '/*.html')
-        .pipe(cached('html'))
-        .pipe(gulp.dest(dirRoot + dirBuild + dirSrc));
-
-    return gulp.src(dirRoot + dirDemo + '/*.html')
-        .pipe(cached('demo-html'))
-        .pipe(gulp.dest(dirRoot + dirBuild + dirDemo));
+gulp.task('copy-lib', () => {
+    return gulp.src(dirRoot + dirSrc + dirLib + '/**/*.*')
+        .pipe(cached('lib'))
+        .pipe(gulp.dest(dirRoot + dirBuild + dirLib));
 });
 
 
-gulp.task('libs', () => {
-    return gulp.src(dirRoot + dirSrc + dirLibs + '/**/*.js')
-        .pipe(cached('libs'))
-        .pipe(gulp.dest(dirRoot + dirBuild + dirSrc + dirLibs));
+gulp.task('copy-html', () => {
+    /*if (!directoryExists(dirRoot + dirBuild + dirBuildCrop)) {
+        fs.mkdirSync(dirRoot + dirBuild + dirBuildCrop);
+    }
+
+    if (!directoryExists(dirRoot + dirBuild + dirBuildHit)) {
+        fs.mkdirSync(dirRoot + dirBuild + dirBuildHit);
+    }*/
+
+    gulp.src(dirRoot + dirSrc + dirCrop + '/*.html')
+        .pipe(cached('cropHtml'))
+        .pipe(gulp.dest(dirRoot + dirBuild + dirBuildCrop));
+
+    return gulp.src(dirRoot + dirSrc + dirHit + '/*.html')
+        .pipe(cached('hitHtml'))
+        .pipe(gulp.dest(dirRoot + dirBuild + dirBuildHit));
 });
 
 
 gulp.task('bundle', () => {
-    if (!directoryExists(dirRoot + dirBuild + dirDemo)) {
-        fs.mkdirSync(dirRoot + dirBuild + dirDemo);
+    /*if (!directoryExists(dirRoot + dirBuild + dirBuildCrop)) {
+        fs.mkdirSync(dirRoot + dirBuild + dirBuildCrop);
     }
 
-    return browserify(dirRoot + dirDemo + dirEs6 + "/index.js")
+    if (!directoryExists(dirRoot + dirBuild + dirBuildHit)) {
+        fs.mkdirSync(dirRoot + dirBuild + dirBuildHit);
+    }*/
+
+    browserify(dirRoot + dirSrc + dirCrop + "/index.js")
         .transform(babelify, {presets: ['es2015-loose']})
         .bundle()
-        .pipe(fs.createWriteStream(dirRoot + dirBuild + dirDemo + '/bundle.js'));
+        .pipe(fs.createWriteStream(dirRoot + dirBuild + dirBuildCrop + '/bundle.js'));
+
+    return browserify(dirRoot + dirSrc + dirHit + "/index.js")
+        .transform(babelify, {presets: ['es2015-loose']})
+        .bundle()
+        .pipe(fs.createWriteStream(dirRoot + dirBuild + dirBuildHit + '/bundle.js'));
 });
 
 
-gulp.task('build', ['clean'], () => {
-    return gulp.start('img', 'libs', 'html', 'bundle');
+gulp.task('build', ['clean', 'copy-img', 'copy-lib', 'copy-html'], () => {
+    return gulp.start('bundle');
 });
+
 
 
 
