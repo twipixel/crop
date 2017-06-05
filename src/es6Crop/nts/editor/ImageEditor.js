@@ -16,18 +16,18 @@ export class ImageEditor {
         this.textureCanvas = textureCanvas;
         this.canvas = document.getElementById('canvas');
 
-        /*this.context = this.canvas.getContext('2d');
+        this.context = this.canvas.getContext('2d');
         this.renderer = new PIXI.CanvasRenderer(this.canvas.width, this.canvas.height, {
             view: this.canvas,
             autoResize: true,
             backgroundColor: 0x000000
-        });*/
+        });
 
-        this.renderer = new PIXI.WebGLRenderer(this.canvas.width, this.canvas.height, {
+        /*this.renderer = new PIXI.WebGLRenderer(this.canvas.width, this.canvas.height, {
             view: this.canvas,
             autoResize: true,
             backgroundColor: 0x000000
-        });
+        });*/
 
          /*var interactive = true;
          this.stage = new PIXI.Stage(0xE6E9EC, interactive);*/

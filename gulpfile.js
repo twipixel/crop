@@ -9,6 +9,7 @@ var pngquant = require('imagemin-pngquant');
 
 var babelify = require('babelify');
 var browserify = require('browserify');
+var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -17,8 +18,8 @@ var watchify = require('watchify');
 // 디렉토리 설정
 var dirRoot = __dirname;
 var dirSrc = '/src';
-var dirCrop = '/es6Crop';
-var dirHit = '/es6Hit';
+var dirCrop = '/es6crop';
+var dirHit = '/es6hit';
 var dirImg = '/img';
 var dirLib = '/lib';
 var dirBuild = '/build';
@@ -78,12 +79,19 @@ gulp.task('bundle', () => {
     browserify(dirRoot + dirSrc + dirCrop + "/index.js")
         .transform(babelify, {presets: ['es2015-loose']})
         .bundle()
-        .pipe(fs.createWriteStream(dirRoot + dirBuild + dirBuildCrop + '/bundle.js'));
+        .pipe(source('bundle.js'))
+        .pipe(buffer())
+        .pipe(uglify())
+        //.pipe(fs.createWriteStream(dirRoot + dirBuild + dirBuildCrop + '/bundle.js'));
+        .pipe(gulp.dest(dirRoot + dirBuild + dirBuildCrop));
 
     return browserify(dirRoot + dirSrc + dirHit + "/index.js")
         .transform(babelify, {presets: ['es2015-loose']})
         .bundle()
-        .pipe(fs.createWriteStream(dirRoot + dirBuild + dirBuildHit + '/bundle.js'));
+        .pipe(source('bundle.js'))
+        .pipe(buffer())
+        .pipe(uglify())
+        .pipe(gulp.dest(dirRoot + dirBuild + dirBuildHit));
 });
 
 

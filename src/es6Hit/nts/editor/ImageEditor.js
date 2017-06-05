@@ -18,18 +18,18 @@ export class ImageEditor {
 
         this.canvas = document.getElementById('canvas');
 
-        /*this.context = this.canvas.getContext('2d');
+        this.context = this.canvas.getContext('2d');
         this.renderer = new PIXI.CanvasRenderer(this.canvas.width, this.canvas.height, {
             view: this.canvas,
             autoResize: true,
             backgroundColor: 0x1B1B1B
-        });*/
+        });
 
-        this.renderer = new PIXI.WebGLRenderer(1200, 800, {
+        /*this.renderer = new PIXI.WebGLRenderer(1200, 800, {
             view: this.canvas,
             autoResize: true,
             backgroundColor: 0x1B1B1B
-        });
+        });*/
 
         this.stage = new PIXI.Container(0xE6E9EC);
         this.cropper = new Cropper(this.canvas, this.imageElement, this.textureCanvas);

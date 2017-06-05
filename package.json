@@ -28,6 +28,7 @@
     "gulp-if": "^2.0.2",
     "gulp-imagemin": "^3.1.1",
     "gulp-sourcemaps": "^1.9.1",
+    "gulp-uglify": "^3.0.0",
     "imagemin-pngquant": "^5.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
@@ -37,7 +38,7 @@
   "scripts": {
     "crop": "electron electron.crop.js",
     "hit": "electron electron.hit.js",
-    "build": "gulp build"
+    "build": "gulp clean & gulp build"
   },
   "repository": {
     "type": "git",
