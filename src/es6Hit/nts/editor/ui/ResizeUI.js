@@ -3,6 +3,8 @@ import {ControlArea} from './ControlArea';
 import {Calc} from './../utils/Calculator';
 import {Painter} from './../utils/Painter';
 import {HitSide} from './../const/HitSide';
+import Mouse from './../utils/Mouse';
+
 
 export class ResizeUI extends PIXI.Container {
     constructor(canvas) {
@@ -368,8 +370,8 @@ export class ResizeUI extends PIXI.Container {
         e.stopPropagation();
 
         this.selectedTarget = e.target;
-        this.dragStartX = this.prevDragX = e.data.global.x;
-        this.dragStartY = this.prevDragY = e.data.global.y;
+        this.dragStartX = this.prevDragX = Mouse.global.x;
+        this.dragStartY = this.prevDragY = Mouse.global.y;
 
         this.addCornerMoveEvent();
         this.removeCornerDownEvent();
@@ -383,8 +385,8 @@ export class ResizeUI extends PIXI.Container {
     }
 
     onCornerMove(e) {
-        this.currentDragX = e.clientX;
-        this.currentDragY = e.clientY;
+        this.currentDragX = Mouse.global.x;
+        this.currentDragY = Mouse.global.y;
 
         this.dx = this.currentDragX - this.prevDragX;
         this.dy = this.currentDragY - this.prevDragY;

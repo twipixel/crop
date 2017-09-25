@@ -38,6 +38,7 @@ function beginWithCanvas(texture, imageElement) {
 
 
 function resizeWindow() {
-    if(editor)
+    if(editor) {
         editor.resize();
+    }
 }

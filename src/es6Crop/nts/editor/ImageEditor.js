@@ -1,5 +1,7 @@
 import {Cropper} from "./crop/Cropper";
 import {requestAnimFrame} from "../../../lib/animation";
+import Config from './config/Config';
+import Mouse from './utils/Mouse';
 
 
 export class ImageEditor {
@@ -22,6 +24,9 @@ export class ImageEditor {
             autoResize: true,
             backgroundColor: 0x000000
         });
+
+        Mouse.renderer = this.renderer;
+        Mouse.mouse = (Config.instance.desktop) ? Mouse.DESKTOP_MOUSE : Mouse.MOBILE_MOUSE;
 
         /*this.renderer = new PIXI.WebGLRenderer(this.canvas.width, this.canvas.height, {
             view: this.canvas,

@@ -1,4 +1,5 @@
 import {Calc} from './../utils/Calculator';
+import Mouse from './../utils/Mouse';
 
 
 export class MoveUI extends PIXI.Sprite {
@@ -61,7 +62,7 @@ export class MoveUI extends PIXI.Sprite {
     }
 
     onMouseDown(e) {
-        this.prevMousePoint = {x:e.data.global.x, y:e.data.global.y};
+        this.prevMousePoint = {x:Mouse.global.x, y:Mouse.global.y};
 
         this.emit('moveStart');
 
@@ -71,7 +72,7 @@ export class MoveUI extends PIXI.Sprite {
     }
 
     onMouseMove(e) {
-        this.currentMousePoint = {x:e.clientX, y:e.clientY};
+        this.currentMousePoint = {x:Mouse.global.x, y:Mouse.global.y};
 
         this.change = {
             x:this.currentMousePoint.x - this.prevMousePoint.x,
