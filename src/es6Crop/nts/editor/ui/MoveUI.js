@@ -34,10 +34,12 @@ export class MoveUI extends PIXI.Sprite {
     addMouseDownEvent() {
         this._mouseDownListener = this.onMouseDown.bind(this);
         this.on('mousedown', this._mouseDownListener);
+        this.on('touchstart', this._mouseDownListener);
     }
 
     removeMouseDownEvent() {
         this.off('mousedown', this._mouseDownListener);
+        this.off('touchstart', this._mouseDownListener);
     }
 
     addMouseMoveEvent() {
@@ -46,11 +48,17 @@ export class MoveUI extends PIXI.Sprite {
 
         window.document.addEventListener('mousemove', this._mouseMoveListener);
         window.document.addEventListener('mouseup', this._mouseUpListener);
+
+        window.document.addEventListener('touchmove', this._mouseMoveListener);
+        window.document.addEventListener('touchend', this._mouseUpListener);
     }
 
     removeMouseMoveEvent() {
         window.document.removeEventListener('mousemove', this._mouseMoveListener);
         window.document.removeEventListener('mouseup', this._mouseUpListener);
+
+        window.document.removeEventListener('touchmove', this._mouseMoveListener);
+        window.document.removeEventListener('touchend', this._mouseUpListener);
     }
 
     onMouseDown(e) {

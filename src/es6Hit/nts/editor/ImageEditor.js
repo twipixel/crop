@@ -31,7 +31,7 @@ export class ImageEditor {
             backgroundColor: 0x1B1B1B
         });*/
 
-        this.stage = new PIXI.Container(0xE6E9EC);
+        this.stage = new PIXI.Container();
         this.cropper = new Cropper(this.canvas, this.imageElement, this.textureCanvas);
         this.stage.addChild(this.cropper);
     }

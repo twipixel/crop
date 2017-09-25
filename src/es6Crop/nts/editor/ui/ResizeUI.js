@@ -425,6 +425,11 @@ export class ResizeUI extends PIXI.Container {
         this.rt.on('mousedown', this._cornerDownListener);
         this.rb.on('mousedown', this._cornerDownListener);
         this.lb.on('mousedown', this._cornerDownListener);
+
+        this.lt.on('touchstart', this._cornerDownListener);
+        this.rt.on('touchstart', this._cornerDownListener);
+        this.rb.on('touchstart', this._cornerDownListener);
+        this.lb.on('touchstart', this._cornerDownListener);
     }
 
     removeCornerDownEvent() {
@@ -432,6 +437,11 @@ export class ResizeUI extends PIXI.Container {
         this.rt.off('mousedown', this._cornerDownListener);
         this.rb.off('mousedown', this._cornerDownListener);
         this.lb.off('mousedown', this._cornerDownListener);
+
+        this.lt.off('touchstart', this._cornerDownListener);
+        this.rt.off('touchstart', this._cornerDownListener);
+        this.rb.off('touchstart', this._cornerDownListener);
+        this.lb.off('touchstart', this._cornerDownListener);
     }
 
     addCornerMoveEvent() {
@@ -440,11 +450,17 @@ export class ResizeUI extends PIXI.Container {
 
         window.document.addEventListener('mouseup', this._cornerUpListener);
         window.document.addEventListener('mousemove', this._cornerMoveListener);
+
+        window.document.addEventListener('touchmove', this._cornerUpListener);
+        window.document.addEventListener('touchend', this._cornerMoveListener);
     }
 
     removeCornerMoveEvent() {
         window.document.removeEventListener('mouseup', this._cornerUpListener);
         window.document.removeEventListener('mousemove', this._cornerMoveListener);
+
+        window.document.removeEventListener('touchmove', this._cornerUpListener);
+        window.document.removeEventListener('touchend', this._cornerMoveListener);
     }
 
 
